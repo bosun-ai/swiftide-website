@@ -27,20 +27,38 @@ export default defineConfig({
       },
       sidebar: [
         {
-          label: "Guides",
-          items: [
-            // Each item here is one entry in the navigation menu.
-            {
-              label: "Example Guide",
-              link: "/guides/example/",
-            },
-          ],
+          label: "Introduction",
+          link: "/introduction/",
         },
         {
+          label: "Installation",
+          autogenerate: {
+            directory: "installation",
+          },
+        },
+        {
+          label: "Concepts",
+          autogenerate: {
+            directory: "concepts",
+          },
+        },
+        {
+          label: "Examples",
+          autogenerate: {
+            directory: "examples",
+          },
+        },
+
+        {
           label: "Reference",
+          collapsed: true,
           autogenerate: {
             directory: "reference",
           },
+        },
+        {
+          label: "Troubleshooting",
+          link: "/troubleshooting/",
         },
       ],
     }),
