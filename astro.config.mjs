@@ -1,6 +1,8 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
+import tailwind from "@astrojs/tailwind";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://swiftide.bosun.ai",
@@ -15,8 +17,11 @@ export default defineConfig({
         "@fontsource/fira-code/400.css",
         "@fontsource/fira-code/600.css",
         "./src/styles/custom.css",
+        "./src/tailwind.css",
       ],
-      logo: { src: "./src/assets/logo.png" },
+      logo: {
+        src: "./src/assets/logo.png",
+      },
       social: {
         github: "https://github.com/bosun-ai/swiftide",
       },
@@ -25,14 +30,20 @@ export default defineConfig({
           label: "Guides",
           items: [
             // Each item here is one entry in the navigation menu.
-            { label: "Example Guide", link: "/guides/example/" },
+            {
+              label: "Example Guide",
+              link: "/guides/example/",
+            },
           ],
         },
         {
           label: "Reference",
-          autogenerate: { directory: "reference" },
+          autogenerate: {
+            directory: "reference",
+          },
         },
       ],
     }),
+    tailwind({ applyBaseStyles: false }),
   ],
 });
