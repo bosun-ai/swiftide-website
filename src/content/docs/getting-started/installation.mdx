@@ -1,0 +1,27 @@
+---
+title: Installation
+sidebar:
+  order: 0
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+:::note
+If you plan to use openai, by default the OPENAI_API_KEY is used.
+:::
+
+<Steps>
+
+1. Setup the Rust toolchain ([rustup](https://rustup.rs/) is recommended)
+
+2. Take a look at our [feature flags](installation/feature-flags) and enable the integrations you would like to have enabled.
+
+3. Add swiftide
+
+   ```shell
+   cargo add swiftide
+   ```
+
+4. Write a pipeline!
+
+</Steps>

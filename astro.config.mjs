@@ -31,13 +31,13 @@ export default defineConfig({
           link: "/introduction/",
         },
         {
-          label: "Installation",
+          label: "Getting Started",
           autogenerate: {
-            directory: "installation",
+            directory: "getting-started",
           },
         },
         {
-          label: "Concepts",
+          label: "In depth",
           autogenerate: {
             directory: "concepts",
           },
@@ -49,13 +49,13 @@ export default defineConfig({
           },
         },
 
-        {
-          label: "Reference",
-          collapsed: true,
-          autogenerate: {
-            directory: "reference",
-          },
-        },
+        // {
+        //   label: "Reference",
+        //   collapsed: true,
+        //   autogenerate: {
+        //     directory: "reference",
+        //   },
+        // },
         {
           label: "Troubleshooting",
           link: "/troubleshooting/",

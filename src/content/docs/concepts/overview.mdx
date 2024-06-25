@@ -1,0 +1,88 @@
+---
+title: Overview
+sidebar:
+  order: 0
+---
+
+Swiftide provides a pipeline model. Troughout a pipeline, `IngestionNodes` are transformed and ultimately persisted. Every step with a pipeline returns the same, _owned_ pipeline.
+
+import { Steps } from "@astrojs/starlight/components";
+
+<Steps>
+
+1. The pipeline starts with a loader:
+
+   ```rust
+   let pipeline = IngestionPipeline::from_loader(FileLoader::new("./"));
+   ```
+
+   A loader implements the `Loader` trait which yields `IngestionNodes` to a stream.
+
+2. Nodes can then be transformed with an existing transformer:
+
+   ```rust
+   pipeline.then(MetadataQACode::new(openai_client.clone()));
+   ```
+
+   Any transformer has to implement the `Transformer` trait, which takes an owned `IngestionNode` and outputs a `Result<IngestionNode>`. Closures also implement this trait!
+
+3. ... so you can also do this:
+
+   ```rust
+   pipeline.then(|node| {
+     node.chunk = format!("{}\n{}", &node.chunk, "awesome!");
+     Ok(node)
+   });
+   ```
+
+4. Batch transformations are also supported:
+
+   ```rust
+   pipeline.then_in_batch(10, Embed::new(FastEmbed::try_default()?));
+   ```
+
+   Batchable transformers implement the `BatchableTransformer` trait, which takes a vector of `IngestionNodes` and outputs an `IngestionStream`.
+
+5. Nodes can be filtered using a NodeCache at any stage, based on a cache key the node cache defines. Redis uses a prefix and the hash of an `IngestionNode`, based on the path and text, by default.
+
+   ```rust
+   pipeline.filter_cached(Redis::try_from_url(
+             redis_url,
+             "swiftide-examples",
+         )?);
+   ```
+
+   Node caches implement the `NodeCache` trait, which defines a `get` and `set` method, taking an `IngestionNode` as input.
+
+6. At any point in the pipeline, nodes can be chunked into smaller parts:
+
+   ```rust
+   pipeline.then_chunk(ChunkCode::try_for_language_and_chunk_size(
+             "rust",
+             10..2048,
+         )?);
+   ```
+
+   Chunkers implement the ChunkerTransformer trait, which take an `IngestionNode` and return an `IngestionStream`. By default metadata is copied over to each node.
+
+7. Also, nodes can be persisted (multiple times!) to storage:
+
+   ```rust
+   .then_store_with(
+       Qdrant::try_from_url(qdrant_url)?
+           .batch_size(50)
+           .vector_size(1536)
+           .collection_name("swiftide-examples".to_string())
+           .build()?,
+   )
+   ```
+
+   Storages implement the `Storage` trait, which define `setup`, `store`, `batch_store` and `batch_size` methods. They also provide ways to convert an `IngestionNode` to something that can be stored.
+
+8. Finally, the pipeline can be run as follows:
+
+   ```rust
+     pipeline.run()?;
+   ```
+
+</Steps>
