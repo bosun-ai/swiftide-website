@@ -37,7 +37,7 @@ export default defineConfig({
           },
         },
         {
-          label: "Concepts",
+          label: "In depth",
           autogenerate: {
             directory: "concepts",
           },
@@ -49,13 +49,13 @@ export default defineConfig({
           },
         },
 
-        {
-          label: "Reference",
-          collapsed: true,
-          autogenerate: {
-            directory: "reference",
-          },
-        },
+        // {
+        //   label: "Reference",
+        //   collapsed: true,
+        //   autogenerate: {
+        //     directory: "reference",
+        //   },
+        // },
         {
           label: "Troubleshooting",
           link: "/troubleshooting/",
