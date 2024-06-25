@@ -31,9 +31,9 @@ export default defineConfig({
           link: "/introduction/",
         },
         {
-          label: "Installation",
+          label: "Getting Started",
           autogenerate: {
-            directory: "installation",
+            directory: "getting-started",
           },
         },
         {

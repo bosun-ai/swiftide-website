@@ -1,5 +1,5 @@
 ---
 title: Transforming and Enriching
 sidebar:
-  order: 4
+  order: 1
 ---

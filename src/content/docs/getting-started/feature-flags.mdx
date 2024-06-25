@@ -1,0 +1,19 @@
+---
+title: Feature Flags
+sidebar:
+  order: 1
+---
+
+> [!NOTE]
+> For a guaranteed up to date list of feature flags, check out [docs.rs](https://docs.rs/crate/swiftide/latest/features)
+
+In swiftide feature flags are organized per integration. Many are large libraries that would introduce significant compile time and binary size. We strongly advice to cherry-pick features that you need.
+
+- **qdrant** - Provides a Qdrant as storage
+- **redis** - Provides Redis as a node cache and as storage
+- **tree-sitter** - Provides a tree-sitter based chunker for code
+- **openai** - Provides prompting and embedding via openai (with `async-openai`) and/or azure openai.
+- **fastembed** - Provides embedding via Qdrant's Fastembed
+- **scraping** - Provides a scraping loader (with `spider`) and a html to markdown transformer (with `htmd`)
+
+Our philosophy is to provide sane defaults and empower engineers to customize. Integrations are generally thin wrappers with a default, builder and the option to customize whatever the integration provides.

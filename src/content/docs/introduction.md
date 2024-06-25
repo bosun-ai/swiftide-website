@@ -2,4 +2,18 @@
 title: Introduction
 ---
 
-Introduction
+## What is swiftide?
+
+Swiftide is a straightforward, easy-to-use, easy-to-extend asynchronous file ingestion and processing library. It is designed to be used in a RAG (Retrieval Augmented Generation) system. It is built to be fast and efficient, with a focus on parallel processing and asynchronous operations.
+
+At the same time, swiftide also has a focus on developer experience and ease of use. It is designed to be simple and intuitive, with a clear and concise API that makes it easy to get started, build complex pipelines, and bring your own transformations.
+
+## What problem does swiftide solve?
+
+In a RAG system, the data needs to be ingested, processed, and indexed. This can be a time-consuming process, especially when dealing with large amounts of data. Swiftide aims to solve this problem by providing a fast and efficient way to ingest and process data, allowing the RAG system to be more responsive and efficient.
+
+In fact, swiftide is **so fast** that it enables real-time indexing before querying, opening up the possibility of real-time RAG systems. At the same time, the internet is booming with wild distributed, kafka based setups. Swiftide hopes to stretch the limits of what is possible before getting to such a setup and beyond.
+
+## How does swiftide work?
+
+With swiftide you define a sequence of steps, from ingestion to processing to indexing. Under the hood, swiftide uses Rust's async and streaming features to speed things up, drastically.
