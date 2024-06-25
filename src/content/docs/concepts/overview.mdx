@@ -68,7 +68,7 @@ import { Steps } from "@astrojs/starlight/components";
 7. Also, nodes can be persisted (multiple times!) to storage:
 
    ```rust
-   .then_store_with(
+   pipeline.then_store_with(
        Qdrant::try_from_url(qdrant_url)?
            .batch_size(50)
            .vector_size(1536)
