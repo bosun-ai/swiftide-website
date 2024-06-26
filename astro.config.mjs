@@ -50,13 +50,16 @@ export default defineConfig({
           },
         },
 
-        // {
-        //   label: "Reference",
-        //   collapsed: true,
-        //   autogenerate: {
-        //     directory: "reference",
-        //   },
-        // },
+        {
+          label: "Reference",
+          link: "https://docs.rs/swiftide/latest/swiftide/",
+          badge: {
+            variant: "note",
+            text: "docs.rs",
+          },
+
+          attrs: { target: "_blank" },
+        },
         {
           label: "Troubleshooting",
           link: "/troubleshooting/",
