@@ -22,7 +22,7 @@ export default defineConfig({
         "./src/styles/custom.css",
         "./src/tailwind.css",
       ],
-      favicon: "./src/assets/swiftide-favicon32.png",
+      favicon: "favicon32.png",
       logo: {
         src: "./src/assets/logo.png",
       },
