@@ -5,7 +5,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://swiftide.bosun.ai",
+  site: "https://swiftide.rs",
   integrations: [
     starlight({
       title: "swiftide",
@@ -19,6 +19,7 @@ export default defineConfig({
         "./src/styles/custom.css",
         "./src/tailwind.css",
       ],
+      favicon: "./src/assets/swiftide-favicon32.png",
       logo: {
         src: "./src/assets/logo.png",
       },
