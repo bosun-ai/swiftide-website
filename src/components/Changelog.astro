@@ -1,0 +1,6 @@
+---
+import { Markdown } from 'astro-remote';
+const markdown = await fetch('https://raw.githubusercontent.com/bosun-ai/swiftide/master/CHANGELOG.md').then(res => res.text());
+---
+
+<Markdown content={markdown} />
