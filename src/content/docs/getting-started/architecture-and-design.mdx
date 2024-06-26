@@ -1,0 +1,41 @@
+---
+title: Architecture and Design
+description: The architecture and design principles of the Swiftide project.
+---
+
+## Design principles
+
+- **Modular**: The pipeline is built from small, composable parts.
+- **Extensible**: It is easy to add new parts to the pipeline by extending straightforward traits.
+- **Performance**: Performance and ease-of-use are the main goals of the library. Performance always has priority.
+- **Tracable**: `tracing` is used throughout the pipeline.
+
+### When designing integrations, transformers, chunkers
+
+- **Simple**: The API should be simple and easy to use.
+- **Sane defaults, fully configurable**: The library should have sane defaults that are easy to override.
+- **Builder pattern**: The builder pattern is used to create new instances of the pipeline.
+
+## The-things-we-talk-about
+
+- **IngestionPipeline**: The main struct that holds the pipeline. It is a stream of IngestionNodes.
+- **IngestionNode**: The main struct that holds the data. It has a path, chunk and metadata.
+- **IngestionStream**: The internal stream of IngestionNodes in the pipeline.
+- **Loader**: The starting point of the stream, creates and emits IngestionNodes.
+- **Transformers**: Some behaviour that modifies the IngestionNodes.
+- **BatchTransformers**: Transformers that transform multiple nodes.
+- **Chunkers**: Transformers that split a node into multiple nodes.
+- **Storages**: Persist the IngestionNodes.
+- **NodeCache**: Filters cached nodes.
+- **Integrations**: External libraries that can be used with the pipeline.
+
+### Pipeline structure and traits
+
+- from_loader (impl Loader) starting point of the stream, creates and emits IngestionNodes
+- filter_cached (impl NodeCache) filters cached nodes
+- then (impl Transformer) transforms the node and puts it on the stream
+- then_in_batch (impl BatchTransformer) transforms multiple nodes and puts them on the stream
+- then_chunk (impl ChunkerTransformer) transforms a single node and emits multiple nodes
+- then_store_with (impl Storage) stores the nodes in a storage backend, this can be chained
+
+Additionally, several generic transformers are implemented. They take implementers of `SimplePrompt` and `EmbeddingModel` to do their things.

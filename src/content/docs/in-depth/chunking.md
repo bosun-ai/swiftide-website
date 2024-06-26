@@ -1,10 +1,13 @@
 ---
 title: Chunking
+description: How to chunk nodes in the pipeline.
 sidebar:
   order: 2
 ---
 
 For quality metadata it can be important to break up text into smaller parts for both better metadata and retrieval. A chunker implements the `ChunkerTransformer` trait.
+
+## The `ChunkerTransformer` trait
 
 Which is defined as follows:
 

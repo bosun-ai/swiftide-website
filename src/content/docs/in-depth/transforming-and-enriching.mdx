@@ -1,0 +1,44 @@
+---
+title: Transforming and Enriching
+description: How to transform and enrich nodes in the pipeline.
+sidebar:
+  order: 1
+---
+
+Transformers are the bread and butter of an ingestion pipeline. They can transform the chunk, extract, modify and add metadata, adding vectors, and probably a whole lot more that we haven't thought of.
+
+There's two ways to apply a transformer. Per node or in batch.
+
+## The `Transformer` trait
+
+The `Transformer` trait is very straightforward:
+
+```rust
+pub trait Transformer: Send + Sync {
+    async fn transform_node(&self, node: IngestionNode) -> Result<IngestionNode>;
+
+    fn concurrency(&self) -> Option<usize> {
+        None
+    }
+}
+```
+
+Or in human language: "You get a node, do your thing, then return a result with the node". That's it.
+
+In batches, the `BatchableTransformer` trait is similar, except that it needs to return a stream. See docs.rs for more details.
+
+## Built in transformers
+
+<small>
+
+| Name                      | Description                                            | Feature Flag |
+| ------------------------- | ------------------------------------------------------ | ------------ |
+| Embed                     | Generic embedding transformer, requires an LLM         |              |
+| MetadataKeywords          | Uses an LLM to extract keywords and add as metadata    |              |
+| MetadataQACode            | Uses an LLM to generate questions and answers for Code |              |
+| MetadataQAText            | Uses an LLM to generate questions and answers for Text |              |
+| MetadataSummary           | Uses an LLM to generate a summary                      |              |
+| MetadataTitle             | Uses an LLM to generate a title                        |              |
+| HtmlToMarkdownTransformer | Converts html in a node to markdown                    | scraping     |
+
+</small>

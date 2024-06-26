@@ -12,6 +12,9 @@ export default defineConfig({
       editLink: {
         baseUrl: "https://github.com/bosun-ai/swiftide-website/edit/master",
       },
+      tableOfContents: {
+        minHeadingLevel: 2,
+      },
       customCss: [
         // Fontsource files for to regular and semi-bold font weights.
         "@fontsource/fira-code/400.css",
@@ -25,11 +28,12 @@ export default defineConfig({
       },
       social: {
         github: "https://github.com/bosun-ai/swiftide",
+        linkedin: "https://www.linkedin.com/company/bosun-ai/",
       },
       sidebar: [
         {
-          label: "Introduction",
-          link: "/introduction/",
+          label: "What is swiftide?",
+          link: "/what-is-swiftide/",
         },
         {
           label: "Getting Started",
@@ -40,7 +44,7 @@ export default defineConfig({
         {
           label: "In depth",
           autogenerate: {
-            directory: "concepts",
+            directory: "in-depth",
           },
         },
         {

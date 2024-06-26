@@ -1,39 +1,62 @@
 ---
 title: swiftide
-description: Get started building your docs site with Starlight.
+description: Blazing fast data pipelines for Retrieval Augmented Generation written in Rust
 template: splash
 hero:
-  tagline: Blazing fast document and code indexation for Retrieval Augmented Generation
+  tagline: Blazing fast data pipelines for Retrieval Augmented Generation written in Rust
   image:
     file: ../../assets/logo-full.png
   actions:
-    - text: Introduction
-      link: /introduction/
+    - text: What is swiftide?
+      link: /what-is-swiftide/
       icon: right-arrow
       variant: primary
-    - text: A simple example
-      link: /examples/example
-      icon: right-arrow
+    - text: View it on Github
+      link: https://github.com/bosun-ai/swiftide
+      icon: external
       variant: secondary
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
 
-## Next steps
+<details>
+  <summary>A quick example</summary>
 
+    ```rust
+    IngestionPipeline::from_loader(FileLoader::new(".").with_extensions(&["md"]))
+            .then_chunk(ChunkMarkdown::with_chunk_range(10..512))
+            .then(MetadataQACode::new(openai_client.clone()))
+            .then_in_batch(10, Embed::new(openai_client.clone()))
+            .then_store_with(
+                Qdrant::try_from_url(qdrant_url)?
+                    .batch_size(50)
+                    .vector_size(1536)
+                    .collection_name("swiftide-examples".to_string())
+                    .build()?,
+            )
+            .run()
+            .await?;
+    ```
+
+</details>
 <CardGrid stagger>
-	<Card title="Introduction" icon="pencil">
-    [Introduction](introduction)
-  </Card>
+	<Card title="Transform, enrich and persist lots of data" icon="seti:bicep">
+  Load data from various sources, transform it, enrich it with metadata, and persist it in a database.
+</Card>
 
-    <Card title="Installation" icon="add-document">
-    [Installation](installation)
-
-  </Card>
-	<Card title="Concepts" icon="setting">
-    [Concepts](concepts/big-picture)
-  </Card>
-	<Card title="Reference" icon="open-book">
-    [Reference](reference/ingestion-pipeline)
-  </Card>
+<Card title="Many existing integrations" icon="puzzle">
+  Qdrant, OpenAI, Redis, FastEmbed, Spider and many more.
+</Card>
+	<Card title="Easy to extend" icon="seti:crystal_embedded">
+  Write your own loaders, transformers, and storages by extending straight forward traits.
+</Card>
+	<Card title="Written in Rust" icon="seti:rust">
+  Fast, safe, and efficient. Built with Rust's async and streaming features.
+</Card>
+	<Card title="Part of Bosun.ai" icon="rocket">
+  Part of [Bosun.ai](https://bosun.ai) and actively used in production.
+</Card>
+<Card title="Reference" icon="open-book">
+  Full API documentation available on [docs.rs](https://docs.rs/swiftide/latest/swiftide/)
+</Card>
 </CardGrid>
