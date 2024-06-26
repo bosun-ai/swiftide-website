@@ -15,14 +15,29 @@ If you plan to use openai, by default the OPENAI_API_KEY is used.
 
 1. Setup the Rust toolchain ([rustup](https://rustup.rs/) is recommended)
 
-2. Take a look at our [feature flags](installation/feature-flags) and enable the integrations you would like to have enabled.
-
-3. Add swiftide
+2. Add tokio to your dependencies
 
    ```shell
-   cargo add swiftide
+   cargo add tokio --features full
    ```
 
-4. Write a pipeline!
+3. Set up tokio as the async runtime
+
+   ```rust
+    #[tokio::main]
+    async fn main() -> Result<(), Box<dyn std::error::Error>> {
+      ...
+    }
+   ```
+
+4. Take a look at our [feature flags](../feature-flags) and enable the integrations you would like to have enabled.
+
+5. Add swiftide
+
+   ```shell
+   cargo add swiftide --features <features>
+   ```
+
+6. Write a pipeline!
 
 </Steps>
