@@ -43,3 +43,4 @@ There are several helpers and utility functions available on the pipeline to hel
 - `log_errors` Logs errors only
 - `log_nodes` Logs nodes only
 - `filter_errors` Filters out errors, only passing nodes
+- `filter` Filter out `Result<IngestionNode>` based on a predicate
