@@ -9,6 +9,8 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "swiftide",
+      description:
+        "Blazing fast data pipelines for Retrieval Augmented Generation written in Rust",
       editLink: {
         baseUrl: "https://github.com/bosun-ai/swiftide-website/edit/master",
       },
