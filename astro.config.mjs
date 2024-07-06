@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
 import tailwind from "@astrojs/tailwind";
+import starlightLinksValidatorPlugin from "starlight-links-validator";
 
 // https://astro.build/config
 export default defineConfig({
@@ -36,6 +37,7 @@ export default defineConfig({
         "./src/tailwind.css",
       ],
       favicon: "favicon32.png",
+      plugins: [starlightLinksValidatorPlugin()],
       logo: {
         src: "./src/assets/logo.png",
       },
