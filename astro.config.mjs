@@ -6,6 +6,17 @@ import tailwind from "@astrojs/tailwind";
 // https://astro.build/config
 export default defineConfig({
   site: "https://swiftide.rs",
+  image: {
+    service: {
+      entrypoint: "astro/assets/services/sharp",
+      config: {
+        limitInputPixels: false,
+      },
+    },
+  },
+  prefetch: {
+    prefetchAll: true,
+  },
   integrations: [
     starlight({
       title: "swiftide",
