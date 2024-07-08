@@ -13,7 +13,7 @@ Which is defined as follows:
 
 ```rust
 pub trait ChunkerTransformer: Send + Sync + Debug {
-    async fn transform_node(&self, node: IngestionNode) -> IngestionStream;
+    async fn transform_node(&self, node: Node) -> IndexingStream;
 
     /// Overrides the default concurrency of the pipeline
     fn concurrency(&self) -> Option<usize> {

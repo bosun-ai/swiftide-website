@@ -33,7 +33,7 @@ When you then set `RUST_LOG=debug` or `RUST_LOG=trace` you will get detailed log
 
 Tracing has best-in-class opentelemetry support. See the [tracing-opentelemetry](https://github.com/tokio-rs/tracing-opentelemetry) crate for more information.
 
-Note that currently the IngestionNode is attached to every transformation step. Beware of large amounts of tracing data.
+Note that currently the Node is attached to every transformation step. Beware of large amounts of tracing data.
 
 ## Helpers and utility functions
 
@@ -43,4 +43,4 @@ There are several helpers and utility functions available on the pipeline to hel
 - `log_errors` Logs errors only
 - `log_nodes` Logs nodes only
 - `filter_errors` Filters out errors, only passing nodes
-- `filter` Filter out `Result<IngestionNode>` based on a predicate
+- `filter` Filter out `Result<Node>` based on a predicate

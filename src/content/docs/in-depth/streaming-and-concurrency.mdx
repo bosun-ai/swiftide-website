@@ -1,11 +1,11 @@
 ---
 title: Streaming and Concurrency
-description: How the ingestion pipeline handles streaming and concurrency.
+description: How the indexing pipeline handles streaming and concurrency.
 sidebar:
   order: 6
 ---
 
-The ingestion pipeline is streaming, asynchronous, unordered and concurrent.
+The indexing pipeline is streaming, asynchronous, unordered and concurrent.
 
 ## Concurrency
 
@@ -30,30 +30,30 @@ import { Aside } from "@astrojs/starlight/components";
   (short exponential) by default.
 </Aside>
 
-## Ingestion Stream
+## Indexing Stream
 
-You might have seen the `IngestionStream` type mentioned a few times. It is the internal stream that is being passed around, build on top of the Rust `Stream` and `StreamExt`. By wrapping it we have more control and less boilerplate when dealing with streams.
+You might have seen the `IndexingStream` type mentioned a few times. It is the internal stream that is being passed around, build on top of the Rust `Stream` and `StreamExt`. By wrapping it we have more control and less boilerplate when dealing with streams.
 
-When building batch transformers, storage or chunkers, you will need to return a `IngestionStream`. We've tried to make that as easy as possible and there are multiple ways.
+When building batch transformers, storage or chunkers, you will need to return a `IndexingStream`. We've tried to make that as easy as possible and there are multiple ways.
 
 ### Using `Into`
 
-From a list of `IngestionNodes` using `Into`:
+From a list of `Nodes` using `Into`:
 
 ```rust
-let nodes: Vec<Result<IngestionNode>>> = vec![Ok(IngestionNode::default())];
-let stream: IngestionStream = nodes.into();
+let nodes: Vec<Result<Node>>> = vec![Ok(Node::default())];
+let stream: IndexingStream = nodes.into();
 ```
 
 There is also an implementation of `Into` for Rust streams.
 
 ### Converting an iterator
 
-You can also convert an `Iterator` into an `IngestionStream` directly. This is great, as the iterator itself will stream it's results, instead of having to collect it first.
+You can also convert an `Iterator` into an `IndexingStream` directly. This is great, as the iterator itself will stream it's results, instead of having to collect it first.
 
 ```rust
-let nodes: Vec<Result<IngestionNode>>> = vec![IngestionNode::default()];
-let stream: IngestionStream = IngestionStream::iter(nodes.into_iter().map(|node| {
+let nodes: Vec<Result<Node>>> = vec![Node::default()];
+let stream: IndexingStream = IndexingStream::iter(nodes.into_iter().map(|node| {
     node.metadata.insert("foo".to_string(), "bar".to_string());
     Ok(node)
 }));

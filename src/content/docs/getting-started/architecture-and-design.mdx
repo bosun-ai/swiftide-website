@@ -18,20 +18,20 @@ description: The architecture and design principles of the Swiftide project.
 
 ## The-things-we-talk-about
 
-- **IngestionPipeline**: The main struct that holds the pipeline. It is a stream of IngestionNodes.
-- **IngestionNode**: The main struct that holds the data. It has a path, chunk and metadata.
-- **IngestionStream**: The internal stream of IngestionNodes in the pipeline.
-- **Loader**: The starting point of the stream, creates and emits IngestionNodes.
-- **Transformers**: Some behaviour that modifies the IngestionNodes.
+- **Pipeline**: The main struct that holds the pipeline. It is a stream of Nodes.
+- **Node**: The main struct that holds the data. It has a path, chunk and metadata.
+- **IndexingStream**: The internal stream of Nodes in the pipeline.
+- **Loader**: The starting point of the stream, creates and emits Nodes.
+- **Transformers**: Some behaviour that modifies the Nodes.
 - **BatchTransformers**: Transformers that transform multiple nodes.
 - **Chunkers**: Transformers that split a node into multiple nodes.
-- **Storages**: Persist the IngestionNodes.
+- **Storages**: Persist the Nodes.
 - **NodeCache**: Filters cached nodes.
 - **Integrations**: External libraries that can be used with the pipeline.
 
 ### Pipeline structure and traits
 
-- from_loader (impl Loader) starting point of the stream, creates and emits IngestionNodes
+- from_loader (impl Loader) starting point of the stream, creates and emits Nodes
 - filter_cached (impl NodeCache) filters cached nodes
 - then (impl Transformer) transforms the node and puts it on the stream
 - then_in_batch (impl BatchTransformer) transforms multiple nodes and puts them on the stream
