@@ -8,19 +8,24 @@ description: A brief introduction to swiftide.
 import { Image } from "astro:assets";
 import pipeline from "/src/assets/rag-dark.svg";
 
-Swiftide is an indexing and processing library, tailored for Retrieval Augmented Generation (RAG). When building applications with large language models (LLM), these LLMs need access to external resources. Data needs to be transformed, enriched, split up, embedded, and persisted. In other solutions, the experimental phase is often done in python and then either rewritten from scratch, or deployed distributed. Swiftide aims to bring the result of experimentation to production as well. It is build in Rust, using parallel, asynchronous streams and is blazingly fast.
+Swiftide is an indexing and processing library, tailored for Retrieval Augmented Generation (RAG). When building applications with large language models (LLM), these LLMs need access to external resources. Data needs to be transformed, enriched, split up, embedded, and persisted. It is build in Rust, using parallel, asynchronous streams and is blazingly fast.
 
 <Image src={pipeline} alt="indexing-pipeline" />
+
 At the same time, swiftide focuses on developer experience and ease of use. It is
 designed to be simple and intuitive, with a clear and concise API that makes it easy
 to get started, build complex pipelines, and bring your own transformations.
 
 ## What problem does swiftide solve?
 
-In a RAG system, the data needs to be ingested, processed, and indexed. This can be a time-consuming process, especially when dealing with large amounts of data, and tends to just as much a research effort as the application that uses the RAG system.
+In other solutions, the experimental phase is often done in python and then either rewritten from scratch, or deployed distributed. Swiftide aims to bring the result of experimentation to production as well.
 
 In fact, swiftide is **so fast** that it enables real-time indexing before querying, opening up the possibility of real-time RAG systems. At the same time, the internet is booming with wild distributed, kafka based setups. Swiftide hopes to stretch the limits of what is possible before getting to such a setup and beyond.
 
 ## How does swiftide work?
 
 With swiftide you define a sequence of steps, from indexing to processing to indexing. Under the hood, swiftide uses Rust's async and streaming features to speed things up, drastically.
+
+:::warn
+Swiftide is under heavy development and can have breaking changes while we work towards 1.0. Documentation here might fall short of all features, and despite our efforts be slightly outdated. We recommend to always keep an eye on our [github](https://github.com/bosun-ai/swiftide) and [api documentation](https://docs.rs/swiftide/latest/swiftide/).
+:::
