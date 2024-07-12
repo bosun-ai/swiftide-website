@@ -23,7 +23,7 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
   <summary>A quick example</summary>
 
     ```rust
-    IngestionPipeline::from_loader(FileLoader::new(".").with_extensions(&["md"]))
+    Pipeline::from_loader(FileLoader::new(".").with_extensions(&["md"]))
             .then_chunk(ChunkMarkdown::with_chunk_range(10..512))
             .then(MetadataQACode::new(openai_client.clone()))
             .then_in_batch(10, Embed::new(openai_client.clone()))

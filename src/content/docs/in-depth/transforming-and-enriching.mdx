@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-Transformers are the bread and butter of an ingestion pipeline. They can transform the chunk, extract, modify and add metadata, adding vectors, and probably a whole lot more that we haven't thought of.
+Transformers are the bread and butter of an indexing pipeline. They can transform the chunk, extract, modify and add metadata, adding vectors, and probably a whole lot more that we haven't thought of.
 
 There's two ways to apply a transformer. Per node or in batch.
 
@@ -15,7 +15,7 @@ The `Transformer` trait is very straightforward:
 
 ```rust
 pub trait Transformer: Send + Sync {
-    async fn transform_node(&self, node: IngestionNode) -> Result<IngestionNode>;
+    async fn transform_node(&self, node: Node) -> Result<Node>;
 
     fn concurrency(&self) -> Option<usize> {
         None

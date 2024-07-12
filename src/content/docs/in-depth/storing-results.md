@@ -14,8 +14,8 @@ Which is defined as follows:
 ```rust
 pub trait Persist: Debug + Send + Sync {
     async fn setup(&self) -> Result<()>;
-    async fn store(&self, node: IngestionNode) -> Result<IngestionNode>;
-    async fn batch_store(&self, nodes: Vec<IngestionNode>) -> IngestionStream;
+    async fn store(&self, node: Node) -> Result<Node>;
+    async fn batch_store(&self, nodes: Vec<Node>) -> IndexingStream;
     fn batch_size(&self) -> Option<usize> {
         None
     }

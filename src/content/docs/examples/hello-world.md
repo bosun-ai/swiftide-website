@@ -1,11 +1,11 @@
 ---
 title: Hello World
-description: A simple example of an ingestion pipeline
+description: A simple example of an indexing pipeline
 ---
 
-## Ingesting code into Qdrant
+## Indexing code with Qdrant
 
-This example demonstrates how to ingest the Swiftide codebase itself.
+This example demonstrates how to index the Swiftide codebase itself.
 Note that for it to work correctly you need to have OPENAI_API_KEY set, redis and qdrant
 running.
 
@@ -25,7 +25,7 @@ with lots of small chunks, consider the rate limits of the API.
 ```rust
 
 use swiftide::{
-    ingestion,
+    indexing,
     integrations::{self, qdrant::Qdrant, redis::Redis},
     loaders::FileLoader,
     transformers::{ChunkCode, Embed, MetadataQACode},
@@ -50,7 +50,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap_or("http://localhost:6334")
         .to_owned();
 
-    ingestion::IngestionPipeline::from_loader(FileLoader::new(".").with_extensions(&["rs"]))
+    indexing::Pipeline::from_loader(FileLoader::new(".").with_extensions(&["rs"]))
         .filter_cached(Redis::try_from_url(redis_url, "swiftide-examples")?)
         .then(MetadataQACode::new(openai_client.clone()))
         .then_chunk(ChunkCode::try_for_language_and_chunk_size(

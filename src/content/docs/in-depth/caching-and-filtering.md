@@ -13,8 +13,8 @@ Which is defined as follows:
 
 ```rust
 pub trait NodeCache: Send + Sync + Debug {
-    async fn get(&self, node: &IngestionNode) -> bool;
-    async fn set(&self, node: &IngestionNode);
+    async fn get(&self, node: &Node) -> bool;
+    async fn set(&self, node: &Node);
 }
 ```
 
