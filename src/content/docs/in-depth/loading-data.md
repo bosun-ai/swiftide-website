@@ -19,6 +19,10 @@ pub trait Loader {
 
 Or in human language: "I can be turned into a stream". The assumption under the hood is that Loaders will yield the data they load as a stream of `Nodes`. These can be files, messages, webpages and so on.
 
+:::note
+Indexing pipelines can also be created from an indexing stream with `Pipeline::from_stream`
+:::
+
 ## Built in loaders
 
 <small>

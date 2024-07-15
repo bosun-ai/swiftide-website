@@ -25,7 +25,50 @@ pub trait Transformer: Send + Sync {
 
 Or in human language: "You get a node, do your thing, then return a result with the node". That's it.
 
-In batches, the `BatchableTransformer` trait is similar, except that it needs to return a stream. See docs.rs for more details.
+## The `BatchableTransformer` trait
+
+Batchable transformers take a list of nodes, and then yield it back as an `IndexingStream`.
+
+The trait is defined as follows:
+
+```rust
+pub trait BatchableTransformer: Send + Sync {
+    async fn batch_transform(&self, nodes: Vec<Node>) -> IndexingStream;
+
+    fn concurrency(&self) -> Option<usize> {
+        None
+    }
+}
+```
+
+:::tip
+`IndexingStream` provides several `Into` and a helper for converting different types into itself.
+:::
+
+## Closures
+
+`Transformer` and `BatchableTransformer` are also implemented for closures! That means you can also do the following:
+
+```rust
+pipeline.then(|mut node| {
+  node.chunk = node.chunk.to_uppercase().to_string();
+
+  Ok(node)
+})
+
+// Or in batch
+
+pipeline.then_in_batch(10, |mut nodes| {
+    IndexingStream::iter(nodes
+      .into_iter()
+      .map(|mut node| {
+        node.chunk = node.chunk.to_uppercase().to_string();
+
+        Ok(Node)
+      })
+    )
+})
+```
 
 ## Built in transformers
 
@@ -42,3 +85,4 @@ In batches, the `BatchableTransformer` trait is similar, except that it needs to
 | HtmlToMarkdownTransformer | Converts html in a node to markdown                    | scraping     |
 
 </small>
+```
