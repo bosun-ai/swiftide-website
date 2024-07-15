@@ -3,8 +3,6 @@ title: Indexing and querying code
 description: Learn how to build an application that can answer questions about your code
 ---
 
-# Building a code question answering pipeline with Swiftide
-
 In this tutorial, we will cover the basics of indexing and querying code with Swiftide. Step by step we will set up the required dependencies and build up a pipeline. We will then manually build a query function to answer a user's question.
 
 The full code is available on the [github tutorial repository](https://github.com/bosun-ai/swiftide-tutorial/tree/master/indexing-and-querying-code).

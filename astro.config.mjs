@@ -57,6 +57,12 @@ export default defineConfig({
           },
         },
         {
+          label: "Concepts",
+          autogenerate: {
+            directory: "concepts",
+          },
+        },
+        {
           label: "In depth",
           autogenerate: {
             directory: "in-depth",
