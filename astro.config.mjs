@@ -63,9 +63,9 @@ export default defineConfig({
           },
         },
         {
-          label: "Examples",
+          label: "Tutorials",
           autogenerate: {
-            directory: "examples",
+            directory: "tutorials",
           },
         },
 
