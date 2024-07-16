@@ -137,7 +137,7 @@ How do I index code with Swiftide?
 
 Before we continue, let's enable logging so we can easily see if something goes wrong.
 
-```
+```shell
 $ cargo add tracing-subscriber
 ```
 
@@ -514,7 +514,7 @@ async fn query(openai: &OpenAI, question: &str) -> Result<String> {
 
 And let's give it a final go:
 
-```
+```shell
 $ cargo run -- --language rust --path '../swiftide' "What is Swiftide? Answer like a poet"
 ```
 

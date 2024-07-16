@@ -1,0 +1,51 @@
+---
+title: Features
+description: Available features and integrations in Swiftide.
+sidebar:
+  order: 2
+---
+
+import { Icon } from "@astrojs/starlight/components";
+
+## Main features
+
+- Fast streaming indexing pipeline with async, parallel processing
+- Integrations with OpenAI, Groq, Redis, Qdrant, FastEmbed, and Treesitter
+- A variety of loaders, transformers, embedders, and other common, generic tools
+- Bring your own transformers by extending straightforward traits
+- Jinja-like templating for prompts
+- Splitting and merging pipelines
+- Store into multiple backends
+
+### Other cool things
+
+- `tracing` support for logging and tracing, see /examples and the tracing crate for more information
+- Indexing Pipeline supports closures as well
+- Embed either all fields on a node, combine it into a single field or do both
+- Store results in memory for debugging and experimentation
+
+:::tip
+For all our integrations and tools we aim to provide sane defaults to get you started, and always allow full customizability when more is required. Check out [docs.rs](https://docs.rs/crate/swiftide/latest/) to see what is possible.
+:::
+
+## LLMs & Embeddings
+
+| Name        | Prompting                            | Embedding                            | Feature flag | Notes                                                                                  |
+| ----------- | ------------------------------------ | ------------------------------------ | ------------ | -------------------------------------------------------------------------------------- |
+| openai      | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | openai       |                                                                                        |
+| AWS Bedrock | <Icon name="approve-check-circle" /> |                                      | aws-bedrock  | Mistral and Titan models supported                                                     |
+| groq        | <Icon name="approve-check-circle" /> |                                      | groq         | All major models supported, uses async_openai with Groq's openai schema under the hood |
+| FastEmbed   |                                      | <Icon name="approve-check-circle" /> | fastembed    | Uses fastembed.rs under the hood                                                       |
+
+## Additional integrations
+
+| Name          | Feature flag | Notes                                                             |
+| ------------- | ------------ | ----------------------------------------------------------------- |
+| Qdrant        | qdrant       | Named vectors also supported.                                     |
+| Redis         | redis        | Supports caching and storage                                      |
+| Spider & htmd | scraping     | Scrape websites fast and convert the html to markdown             |
+| Treesitter    | tree-sitter  | Code splitting and various transformers to effectively index code |
+
+:::note
+Swiftide is under active development and might have more features than specified here, for an up to date list check out our api documentation [docs.rs](https://docs.rs/crate/swiftide/latest/)
+:::
