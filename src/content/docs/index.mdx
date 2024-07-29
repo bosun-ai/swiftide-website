@@ -1,9 +1,9 @@
 ---
 title: swiftide
-description: Blazing fast data pipelines for Retrieval Augmented Generation written in Rust
+description: Blazing fast, streaming indexing and query library for Retrieval Augment Generation (RAG), written in Rust
 template: splash
 hero:
-  tagline: Blazing fast data pipelines for Retrieval Augmented Generation written in Rust
+  tagline: Blazing fast, streaming indexing and query library for Retrieval Augment Generation (RAG), written in Rust
   image:
     file: ../../assets/logo-full.png
   actions:
@@ -42,11 +42,17 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 <br />
 <CardGrid stagger>
 	<Card title="Transform, enrich and persist lots of data" icon="seti:bicep">
-  Load data from various sources, transform it, enrich it with metadata, and persist it in a database.
+  Load data from various sources, transform it, enrich it with metadata, and persist it with lazy, asynchronous, parallel pipelines.
+</Card>
+	<Card title="Experimental query pipeline" icon="seti:bicep">
+    Augment queries with retrieved data using the streaming query pipeline and generate a response.
+</Card>
+	<Card title="Customizable templated prompts" icon="document">
+    Customize and bring your own prompts, build on `Tera`, a jinja style templating library.
 </Card>
 
 <Card title="Many existing integrations" icon="puzzle">
-  Qdrant, OpenAI, Redis, FastEmbed, Spider and many more.
+  Qdrant, OpenAI, Groq, AWS Bedrock, Redis, FastEmbed, Spider and many more.
 </Card>
 	<Card title="Easy to extend" icon="seti:crystal_embedded">
   Write your own loaders, transformers, and storages by extending straight forward traits.

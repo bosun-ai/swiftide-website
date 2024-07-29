@@ -74,14 +74,15 @@ pipeline.then_in_batch(10, |mut nodes| {
 
 <small>
 
-| Name                      | Description                                            | Feature Flag |
-| ------------------------- | ------------------------------------------------------ | ------------ |
-| Embed                     | Generic embedding transformer, requires an LLM         |              |
-| MetadataKeywords          | Uses an LLM to extract keywords and add as metadata    |              |
-| MetadataQACode            | Uses an LLM to generate questions and answers for Code |              |
-| MetadataQAText            | Uses an LLM to generate questions and answers for Text |              |
-| MetadataSummary           | Uses an LLM to generate a summary                      |              |
-| MetadataTitle             | Uses an LLM to generate a title                        |              |
-| HtmlToMarkdownTransformer | Converts html in a node to markdown                    | scraping     |
+| Name                      | Description                                                    | Feature Flag |
+| ------------------------- | -------------------------------------------------------------- | ------------ |
+| Embed                     | Generic embedding transformer, requires an LLM                 |              |
+| MetadataKeywords          | Uses an LLM to extract keywords and add as metadata            |              |
+| MetadataQACode            | Uses an LLM to generate questions and answers for Code         |              |
+| MetadataQAText            | Uses an LLM to generate questions and answers for Text         |              |
+| MetadataSummary           | Uses an LLM to generate a summary                              |              |
+| MetadataTitle             | Uses an LLM to generate a title                                |              |
+| HtmlToMarkdownTransformer | Converts html in a node to markdown                            | scraping     |
+| MetadataRefsDefsCode      | Extracts references and definitions with tree-sitter from code | treesitter   |
 
 </small>

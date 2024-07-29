@@ -41,5 +41,6 @@ Or in human language: "Given a list of things to Embed, give me embeddings". The
 | FastEmbed                  | Implements Embed via `fastembed-rs`                       | fastembed    |
 | Titan (Bedrock)            | AWS Titan via Bedrock                                     | aws-bedrock  |
 | Anthropic models (Bedrock) | Recen Anthropic models via Bedrock                        | aws-bedrock  |
+| Groq                       | Implements `SimplePrompt`                                 | groq         |
 
 </small>
