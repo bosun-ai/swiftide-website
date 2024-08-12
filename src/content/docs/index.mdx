@@ -24,14 +24,20 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 
     ```rust
     indexing::Pipeline::from_loader(FileLoader::new(".").with_extensions(&["md"]))
-            .then_chunk(ChunkMarkdown::with_chunk_range(10..512))
-            .then(MetadataQACode::new(openai_client.clone()))
-            .then_in_batch(10, Embed::new(openai_client.clone()))
+            .with_default_llm_client(openai_client)
+            .then_chunk(ChunkMarkdown::from_chunk_range(10..512))
+            .then(MetadataQAText::default())
+            .then(move |mut node: Node| {
+              node.metadata.insert("Hello", "Metadata");
+
+              Ok(node)
+            })
+            .then_in_batch(10, Embed::new(FastEmbed::default()))
             .then_store_with(
-                Qdrant::try_from_url(qdrant_url)?
+                Qdrant::builder()
                     .batch_size(50)
-                    .vector_size(1536)
-                    .collection_name("swiftide-examples".to_string())
+                    .vector_size(384)
+                    .collection_name("swiftide-examples")
                     .build()?,
             )
             .run()
