@@ -10,6 +10,7 @@ import { Icon } from "@astrojs/starlight/components";
 ## Main features
 
 - Fast streaming indexing pipeline with async, parallel processing
+- Experimental query pipeline
 - Integrations with OpenAI, Groq, Redis, Qdrant, FastEmbed, and Treesitter
 - A variety of loaders, transformers, embedders, and other common, generic tools
 - Bring your own transformers by extending straightforward traits
@@ -35,7 +36,8 @@ For all our integrations and tools we aim to provide sane defaults to get you st
 | openai      | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | openai       |                                                                                        |
 | AWS Bedrock | <Icon name="approve-check-circle" /> |                                      | aws-bedrock  | Mistral and Titan models supported                                                     |
 | groq        | <Icon name="approve-check-circle" /> |                                      | groq         | All major models supported, uses async_openai with Groq's openai schema under the hood |
-| FastEmbed   |                                      | <Icon name="approve-check-circle" /> | fastembed    | Uses fastembed.rs under the hood                                                       |
+| FastEmbed   |                                      | <Icon name="approve-check-circle" /> | fastembed    | Uses fastembed.rs under the hood, dense and sparse embedding models supported          |
+| Ollama      | <Icon name="approve-check-circle" /> |                                      | ollama       | Ollama support                                                                         |
 
 ## Additional integrations
 
@@ -48,4 +50,6 @@ For all our integrations and tools we aim to provide sane defaults to get you st
 
 :::note
 Swiftide is under active development and might have more features than specified here, for an up to date list check out our api documentation [docs.rs](https://docs.rs/crate/swiftide/latest/)
+
+You can find many examples on github [here](https://github.com/bosun-ai/swiftide/tree/master/examples).
 :::
