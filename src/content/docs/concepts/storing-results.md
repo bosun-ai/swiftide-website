@@ -30,10 +30,11 @@ If `batch_size` is implemented for the storage, the stream will always prefer `b
 
 <small>
 
-| Name          | Description                                          | Feature Flag |
-| ------------- | ---------------------------------------------------- | ------------ |
-| Redis         | Persists nodes by default as json                    | redis        |
-| Qdrant        | Persists nodes in qdrant; expects a vector to be set | qdrant       |
-| MemoryStorage | Persists nodes in memory; great for debugging        |              |
+| Name          | Description                                   | Feature Flag |
+| ------------- | --------------------------------------------- | ------------ |
+| Redis         | Persists nodes by default as json             | redis        |
+| Qdrant        | Persists nodes in qdrant                      | qdrant       |
+| MemoryStorage | Persists nodes in memory; great for debugging |              |
+| LanceDB       | Persist and retrieve in lancedb               | lancedb      |
 
 </small>

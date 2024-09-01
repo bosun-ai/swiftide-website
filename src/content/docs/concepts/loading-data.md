@@ -27,9 +27,10 @@ Indexing pipelines can also be created from an indexing stream with `Pipeline::f
 
 <small>
 
-| Name           | Description                                                         | Feature Flag |
-| -------------- | ------------------------------------------------------------------- | ------------ |
-| FileLoader     | Loads files with an optional extension filter, respecting gitignore |              |
-| ScrapingLoader | Scrapes a website using the `spider` crate                          | scraping     |
+| Name           | Description                                                                     | Feature Flag |
+| -------------- | ------------------------------------------------------------------------------- | ------------ |
+| FileLoader     | Loads files with an optional extension filter, respecting gitignore             |              |
+| ScrapingLoader | Scrapes a website using the `spider` crate and html to markdown transformations | scraping     |
+| fluvio         | Load data directly from fluvio streams                                          | fluvio       |
 
 </small>
