@@ -19,6 +19,23 @@ hero:
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
 
+<div class="flex flex-row not-content justify-around mb-20">
+  <div class="basis-1/3">
+    <h2>What is Swiftide?</h2>
+    <p>
+      Swiftide is a Rust native library for building LLM applications. Large language models are amazing, but need context
+      to solve real problems. Swiftide allows you to ingest, transform and index large amounts of data fast, and then query that data so it it can be injected into prompts.
+      This process is called Retrieval Augmented Generation.
+      </p>
+
+  </div>
+  <div class="basis-1/3">
+    <h2>Why Swiftide?</h2>
+    <p>Production LLM applications deal with large amounts of data, concurrent LLM requests and structured and unstructured transformations of data. Rust is great at this. The goal
+      of Swiftide is to build indexing and query pipelines easily, experiment and verify, then ship it right to production.</p>
+  </div>
+</div>
+
 <details open>
   <summary>A quick example</summary>
 
@@ -32,7 +49,7 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 
               Ok(node)
             })
-            .then_in_batch(10, Embed::new(FastEmbed::default()))
+            .then_in_batch(256, Embed::new(FastEmbed::default()))
             .then_store_with(
                 Qdrant::builder()
                     .batch_size(50)
@@ -42,6 +59,19 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
             )
             .run()
             .await?;
+
+
+    query::Pipeline::default()
+        .then_transform_query(GenerateSubquestions::from_client(
+            openai_client.clone(),
+        ))
+        .then_transform_query(Embed::from_client(
+            openai_client.clone(),
+        ))
+        .then_retrieve(qdrant.clone())
+        .then_answer(Simple::from_client(openai_client.clone()))
+        .query("How can I use the query pipeline in Swiftide?")
+        .await?;
     ```
 
 </details>
