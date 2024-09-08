@@ -40,8 +40,8 @@ Or in human language: "Given a list of things to Embed, give me embeddings". The
 | OpenAI                     | Implements both SimplePrompt and Embed via `async_openai`                   | openai       |
 | FastEmbed                  | Implements Embed via `fastembed-rs`, including many dense and sparse models | fastembed    |
 | Titan (Bedrock)            | AWS Titan via Bedrock                                                       | aws-bedrock  |
-| Anthropic models (Bedrock) | Recen Anthropic models via Bedrock                                          | aws-bedrock  |
+| Anthropic models (Bedrock) | Recent Anthropic models via Bedrock                                         | aws-bedrock  |
 | Groq                       | Implements `SimplePrompt`                                                   | groq         |
-| ollama                     | Local models via ollama.rs implementing SimplePrompt                        | ollama       |
+| ollama                     | Implements both SimplePrompt and Embed via `ollama-rs`, using local models  | ollama       |
 
 </small>
