@@ -7,6 +7,10 @@ import partytown from "@astrojs/partytown";
 
 // https://astro.build/config
 export default defineConfig({
+  // Keep this around for a while so indexing can catch up
+  redirects: {
+    "/concepts/[...slug]": "/indexing/[...slug]",
+  },
   site: "https://swiftide.rs",
   image: {
     service: {
@@ -71,9 +75,9 @@ export default defineConfig({
           },
         },
         {
-          label: "Concepts",
+          label: "Indexing",
           autogenerate: {
-            directory: "concepts",
+            directory: "indexing",
           },
         },
         {
