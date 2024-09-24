@@ -75,9 +75,21 @@ export default defineConfig({
           },
         },
         {
-          label: "Indexing",
+          label: "Core Concepts",
+          autogenerate: {
+            directory: "core-concepts",
+          },
+        },
+        {
+          label: "Indexing Your Data",
           autogenerate: {
             directory: "indexing",
+          },
+        },
+        {
+          label: "Querying With Your Data",
+          autogenerate: {
+            directory: "querying",
           },
         },
         {
