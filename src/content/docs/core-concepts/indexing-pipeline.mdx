@@ -16,7 +16,7 @@ import { Steps } from "@astrojs/starlight/components";
 1. The pipeline starts with a loader:
 
    ```rust
-   let pipeline = Pipeline::from_loader(FileLoader::new("./"));
+   let pipeline = indexing::Pipeline::from_loader(FileLoader::new("./"));
    ```
 
    **A loader implements the `Loader` trait which yields `Nodes` to a stream.**

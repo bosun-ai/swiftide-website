@@ -2,5 +2,39 @@
 title: Retrieving Data
 description: Retrieving The Data You Need for Retrieval Augmented Generation.
 sidebar:
-  order: 1
+  order: 2
 ---
+
+When a query meets all your and the retrievers requirements (i.e. extra generated context, embeddings), documents can then be retrieved by a
+retriever.
+
+A retriever implements the `Retrieve<S>` trait.
+
+## The `Retrieve<S>` trait
+
+The `Retrieve<S>` trait is defined as follows:
+
+```rust
+pub trait Retrieve<S: SearchStrategy>: Send + Sync {
+    async fn retrieve(
+        &self,
+        search_strategy: &S,
+        query: Query<states::Pending>,
+    ) -> Result<Query<states::Retrieved>>;
+}
+```
+
+The retriever retrieves documents for the given `SearchStrategy`. Retrieved documents are then added to the query with `query.retrieved_documents(documents)`.
+Any additional configuration is set on the `SearchStrategy`.
+The trait is also implemented for closures, enabling full customization where needed.
+
+## Built in retrievers
+
+<small>
+
+| Name    | Description                                                                         | Feature Flag |
+| ------- | ----------------------------------------------------------------------------------- | ------------ |
+| Qdrant  | Implements both `Retrieve<SimilaritySingleEmbedding>` and `Retrieve<HybridSearch>`. | qdrant       |
+| LanceDB | Implements `Retrieve<SimilaritySingleEmbedding>`.                                   | lancedb      |
+
+</small>
