@@ -58,7 +58,7 @@ pipeline.then(|mut node| {
 
 // Or in batch
 
-pipeline.then_in_batch(10, |mut nodes| {
+pipeline.then_in_batch(|mut nodes| {
     IndexingStream::iter(nodes
       .into_iter()
       .map(|mut node| {

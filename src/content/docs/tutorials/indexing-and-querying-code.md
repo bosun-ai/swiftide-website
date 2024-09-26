@@ -270,7 +270,7 @@ async fn index_markdown(path: &PathBuf, openai: &OpenAI, qdrant: &Qdrant) -> Res
         .then(MetadataQAText::new(openai.clone()))
         // Embed chunks in batches of 100. By default the metadata in the node is included in the
         // embedding
-        .then_in_batch(100, Embed::new(openai.clone()))
+        .then_in_batch(Embed::new(openai.clone()))
         // Finally store the embeddings into Qdrant
         .then_store_with(qdrant.clone())
         .run()
@@ -316,7 +316,7 @@ async fn index_code(
             50..2048,
         )?)
         .then(MetadataQACode::new(openai.clone()))
-        .then_in_batch(100, Embed::new(openai.clone()))
+        .then_in_batch(Embed::new(openai.clone()))
         .then_store_with(qdrant.clone())
         .run()
         .await
@@ -395,7 +395,7 @@ async fn index_all(language: &str, path: &PathBuf, openai: &OpenAI, qdrant: &Qdr
         .then(MetadataQAText::new(openai.clone()));
 
     code.merge(markdown)
-        .then_in_batch(50, Embed::new(openai.clone()))
+        .then_in_batch(Embed::new(openai.clone()))
         .then_store_with(qdrant.clone())
         .run()
         .await

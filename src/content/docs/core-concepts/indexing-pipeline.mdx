@@ -5,11 +5,11 @@ sidebar:
   order: 0
 ---
 
-Swiftide provides a pipeline model. Throughout a pipeline, `Nodes` are transformed and ultimately persisted. Every step with a pipeline returns the same, _owned_ pipeline.
+Swiftide indexes your data using a parallel, asynchronous, streaming pipeline. Throughout a pipeline, `Nodes` are transformed and ultimately persisted. Every step with a pipeline returns the same, _owned_ pipeline.
 
 import { Steps } from "@astrojs/starlight/components";
 
-### A pipeline step-by-step
+### An indexing pipeline step-by-step
 
 <Steps>
 
@@ -41,7 +41,7 @@ import { Steps } from "@astrojs/starlight/components";
 4. Batch transformations are also supported:
 
    ```rust
-   pipeline.then_in_batch(10, Embed::new(FastEmbed::try_default()?));
+   pipeline.then_in_batch(Embed::new(FastEmbed::try_default()?));
    ```
 
    **Batchable transformers implement the `BatchableTransformer` trait, which takes a vector of `Nodes` and outputs an `IndexingStream`.**
@@ -75,7 +75,7 @@ import { Steps } from "@astrojs/starlight/components";
        Qdrant::try_from_url(qdrant_url)?
            .batch_size(50)
            .vector_size(1536)
-           .collection_name("swiftide-examples".to_string())
+           .collection_name("swiftide-examples")
            .build()?,
    )
    ```
@@ -92,4 +92,4 @@ import { Steps } from "@astrojs/starlight/components";
 
 ### Read more
 
-[Reference documentation on docs.rs](https://docs.rs/swiftide/latest/swiftide/)
+[Indexing documentation on docs.rs](https://docs.rs/swiftide/latest/swiftide/indexing)

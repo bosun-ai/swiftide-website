@@ -4,3 +4,100 @@ description: A step-by-step introduction on how to use swiftide for generating a
 sidebar:
   order: 0
 ---
+
+After indexing data, you can use a query pipeline to answer questions, using the indexed data, together with various
+transformations, to generate the most relevant context for the LLM.
+
+Query pipelines, similar to indexing pipelines, function as parallel streams.
+
+In the pipeline, a `Query<states::Pending>` starts its journey of going through
+a series of transformations, before being used to generate an answer.
+
+By default, a similarity search is used on a single embedding.
+
+import { Steps } from "@astrojs/starlight/components";
+
+### A query pipeline pipeline step-by-step
+
+<Steps>
+
+1. The default query pipeline
+
+   ```rust
+   let pipeline = Pipeline::from_loader(FileLoader::new("./"));
+   ```
+
+   **A loader implements the `Loader` trait which yields `Nodes` to a stream.**
+
+2. Nodes can then be transformed with an existing transformer:
+
+   ```rust
+   pipeline.then(MetadataQACode::new(openai_client.clone()));
+   ```
+
+   **Any transformer has to implement the `Transformer` trait, which takes an owned `Node` and outputs a `Result<Node>`. Closures also implement this trait!**
+
+3. ... and you can also do this:
+
+   ```rust
+   pipeline.then(|node| {
+     node.chunk = format!("{}\n{}", &node.chunk, "awesome!");
+     Ok(node)
+   });
+   ```
+
+4. Batch transformations are also supported:
+
+   ```rust
+   pipeline.then_in_batch(Embed::new(FastEmbed::try_default()?));
+   ```
+
+   **Batchable transformers implement the `BatchableTransformer` trait, which takes a vector of `Nodes` and outputs an `IndexingStream`.**
+
+5. Nodes can be filtered using a NodeCache at any stage, based on a cache key the node cache defines. Redis uses a prefix and the hash of an `Node`, based on the path and text, by default.
+
+   ```rust
+   pipeline.filter_cached(Redis::try_from_url(
+             redis_url,
+             "swiftide-examples",
+         )?);
+   ```
+
+   **Node caches implement the `NodeCache` trait, which defines a `get` and `set` method, taking an `Node` as input.**
+
+6. At any point in the pipeline, nodes can be chunked into smaller parts:
+
+   ```rust
+   pipeline.then_chunk(ChunkCode::try_for_language_and_chunk_size(
+             "rust",
+             10..2048,
+         )?);
+   ```
+
+   **Chunkers implement the ChunkerTransformer trait, which take an `Node` and return an `IndexingStream`. By default metadata is copied over to each node.**
+
+7. Also, nodes can be persisted (multiple times!) to storage:
+
+   ```rust
+   pipeline.then_store_with(
+       Qdrant::try_from_url(qdrant_url)?
+           .batch_size(50)
+           .vector_size(1536)
+           .collection_name("swiftide-examples".to_string())
+           .build()?,
+   )
+   ```
+
+   **Storages implement the `Storage` trait, which define `setup`, `store`, `batch_store` and `batch_size` methods. They also provide ways to convert an `Node` to something that can be stored.**
+
+8. Finally, the pipeline can be run as follows:
+
+   ```rust
+     pipeline.run()?;
+   ```
+
+</Steps>
+
+### Read more
+
+[Reference documentation on docs.rs](https://docs.rs/swiftide/latest/swiftide/)

@@ -34,7 +34,7 @@ let (mut markdown, mut code) =
         .then(MetadataQAText::new(openai.clone()));
 
     code.merge(markdown)
-        .then_in_batch(50, Embed::new(openai.clone()))
+        .then_in_batch(Embed::new(openai.clone()))
         .then_store_with(qdrant.clone())
         .run()
         .await
