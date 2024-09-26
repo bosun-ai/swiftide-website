@@ -411,7 +411,8 @@ time cargo run -- --language rust --path '../swiftide' test
 2024-07-14T16:56:56.103761Z  INFO indexing_pipeline.run:setup: swiftide::integrations::qdrant: Checking if collection swiftide-tutorial exists
 2024-07-14T16:56:56.108963Z  WARN indexing_pipeline.run:setup: swiftide::integrations::qdrant: Collection swiftide-tutorial exists
 2024-07-14T16:57:11.984648Z  WARN indexing_pipeline.run: swiftide::indexing::pipeline: Processed 478 nodes
-cargo run -- --language rust --path '../swiftide' test  4.53s user 0.74s system 30% cpu 17.143 total
+cargo run -- --language rust --path '../swiftide' test
+4.53s user 0.74s system 30% cpu 17.143 total
 ```
 
 Aww yeah, _478 nodes processed in 17 seconds_! For the record, splitting gets it down to ~50 seconds, and bumping the currency gets it down close to 20. The smaller embedding batches shave off the rest.
@@ -427,131 +428,83 @@ With that sorted, let's quickly add a node cache right before splitting, so that
 .split_by(...)
 ```
 
-## Wrapping it up with a query and a poem
-
-**Swiftide does not include a querying pipeline yet. This is highly desired and in progress. At this moment in time we will do it manually**
-
-Let's add a query to our freshly indexed data and see if we can get some answers on all this confusing code. We'll use `gpt-4o` for the inference and rewrite the user query with multiple questions. In real environments you might do a lot more, but let's leave that to an article of it's own.
+## Querying our data
 
 ```rust
-async fn query(openai: &OpenAI, question: &str) -> Result<String> {
-    let qdrant_url =
-        std::env::var("QDRANT_URL").unwrap_or_else(|_err| "http://localhost:6334".to_string());
+#[tokio::main]
+async fn main() -> Result<()> {
+    ...
 
-    // Build a manual client as Swiftide does not support querying yet
-    let qdrant_client = qdrant_client::Qdrant::from_url(&qdrant_url).build()?;
+    let answer = query(&args.query, &openai, &qdrant).await?.answer();
+    println!("{answer}");
 
-    // Use Swiftide's openai to rewrite the prompt to a set of questions
-    let transformed_question = openai.prompt(formatdoc!(r"
-        Your job is to help a code query tool finding the right context.
+    Ok(())
+}
 
-        Given the following question:
-        {question}
 
-        Please think of 5 additional questions that can help answering the original question. The code is written in {lang}.
+fn query(query: &str, openai_client: &OpenAI, qdrant: &Qdrant) -> Result<Query<states::Answered>> {
+    // Create a query pipeline that uses the default similarity search
+    let pipeline = query::Pipeline::default()
+        // Generate subquestions to improve the semantic coverage
+        .then_transform_query(query_transformers::GenerateSubquestions::from_client(
+            openai_client.clone(),
+        ))
+        // Then embed the transformed query
+        .then_transform_query(query_transformers::Embed::from_client(
+            openai_client.clone(),
+        ))
+        // Retrieve documents from qdrant
+        .then_retrieve(qdrant.clone())
+        // Summarize all the retrieved documents
+        .then_transform_response(response_transformers::Summary::from_client(
+            openai_client.clone(),
+        ))
+        // Use the summary as context for answering our question
+        .then_answer(answers::Simple::from_client(openai_client.clone()));
 
-        Especially consider what might be relevant to answer the question, like dependencies, usage and structure of the code.
-
-        Please respond with the original question and the additional questions only.
-
-        ## Example
-
-        - {question}
-        - Additional question 1
-        - Additional question 2
-        - Additional question 3
-        - Additional question 4
-        - Additional question 5
-        ", question = question, lang = "rust"
-    ).into()).await?;
-
-    // Embed the full rewrite for querying
-    let embedded_question = openai
-        .embed(vec![transformed_question.clone()])
-        .await?
-        .pop()
-        .context("Expected embedding")?;
-
-    // Search for matches
-    let answer_context_points = qdrant_client
-        .search_points(
-            SearchPointsBuilder::new("swiftide-tutorial", embedded_question, 20).with_payload(true),
-        )
-        .await?;
-
-    // Concatenate all the found chunks
-    let answer_context = answer_context_points
-        .result
-        .into_iter()
-        .map(|v| v.payload.get("content").unwrap().to_string())
-        .collect::<Vec<_>>()
-        .join("\n\n");
-
-    // A prompt for answering the initial question with the found context
-    let prompt = formatdoc!(
-        r#"
-        Answer the following question(s):
-        {question}
-
-        ## Constraints
-        * Only answer based on the provided context below
-        * Always reference files by the full path if it is relevant to the question
-        * Answer the question fully and remember to be concise
-        * Only answer based on the given context. If you cannot answer the question based on the
-            context, say so.
-        * Do not make up anything, especially code, that is not included in the provided context
-
-        ## Context:
-        {answer_context}
-        "#,
-    );
-
-    let answer = openai.prompt(prompt.into()).await?;
-
-    Ok(answer)
+    pipeline
+        .query("What is swiftide? Please provide an elaborate explanation")
+        .await
 }
 ```
 
 And let's give it a final go:
 
 ```shell
-$ cargo run -- --language rust --path '../swiftide' "What is Swiftide? Answer like a poet"
+$ cargo run -- --language rust --path '../swiftide' "What is swiftide? Please provide an elaborate explanation"
 ```
 
-<pre class="strong text-xl monospace text-white">
-What is Swiftide, you ask my muse?
-A tale to tell with verses true.
-A library in Rust that's spun,
-For data weaving swiftly done.
+Which gives us the following answer:
 
-With streams async, it blazes fast,
-Transforms and splits, embeds and lasts.
-In RAG it holds a guiding light,
-For LLMs to work just right.
+```markdown
+Based on the provided context, Swiftide can be described as follows:
 
-Born from need, where Python failed,
-Swiftide's speed and grace prevailed.
-Data's journey through its veins,
-From chunks to nodes, it entertains.
+# Swiftide Overview
 
-A bosun's part in code's grand dance,
-For autonomous advance.
-Yet know, Swiftide's a work in flow,
-With changes swift and bugs to show.
+Swiftide is a Rust-native library designed for building Large Language Model (LLM) applications. It facilitates the ingestion, transformation, and indexing of large volumes of data quickly, making it possible to query this data and use it in prompts. This process is known as Retrieval Augmented Generation.
 
-Hand in hand with Treesitter’s might,
-Or OpenAI’s insight.
-Qdrant and Redis join the ride,
-FastEmbed stands by its side.
+## Features and Goals
 
-A project growing, feedback’s gold,
-In issues, stories shall unfold.
-On [swiftide.rs][1] explore,
-Or GitHub pages, there’s much more.
+Swiftide aims to provide a fast, easy-to-use, reliable, and extendable library. It was developed to overcome performance and stability issues encountered with Python-based tools. The library is part of the upcoming [bosun.ai](https://bosun.ai) platform for autonomous code improvement.
 
-So, here's Swiftide, a name to note,
-In Rust, it sails, a data boat.
+**Key Features:**
 
-</pre>
+- Fast and efficient data processing
+- Built with Rust for performance and reliability
+- Easy-to-integrate with other AI tools and libraries
+- Open for community contributions and feedback
+
+### Installation
+
+To install Swiftide, you need to set up a new Rust project and add Swiftide to your project using the following command: `cargo add swiftide`
+
+For more detailed information about getting started, indexing, querying, and contributing to the project, you can refer to the official documentation and resources provided.
+
+Swiftide is distributed under the MIT License, ensuring it is freely available for use and modification."
+```
+
+Swiftide offers a lot more features for customization and tuning. Every RAG application is different, with different data, and different requirements.
+
+For more in depth documentation, check out [our api documentation](https://docs.rs/swiftide) and the rest of the documentation. Questions? Join us on Discord!
 
 [1]: https://swiftide.rs
