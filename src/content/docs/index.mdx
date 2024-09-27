@@ -40,6 +40,8 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
   <summary>A quick example</summary>
 
     ```rust
+    // Load markdown from the current directory, generate synthetic questions and answers,
+    // embed it with FastEmbed and store into Qdrant.
     indexing::Pipeline::from_loader(FileLoader::new(".").with_extensions(&["md"]))
             .with_default_llm_client(openai_client)
             .then_chunk(ChunkMarkdown::from_chunk_range(10..512))
@@ -60,7 +62,8 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
             .run()
             .await?;
 
-
+    // Query our indexed data by generating subquestions, embedding the transformed query,
+    // retrieving documents from Qdrant and generating an answer.
     query::Pipeline::default()
         .then_transform_query(GenerateSubquestions::from_client(
             openai_client.clone(),
@@ -80,13 +83,16 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 	<Card title="Transform, enrich and persist lots of data" icon="seti:bicep">
   Load data from various sources, transform it, enrich it with metadata, and persist it with lazy, asynchronous, parallel pipelines.
 </Card>
+<Card title="Transform code and text" icon="codePen">
+  Chunk, transform, and augment code with build in transformers. Swiftide uses tree-sitter to interpret and augment code. Text documents,
+  be it markdown, html or unstructured, is also supported.
+</Card>
 	<Card title="Experimental query pipeline" icon="seti:bicep">
     Augment queries with retrieved data using the streaming query pipeline and generate a response.
 </Card>
 	<Card title="Customizable templated prompts" icon="document">
     Customize and bring your own prompts, build on `Tera`, a jinja style templating library.
 </Card>
-
 <Card title="Many existing integrations" icon="puzzle">
   Qdrant, OpenAI, Groq, AWS Bedrock, Redis, FastEmbed, Spider and many more.
 </Card>
