@@ -8,7 +8,8 @@ sidebar:
 Implementers of the trait `SimplePrompt` take a `Prompt` as argument. A `Prompt` references a `PromptTemplate` and can render, with optional context, to something that goes to an LLM.
 
 :::warn
-Avoid creating **compiled** templates during a pipeline or under load. The repository is managed internally by a `RwLock` and this _will_ deadlock.
+Avoid creating **compiled** templates during a pipeline or under load. The repository is managed internally by a `RwLock` and this _will_ negatively impact performance. Use ad-hoc templates
+from strings instead.
 :::
 
 ## Customizing templates

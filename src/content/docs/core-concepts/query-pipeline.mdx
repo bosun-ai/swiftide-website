@@ -13,6 +13,9 @@ Query pipelines, similar to indexing pipelines, function as parallel streams.
 In the pipeline, a `Query<states::Pending>` starts its journey of going through
 a series of transformations, before being used to generate an answer.
 
+A query holds the `original` query as a string, the `current` transformed query or context as a string,
+state, history, embeddings and retrieved documents.
+
 By default, a similarity search is used on a single embedding.
 
 import { Steps } from "@astrojs/starlight/components";
@@ -33,7 +36,7 @@ import { Steps } from "@astrojs/starlight/components";
    pipeline.then_transform_query(query_transformers::GenerateSubQuestions::from_client(openai_client.clone()))
    ```
 
-   This transformer takes the **current** query, generates subquestions and sets that as the new query.
+   This transformer takes the **current** query, generates subquestions and sets that as `current`.
 
    **A query transformer takes a `Query<states::Pending>` and implements the `TransformQuery` trait. Query transformers always return a `Result<Query<states::Pending>>`. For each state, `Query` provides an interface for state transitioning.**
 
@@ -53,7 +56,7 @@ import { Steps } from "@astrojs/starlight/components";
    pipeline.transform_query(query_transformers::Embed::from_client(openai_client.clone()))
    ```
 
-   An embedding is added to the query, used for retrieval. Note that multiple embeddings are not (yet!) supported.
+   An embedding is added to the query, based on what is in `current`, and used for retrieval. Note that multiple embeddings are not (yet!) supported.
 
 5. Then use our embedding to retrieve documents from Qdrant:
 
