@@ -1,0 +1,41 @@
+---
+title: Transforming Queries For Optimal Retrieval
+description: Transforming Queries For Optimal Retrieval
+sidebar:
+  order: 0
+---
+
+When doing similarity search, a query might not contain semantics fully aligned with the stored documents.
+
+Queries can be further transformed so that they do. For instance, generating subquestions is a common practice.
+
+Additionally, both similarity search and hybrid search require embeddings to be generated on the query as well.
+
+## The `TransformQuery` trait
+
+The `TransformQuery` trait is defined as follows:
+
+```rust
+pub trait TransformQuery: Send + Sync {
+    async fn transform_query(
+        &self,
+        query: Query<states::Pending>,
+    ) -> Result<Query<states::Pending>>;
+}
+```
+
+The transformer takes the current query, applies a transformation, and returns it.
+
+Closures are also supported in this step.
+
+## Built in query transformers
+
+<small>
+
+| Name                 | Description                                  | Feature Flag |
+| -------------------- | -------------------------------------------- | ------------ |
+| GenerateSubquestions | Generates subquestions for the current query |              |
+| Embed                | Generates a dense embedding                  |              |
+| SparseEmbed          | Generates a sparse embedding                 |              |
+
+</small>

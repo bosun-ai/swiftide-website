@@ -1,0 +1,105 @@
+---
+title: Query Pipeline
+description: A step-by-step introduction on how to use swiftide for generating answers with a query pipeline.
+sidebar:
+  order: 0
+---
+
+After indexing data, you can use a query pipeline to answer questions, using the indexed data, together with various
+transformations, to generate the most relevant context for the LLM.
+
+Query pipelines, similar to indexing pipelines, function as parallel streams.
+
+In the pipeline, a `Query<states::Pending>` starts its journey of going through
+a series of transformations, before being used to generate an answer.
+
+A query holds the `original` query as a string, the `current` transformed query or context as a string,
+state, history, embeddings and retrieved documents.
+
+By default, a similarity search is used on a single embedding.
+
+import { Steps } from "@astrojs/starlight/components";
+
+### A query pipeline pipeline step-by-step
+
+<Steps>
+
+1. Start with the default query pipeline that does a similarity search with a single embedding:
+
+   ```rust
+   let pipeline = query::Pipeline::default();
+   ```
+
+2. Then generate subquestions, improving the semantic coverage of the query:
+
+   ```rust
+   pipeline.then_transform_query(query_transformers::GenerateSubQuestions::from_client(openai_client.clone()))
+   ```
+
+   This transformer takes the **current** query, generates subquestions and sets that as `current`.
+
+   **A query transformer takes a `Query<states::Pending>` and implements the `TransformQuery` trait. Query transformers always return a `Result<Query<states::Pending>>`. For each state, `Query` provides an interface for state transitioning.**
+
+3. Closures are also supported at every step:
+
+   ```rust
+   pipeline.then_transform_query(|mut query| {
+     query.transform_query("Hello world")
+
+     Ok(query)
+   });
+   ```
+
+4. Now we need to generate an embedding for the transformed query:
+
+   ```rust
+   pipeline.transform_query(query_transformers::Embed::from_client(openai_client.clone()))
+   ```
+
+   An embedding is added to the query, based on what is in `current`, and used for retrieval. Note that multiple embeddings are not (yet!) supported.
+
+5. Then use our embedding to retrieve documents from Qdrant:
+
+   ```rust
+   pipeline.then_retrieve(integrations::qdrant::Qdrant::builder()
+     .vector_size(1536)
+     .collection_name("swiftide-examples")
+     .build()?
+   )
+   ```
+
+   Documents are retrieved and added to the query object, changing the state to `states::Retrieved`.
+
+   For full customization, closures are supported here as well. Search strategies also have configurable defaults.
+
+   **A retriever implements the `Retrieve<S>` trait, where `S` is the search strategy.**
+
+6. Sometimes, presenting the documents as they are, is not efficient. For example, you could summarize the documents first:
+
+   ```rust
+   pipeline.then_transform_response(response_transformers::Summary::from_client(openai_client.clone()))
+   ```
+
+   This summarizes the current set of retrieved documents, and updates the query.
+
+   **Response transformers implement the `TransformResponse` trait.**
+
+7. Finally, we need to explicitly tell the pipeline how to generate an answer:
+
+   ```rust
+   pipeline.then_answer(answers::Simple::from_client(openai_client.clone()))
+   ```
+
+   The `Simple` answer either forwards the documents as they are, or any generated context like in the previous step.
+
+8. Finally, the pipeline can be run as follows:
+
+   ```rust
+     pipeline.query("What is Swiftide")?;
+   ```
+
+</Steps>
+
+### Read more
+
+[Reference documentation on docs.rs](https://docs.rs/swiftide/latest/swiftide/query)

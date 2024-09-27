@@ -5,7 +5,7 @@ description: Debugging and troubleshooting your pipeline.
 
 When building a pipeline, things can go wrong. We provide several tools to help you debug and troubleshoot your pipeline.
 
-By default, if _any_ node fails, the pipeline will stop. This is to prevent cascading failures. You can change this behaviour by using `filter_errors` after any step.
+By default, if _any_ node fails, the pipeline will stop. This is to prevent cascading failures. You can change this behaviour by using `filter_errors` after any step, or using other available helpers.
 
 ## The `tracing` crate
 

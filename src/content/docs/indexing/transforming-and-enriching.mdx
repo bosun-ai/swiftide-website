@@ -58,7 +58,7 @@ pipeline.then(|mut node| {
 
 // Or in batch
 
-pipeline.then_in_batch(10, |mut nodes| {
+pipeline.then_in_batch(|mut nodes| {
     IndexingStream::iter(nodes
       .into_iter()
       .map(|mut node| {
@@ -83,6 +83,6 @@ pipeline.then_in_batch(10, |mut nodes| {
 | MetadataSummary           | Uses an LLM to generate a summary                              |              |
 | MetadataTitle             | Uses an LLM to generate a title                                |              |
 | HtmlToMarkdownTransformer | Converts html in a node to markdown                            | scraping     |
-| MetadataRefsDefsCode      | Extracts references and definitions with tree-sitter from code | treesitter   |
+| MetadataRefsDefsCode      | Extracts references and definitions with tree-sitter from code | tree-sitter  |
 
 </small>

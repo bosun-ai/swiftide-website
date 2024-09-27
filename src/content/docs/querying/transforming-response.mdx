@@ -1,0 +1,34 @@
+---
+title: Retrieved Context Transformation
+description: Transforming Response For Optimal Context
+sidebar:
+  order: 3
+---
+
+After retrieving documents, you might want to transform the documents or generate better context.
+
+## The `TransformResponse` trait
+
+The `TransformResponse` trait is defined as follows:
+
+```rust
+pub trait TransformResponse: Send + Sync {
+    async fn transform_response(&self, query: Query<Retrieved>)
+        -> Result<Query<states::Retrieved>>;
+
+}
+```
+
+The transformer takes the current query, applies transformations, and returns the new query.
+
+Closures are also supported in this step.
+
+## Built in query transformers
+
+<small>
+
+| Name    | Description                                            | Feature Flag |
+| ------- | ------------------------------------------------------ | ------------ |
+| Summary | Generates a summary of the current retrieved documents |              |
+
+</small>

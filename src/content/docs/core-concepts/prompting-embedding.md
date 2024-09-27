@@ -13,11 +13,11 @@ Which is defined as follows:
 
 ```rust
 pub trait SimplePrompt: Debug + Send + Sync {
-    async fn prompt(&self, prompt: &str) -> Result<String>;
+    async fn prompt(&self, prompt: Prompt) -> Result<String>;
 }
 ```
 
-Or in human language: "Given a Prompt, give me a response".
+Or in human language: "Given a Prompt, give me a response". Prompts can be created from strings, loaded from a template repository, or loaded from files. They use `Tera` under the hood.
 
 ## The `EmbeddingModel` trait
 

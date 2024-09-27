@@ -1,0 +1,35 @@
+---
+title: Different kinds of search
+description: Different kinds of search strategies in Swiftide
+sidebar:
+  order: 1
+---
+
+Currently there are two methods of search.
+
+## Similarity Single Embedding
+
+This is the default strategy.
+
+Similarity single embedding does a vector similarity search. The strategy expects the query to have an embedding set.
+
+## Hybrid Search
+
+Search with different kinds of search in the same database, automatically rerank if supported, and return the top matching documents.
+
+For Qdrant, the strategy expects both a dense and a sparse vector to be present. Sparse vectors can be generated with `integrations::fastembed::FastEmbed`.
+
+Additional configuration is also possible on the strategy itself.
+
+## Creating a pipeline with a strategy
+
+To create a query pipeline from a search strategy, you can use the `query::Pipeline::from_search_strategy` constructor, like this:
+
+```rust
+let query_pipeline = query::Pipeline::from_search_strategy(
+    HybridSearch::default()
+        .with_top_n(20)
+        .with_top_k(20)
+        .to_owned(),
+)
+```

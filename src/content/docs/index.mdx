@@ -49,7 +49,7 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 
               Ok(node)
             })
-            .then_in_batch(256, Embed::new(FastEmbed::default()))
+            .then_in_batch(Embed::new(FastEmbed::default()))
             .then_store_with(
                 Qdrant::builder()
                     .batch_size(50)
