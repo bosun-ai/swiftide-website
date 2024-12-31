@@ -35,7 +35,7 @@ export default defineConfig({
         },
       ],
       description:
-        "Blazing fast data pipelines for Retrieval Augmented Generation written in Rust. Swiftide is a Rust native library to build and experiment modular LLM pipelines, allowing you to ship your AI application right to production.",
+        "Swiftide is a Rust library for building LLM applications. Large language models are amazing, but need context to solve real problems. Swiftide allows you to ingest, transform and index large amounts of data fast, and then query that data so it it can be injected into prompts. This process is called Retrieval Augmented Generation.",
       editLink: {
         baseUrl: "https://github.com/bosun-ai/swiftide-website/edit/master",
       },

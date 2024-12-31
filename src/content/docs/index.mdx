@@ -1,13 +1,13 @@
 ---
-title: swiftide
-description: Blazing fast, streaming indexing and query library for Retrieval Augment Generation (RAG), written in Rust
+title: Fast & streaming LLM applications in Rust
+description: Fast, streaming, indexing, query, and agent library for building LLM applications in Rust.
 template: splash
 hero:
-  tagline: Blazing fast, streaming indexing and query library for Retrieval Augment Generation (RAG), written in Rust
+  tagline: Index, query, run agents, bring your experiments right to production
   image:
     file: ../../assets/logo-full.png
   actions:
-    - text: Read the docs
+    - text: Get started
       link: /what-is-swiftide/
       icon: right-arrow
       variant: primary
@@ -21,18 +21,24 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
 
 <div class="flex flex-row not-content justify-around mb-20">
   <div class="basis-1/3">
-    <h2>What is Swiftide?</h2>
+    <h2>What?</h2>
     <p>
-      Swiftide is a Rust native library for building LLM applications. Large language models are amazing, but need context
-      to solve real problems. Swiftide allows you to ingest, transform and index large amounts of data fast, and then query that data so it it can be injected into prompts.
-      This process is called Retrieval Augmented Generation.
+      Large language models are amazing, but need context
+      to solve real problems. Ingest, transform, and index large amounts of data. Query it, augment it, and generate answers with Swiftide.
+<br/>
+      Swiftide aims to be fast, modular, and with minimal abstractions, and can easily be extended by implementing simple traits.
       </p>
 
   </div>
   <div class="basis-1/3">
-    <h2>Why Swiftide?</h2>
-    <p>Production LLM applications deal with large amounts of data, concurrent LLM requests and structured and unstructured transformations of data. Rust is great at this. The goal
-      of Swiftide is to build indexing and query pipelines easily, experiment and verify, then ship it right to production.</p>
+    <h2>Why?</h2>
+    <p>
+The AI and LLM landscape is moving fast. The core idea is to have a stable and modular infrastructure, so you can focus on building the actual LLM application.
+      <br />
+Being written in Rust, Swiftide is fast, safe, and efficient. It is built with Rust's async and streaming features, and can be used in production.
+
+    </p>
+
   </div>
 </div>
 
