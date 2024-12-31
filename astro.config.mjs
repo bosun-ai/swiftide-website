@@ -78,24 +78,28 @@ export default defineConfig({
         },
         {
           label: "Indexing Your Data",
+          collapsed: true,
           autogenerate: {
             directory: "indexing",
           },
         },
         {
           label: "Querying With Your Data",
+          collapsed: true,
           autogenerate: {
             directory: "querying",
           },
         },
         {
           label: "In depth",
+          collapsed: true,
           autogenerate: {
             directory: "in-depth",
           },
         },
         {
           label: "Tutorials",
+          collapsed: true,
           autogenerate: {
             directory: "tutorials",
           },
