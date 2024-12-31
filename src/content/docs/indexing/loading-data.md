@@ -32,6 +32,6 @@ Indexing pipelines can also be created from an indexing stream with `Pipeline::f
 | FileLoader     | Loads files with an optional extension filter, respecting gitignore             |              |
 | ScrapingLoader | Scrapes a website using the `spider` crate and html to markdown transformations | scraping     |
 | fluvio         | Load data directly from fluvio streams                                          | fluvio       |
-| Parquest       | Load data from parquet files                                                    | parquet      |
+| Parquet        | Load data from parquet files                                                    | parquet      |
 
 </small>
