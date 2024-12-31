@@ -36,5 +36,6 @@ If `batch_size` is implemented for the storage, the stream will always prefer `b
 | Qdrant        | Persists nodes in qdrant                      | qdrant       |
 | MemoryStorage | Persists nodes in memory; great for debugging |              |
 | LanceDB       | Persist and retrieve in lancedb               | lancedb      |
+| PGVector      | Persist and retrieve in pgvector              | pgvector     |
 
 </small>
