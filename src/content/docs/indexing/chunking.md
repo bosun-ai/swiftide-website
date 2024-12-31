@@ -9,6 +9,8 @@ For quality metadata it can be important to break up text into smaller parts for
 
 All our chunkers try to chunk in semantic blocks, i.e. a paragraph with its headers, or a full code function body.
 
+The text and markdown splitters use [text_splitter](https://docs.rs/text-splitter/latest/text_splitter/) under the hood, and can be customized by overwriting the chunker.
+
 ## The `ChunkerTransformer` trait
 
 Which is defined as follows:
@@ -34,5 +36,6 @@ Or in human language: "Given a Node, break it up into smaller parts".
 | ------------- | ------------------------------------------- | ------------ |
 | ChunkCode     | Given a (tree-sitter) language, chunks code | tree-sitter  |
 | ChunkMarkdown | Chunks markdown                             |              |
+| ChunkText     | Chunks text                                 |              |
 
 </small>

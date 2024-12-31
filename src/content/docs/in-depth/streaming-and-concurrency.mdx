@@ -24,12 +24,6 @@ If due to rate or other limitations throughput is too high, there is also a `pip
 
 import { Aside } from "@astrojs/starlight/components";
 
-<Aside type="caution" title="Note on openai">
-  **gpt-3.5-turbo** is notorious for hitting rate limits fast. The
-  `async_openai` crate offers further options to tune the backoff algorithm
-  (short exponential) by default.
-</Aside>
-
 ## Indexing Stream
 
 You might have seen the `IndexingStream` type mentioned a few times. It is the internal stream that is being passed around, build on top of the Rust `Stream` and `StreamExt`. By wrapping it we have more control and less boilerplate when dealing with streams.

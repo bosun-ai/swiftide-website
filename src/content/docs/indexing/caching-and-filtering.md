@@ -27,5 +27,6 @@ Or in human language: "Given a Node, provide methods to set and get from the cac
 | Name  | Description                                         | Feature Flag |
 | ----- | --------------------------------------------------- | ------------ |
 | Redis | Can get and set nodes using multiplexed connections | redis        |
+| Redb  | Embedded / local solution for caching nodes         | redb         |
 
 </small>
