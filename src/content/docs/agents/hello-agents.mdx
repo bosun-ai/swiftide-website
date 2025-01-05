@@ -1,0 +1,96 @@
+---
+title: Hello Agents
+description: A practical agents example
+sidebar:
+  order: 1
+---
+
+As a simple example, let's build an agent that can print hello world to a file use using a tool.
+
+For brevity, this expects you have a working rust project with all dependencies configured.
+
+import { Steps } from "@astrojs/starlight/components";
+
+<Steps>
+
+1. First, lets add a tool that prints hello world. With the macro, the implementation is straightforward:
+
+   ```rust
+   #[tool(
+     description = "Prints hello <name>  to a file",
+     param(
+       name = "name",
+       description = "The name to say hello to"
+
+     )
+   )]
+   pub async fn print_hello(context: &dyn AgentContext, name: &str) -> Result<ToolOutput, ToolError> {
+     // The context provides an `exec_cmd` method to execute a Command
+     context.exec_cmd(&Command::write_file("hello.txt", format!("hello {{name}}"))).await?;
+
+     Ok("Printing hello ")
+   }
+   ```
+
+2. Let's also add a tool that can read the last printed hello file. Just for the example, we will use the struct
+  variant of the macro instead.
+
+   ```rust
+   #[derive(Tool, Clone)]
+   #[tool(
+      description = "Reads the last printed hello <name>",
+   )]
+   pub struct LastPrinted {
+     filename: PathBuf
+   }
+
+   impl LastPrinted {
+     pub new(filename: impl Into<PathBuf>) -> Self {
+       LastPrinted { filename: filename.into() }
+     }
+
+     pub async fn last_printed(&self, context: &dyn AgentContext) -> Result<ToolOutput, ToolError> {
+       let file_content = context.exec_cmd(&Command::read_file(&self.filename)).await?;
+
+       Ok(file_content.into())
+     }
+   }
+   ```
+
+   Note that the format for the `#[tool]` attributes is exactly the same for both macros.
+
+3. Let's set up the context. We don't have to if we just want to use the default, but for the example it illustrates how everything fits together nicely.
+
+   ```rust
+   let executor = LocalExecutor::default();
+   let context = DefaultContext::from_executor(executor);
+   ```
+   If you're executing code, sandboxing is a *good idea*. We also have a [docker executor](https://github.com/bosun-ai/swiftide-docker-executor).
+
+4. Finally, we can set up the agent with our context and tools:
+
+   ```rust
+   let available_tools = vec![print_hello(), LastPrinted::new("hello.txt").boxed()];
+   let agent = Agent::builder()
+     .context(context)
+     .tools(available_tools)
+     .build()?;
+   ```
+5. And now we can give it a whirl:
+
+   ```rust
+   // The agent loop on its messages and tool results, until there are no more completions, or when it decides to stop itself.
+   agent.query("Print the name Swiftide to a file").await?;
+
+   // `hello.txt` should contain `Swiftide`
+
+   // When querying again, the agent retains it's messages (the context is responsible for this)
+   // So let's `echo "bananas" > hello.txt` and ask it to fix it
+   agent.query("Please check if the name last printed is still correct, fix it if needed").await?;
+   ```
+
+</Steps>
+That concludes a very brief introduction to Swiftide agents. A lot more is possible, and this is just a trivial example.
+
+For a full blown example of what agents can do, check out [kwaak](https://github.com/bosun-ai/kwaak).
+

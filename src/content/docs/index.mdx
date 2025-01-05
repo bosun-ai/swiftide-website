@@ -35,15 +35,18 @@ import { Card, CardGrid } from "@astrojs/starlight/components";
     <p>
 The AI and LLM landscape is moving fast. The core idea is to have a stable and modular infrastructure, so you can focus on building the actual LLM application.
       <br />
-Being written in Rust, Swiftide is fast, safe, and efficient. It is built with Rust's async and streaming features, and can be used in production.
+Written in Rust, Swiftide is fast, safe, and efficient. It is built with Rust's async and streaming features, and can be used in production.
 
     </p>
 
   </div>
 </div>
 
-<details open>
-  <summary>A quick example</summary>
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Some quick examples
+<Tabs>
+  <TabItem label="Indexing">
 
     ```rust
     // Load markdown from the current directory, generate synthetic questions and answers,
@@ -67,7 +70,11 @@ Being written in Rust, Swiftide is fast, safe, and efficient. It is built with R
             )
             .run()
             .await?;
+    ```
+  </TabItem>
+  <TabItem label="Querying">
 
+    ```rust
     // Query our indexed data by generating subquestions, embedding the transformed query,
     // retrieving documents from Qdrant and generating an answer.
     query::Pipeline::default()
@@ -82,21 +89,53 @@ Being written in Rust, Swiftide is fast, safe, and efficient. It is built with R
         .query("How can I use the query pipeline in Swiftide?")
         .await?;
     ```
+  </TabItem>
+  <TabItem label="Agents">
 
-</details>
+    ```rust
+    #[swiftide_macros::tool(
+        description = "Searches code",
+        param(name = "code_query", description = "The code query")
+    )]
+    async fn search_code(
+        context: &dyn AgentContext,
+        code_query: &str,
+    ) -> Result<ToolOutput, ToolError> {
+        let command_output = context
+            .exec_cmd(&Command::shell(format!("rg '{code_query}'")))
+            .await?;
+
+        Ok(command_output.into())
+    }
+
+    agents::Agent::builder()
+            .llm(&openai)
+            .tools(vec![search_code()])
+            .build()?
+            .query("In what file can I find an example of a swiftide agent?").await?;
+    ```
+  </TabItem>
+</Tabs>
+
+
 <br />
+
+## Features
 <CardGrid stagger>
-	<Card title="Transform, enrich and persist lots of data" icon="seti:bicep">
+	<Card title="Transform, enrich and persist lots of data" icon="seti:pipeline">
   Load data from various sources, transform it, enrich it with metadata, and persist it with lazy, asynchronous, parallel pipelines.
 </Card>
 <Card title="Transform code and text" icon="codePen">
   Chunk, transform, and augment code with build in transformers. Swiftide uses tree-sitter to interpret and augment code. Text documents,
   be it markdown, html or unstructured, is also supported.
 </Card>
-	<Card title="Experimental query pipeline" icon="seti:bicep">
-    Augment queries with retrieved data using the streaming query pipeline and generate a response.
+	<Card title="Query pipeline" icon="seti:bicep">
+    Query your indexed data, transform it, filter it, and generate a response. Purpusely build for Retrieval Augmented Generation.
 </Card>
-	<Card title="Customizable templated prompts" icon="document">
+	<Card title="Agents" icon="sun">
+    Build and run autonomous agents on top of Swiftide. Easily define tools, hook in on important parts of the agent lifecycle, and code something that does the job for you.
+</Card>
+<Card title="Customizable templated prompts" icon="document">
     Customize and bring your own prompts, build on `Tera`, a jinja style templating library.
 </Card>
 <Card title="Many existing integrations" icon="puzzle">

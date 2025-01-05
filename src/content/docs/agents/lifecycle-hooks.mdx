@@ -1,0 +1,39 @@
+---
+title: Lifecycle hooks
+description: Functions that run at various stages of an agent
+sidebar:
+  order: 3
+---
+
+Agents can have functions trigger at various stages of its run. You can provide a closure, or any function that implements the trait.
+
+This is great for providing initial context, handling tool errors, modifying the output of multiple tools with a single function, and so on.
+
+Hooks are initialized during when building an agent and can be added multiple times. The following hooks are available:
+
+* **after_completion**: Runs right after each completion, before any tool calls, and yields the full completion response mutable
+* **after_each**: Runs after each completion cycle
+* **after_tool**: Runs after each tool, yielding the tool call result as mutable
+* **before_all**: Runs _only once_ when the agent starts for the first time
+* **before_completion**: Runs before each completion, yielding the `ChatCompletionRequest` as mutable
+* **before_tool**: Runs before each tool call, yields the `ToolCall`, not mutable
+
+Each hook accepts an implementation of a trait named like the hook, suffixed with Fn, i.e. `AfterCompletionFn`.
+
+Additionally, there is also `on_new_message`, taking a `MessageHookFn`, that is triggered right before a new messages is added by the agent to the context. This includes responses from tools.
+
+Unlike tools, hooks are _not_ called in parallel, but in the order they were added (FIFO).
+
+The hooks are expected to be async. Because Rust does not have async closures yet (soon!), we need to be a bit verbose in the syntax, for example:
+
+```rust
+agent.before_all(move |context: &dyn AgentContext| {
+  println!("Calling the before all hook!");
+
+  Box::pin(async move {
+    context.add_message(ChatMessage::new_user("Just want to say I think you are very special")).await?;
+
+    Ok(())
+  })
+})
+```

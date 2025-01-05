@@ -7,18 +7,15 @@ description: |
 import { Image } from "astro:assets";
 import pipeline from "/src/assets/rag-dark.svg";
 
-Swiftide is a Rust native library for building LLM applications. Large language models are amazing, but need context
+Swiftide is a Rust  library for building LLM applications. Large language models are amazing, but need context
 to solve real problems. Swiftide allows you to ingest, transform and index large amounts of data fast, and then query that data so it it can be injected into prompts.
-This process is called Retrieval Augmented Generation.
 
 <Image src={pipeline} alt="indexing-pipeline" />
 
 Production LLM applications deal with large amounts of data, concurrent LLM requests and structured and unstructured transformations of data. Rust is great at this. The goal
 of Swiftide is to build indexing and query pipelines easily, experiment and verify, then ship it right to production.
 
-:::note
-Our query pipeline is under active development and fully usuable, documentation is still a work in process. In the mean time, please refer to our examples and the api documentation.
-:::
+Building on the same abstractions, Swiftide also provides building blocks for agentic workflows.
 
 ## What problem does Swiftide solve?
 
