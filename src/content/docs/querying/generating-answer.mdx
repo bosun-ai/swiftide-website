@@ -24,6 +24,8 @@ The trait is also implemented for closures.
 In a lot of cases, the `Simple` answer might just be sufficient. It takes either a transformed context if present, or the current retrieved documents, then prompts
 the LLM with the original query to generate an answer.
 
+Optionally, it can also take a `Template` to render documents before adding them to the context.
+
 The prompt used is straightforward:
 
 ```markdown

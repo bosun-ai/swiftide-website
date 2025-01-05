@@ -1,0 +1,99 @@
+---
+title: Creating tools
+description: How to build tools for agents in Swiftide
+sidebar:
+  order: 2
+---
+
+Tools for agents are a trait, conveniently called `Tool`. The definition of the trait is as follows:
+
+```rust
+#[async_trait]
+pub trait Tool: Send + Sync + DynClone {
+    async fn invoke(
+        &self,
+        agent_context: &dyn AgentContext,
+        raw_args: Option<&str>,
+    ) -> Result<ToolOutput, ToolError>;
+
+    fn name(&self) -> &'static str;
+
+    // Tool Specs are converted to i.e. JsonSpec for OpenAI
+    fn tool_spec(&self) -> ToolSpec;
+
+    // Generally we want to give a list of tools to an agent, boxing them is the solution
+    fn boxed<'a>(self) -> Box<dyn Tool + 'a>
+    where
+        Self: Sized + 'a,
+    {
+        Box::new(self)
+    }
+}
+```
+
+Macros are provided to make the implementation trivial. There is a macro for regular async functions, and one for structs if you need to have some sort
+of internal state, tool, or anything else as well.
+
+The macros will generate a ToolSpec, typed arguments (with serde_json), and the `invoke` call to the underlying function. Tools can have zero or more arguments. Their value always has to be of type `&str`.
+
+The param names and the argument names of the function **must** be the same. Tools are executed in _parallel_.
+
+## Creating a tool from a function
+
+```rust
+#[tool(
+  description = "Search code with ripgrep",
+  param(
+    name = "query"
+    description = "The code query to search"
+  )
+)]
+pub async fn search_code(context: &dyn AgentContext, query: &str) -> Result<ToolOutput, ToolError> {
+  let cmd = format!("rg '{query}'")
+
+  // Extra verbose to illustrate how it works, froms and intos are also provided. However, with many dev tools a non zero exit might be intentionally handled by the llm
+  match context.exec_cmd(&Command::shell(cmd)).await {
+    Ok(output) => Ok(ToolOutput::Text(output)),
+    Err(CommandError::NonZeroExit(output)) => Ok(ToolOutput::Text(output)),
+    Err(error) => return Err(error.into())
+  }
+}
+```
+
+## Creating a tool from a struct
+
+Creating a tool from a struct is similar. Important is that the struct name is the camelcase version of the method the tool should invoke.
+
+```rust
+#[derive(Tool, Clone)]
+#[tool(
+  description = "Search code with ripgrep",
+  param(
+    name = "query"
+    description = "The code query to search"
+  )
+)]
+pub struct SearchCode {
+  search_cmd: String
+}
+
+impl SearchCode {
+  pub async fn search_code(&self, context: &dyn AgentContext, query: &str) -> Result<ToolOutput, ToolError> {
+    let cmd = format!("{} '{query}'", &self.search_cmd)
+
+    // Extra verbose to illustrate how it works, froms and intos are also provided. However, with many dev tools a non zero exit might be intentionally handled by the llm
+    match context.exec_cmd(&Command::shell(cmd)).await {
+      Ok(output) => Ok(ToolOutput::Text(output)),
+      Err(CommandError::NonZeroExit(output)) => Ok(ToolOutput::Text(output)),
+      Err(error) => return Err(error.into())
+    }
+  }
+}
+```
+
+## Tool output and errors
+
+In addition to feeding back output from tools to the llm with `ToolOutput::Text`, you can also return `ToolOutput::Stop` to stop the agent. The agent can always be resumed later.
+
+ToolErrors are typed. By default, every ToolError will hard stop the agent. If you need custom handling for an error, you can use the `after_tool` or `before_tool` lifecycle hooks to report on or modify the tool calls and results.
+

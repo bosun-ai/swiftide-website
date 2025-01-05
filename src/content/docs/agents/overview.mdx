@@ -1,0 +1,40 @@
+---
+title: An overview of agents
+description: An overview of what agents are and how they work
+sidebar:
+  order: 0
+---
+
+> In intelligence and artificial intelligence, an intelligent agent (IA) is an agent that perceives its environment, takes actions autonomously in order to achieve goals, and may improve its performance with learning or acquiring knowledge.
+
+-- <cite>[wikipedia](https://en.wikipedia.org/wiki/Intelligent_agent)</cite>
+
+In Swiftide, an agent is in essence a chat completion loop that can execute tools. The agent gets its messages from a context. This context also provides an execution environment for tools.
+
+Here is an overview of the different concepts for building agents:
+
+- **Agent**: The agent itself
+- **ChatCompletion**: The LLM provider that can handle chat completions for the agent
+- **Context**: Manages the playing ground of the LLM. Yields messages for completions, tool completion, and some small things. Another way to view it is as the gateway to the outside world for an agent.
+- **Tools**: Tools are pure functions, Swiftide provides macros for functions and structs. They take a context and arguments, do their thing, and return a tool result. I.e. run a shell command, search the web, etcetera.
+- **ToolExecutor**: Provided via the context, it can execute tools in an environment it manages. I.e. local, docker.
+- **Lifecycle Hooks**: An agent can be build with hooks, which will trigger on certain events, like after a new message, after a tool call, before all.
+- **System Prompt**: An agent starts its adventure with a system prompt. We provide a, from experience, working default builder, but you are completely free to customize it, or even fully write your own.
+- **ChatMessage**: User, system, and assistant messages that are part of the completion, and managed by the context
+
+You can find the api documentation on [docs.rs](https://docs.rs/swiftide/latest/swiftide/agents/index.html).
+
+:::note
+If you want to see a fully build, usable agent in action, check out [kwaak](https://github.com/bosun-ai/kwaak).
+:::
+
+## Debugging and tuning agents
+
+The hard part with agents in our experience is trying to figure out what they did, why they did it, and what steps let up to that.
+
+Agents have full tracing support with added tags for `OpenTelemetry`. If you set up tracing with `OpenTelemetry` in your project, set `RUST_LOG` to include `swiftide=debug`,
+you will be able to fully inspect all the steps the agent took.
+
+## Interaction with the rest of Swiftide
+
+Agents, query pipelines, and indexing pipelines can fully interact. You can build tools around query pipelines, have an agent index, have agents invoke agents, and so fort.

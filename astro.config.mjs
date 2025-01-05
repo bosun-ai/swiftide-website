@@ -91,6 +91,13 @@ export default defineConfig({
           },
         },
         {
+          label: "Agents",
+          collapsed: true,
+          autogenerate: {
+            directory: "agents",
+          },
+        },
+        {
           label: "In depth",
           collapsed: true,
           autogenerate: {
