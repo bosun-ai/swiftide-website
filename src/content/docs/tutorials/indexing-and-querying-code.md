@@ -19,9 +19,9 @@ On [github](https://github.com/bosun-ai/swiftide-tutorial/tree/master/indexing-a
 Then make sure the following environment variables are configured:
 
 ```shell
-OPENAI_API_KEY=<openai api key>
-REDIS_URL=<redis url, i.e. redis://localhost:6379>
-QDRANT_URL=<grpc qdrant url, i.e. http://localhost:6334>
+export OPENAI_API_KEY=<openai api key>
+export REDIS_URL=<redis url, i.e. redis://localhost:6379>
+export QDRANT_URL=<grpc qdrant url, i.e. http://localhost:6334>
 ```
 
 ### Creating the Rust project
@@ -83,7 +83,7 @@ And add the argument parsing:
 ```rust
 use clap::Parser;
 use anyhow::Result;
-
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -104,7 +104,6 @@ async fn main() -> Result<()> {
   println!("{}", args.language);
   println!("{}", args.path.to_string_lossy());
   println!("{}", args.query);
-
 }
 ```
 
