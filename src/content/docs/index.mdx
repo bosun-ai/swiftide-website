@@ -42,9 +42,10 @@ Written in Rust, Swiftide is fast, safe, and efficient. It is built with Rust's 
   </div>
 </div>
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 ## Some quick examples
+
 <Tabs>
   <TabItem label="Indexing">
 
@@ -71,6 +72,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
             .run()
             .await?;
     ```
+
   </TabItem>
   <TabItem label="Querying">
 
@@ -89,6 +91,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
         .query("How can I use the query pipeline in Swiftide?")
         .await?;
     ```
+
   </TabItem>
   <TabItem label="Agents">
 
@@ -114,43 +117,52 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
             .build()?
             .query("In what file can I find an example of a swiftide agent?").await?;
     ```
+
   </TabItem>
 </Tabs>
-
 
 <br />
 
 ## Features
+
 <CardGrid stagger>
-	<Card title="Transform, enrich and persist lots of data" icon="seti:pipeline">
-  Load data from various sources, transform it, enrich it with metadata, and persist it with lazy, asynchronous, parallel pipelines.
-</Card>
-<Card title="Transform code and text" icon="codePen">
-  Chunk, transform, and augment code with build in transformers. Swiftide uses tree-sitter to interpret and augment code. Text documents,
-  be it markdown, html or unstructured, is also supported.
-</Card>
-	<Card title="Query pipeline" icon="seti:bicep">
-    Query your indexed data, transform it, filter it, and generate a response. Purpusely build for Retrieval Augmented Generation.
-</Card>
-	<Card title="Agents" icon="sun">
-    Build and run autonomous agents on top of Swiftide. Easily define tools, hook in on important parts of the agent lifecycle, and code something that does the job for you.
-</Card>
-<Card title="Customizable templated prompts" icon="document">
-    Customize and bring your own prompts, build on `Tera`, a jinja style templating library.
-</Card>
-<Card title="Many existing integrations" icon="puzzle">
-  Qdrant, OpenAI, Groq, AWS Bedrock, Redis, FastEmbed, Spider and many more.
-</Card>
-	<Card title="Easy to extend" icon="seti:crystal_embedded">
-  Write your own loaders, transformers, and storages by extending straight forward traits.
-</Card>
-	<Card title="Written in Rust" icon="seti:rust">
-  Fast, safe, and efficient. Built with Rust's async and streaming features.
-</Card>
-	<Card title="Part of Bosun.ai" icon="rocket">
-  Part of [Bosun.ai](https://bosun.ai) and actively used in production.
-</Card>
-<Card title="Reference" icon="open-book">
-  Full API documentation available on [docs.rs](https://docs.rs/swiftide/latest/swiftide/)
-</Card>
+  <Card title="Transform, enrich and persist lots of data" icon="seti:pipeline">
+    Load data from various sources, transform it, enrich it with metadata, and
+    persist it with lazy, asynchronous, parallel pipelines.
+  </Card>
+  <Card title="Transform code and text" icon="codePen">
+    Chunk, transform, and augment code with build in transformers. Swiftide uses
+    tree-sitter to interpret and augment code. Text documents, be it markdown,
+    html or unstructured, is also supported.
+  </Card>
+  <Card title="Query pipeline" icon="seti:bicep">
+    Query your indexed data, transform it, filter it, and generate a response.
+    Purpusely build for Retrieval Augmented Generation.
+  </Card>
+  <Card title="Agents" icon="sun">
+    Build and run autonomous agents on top of Swiftide. Easily define tools,
+    hook in on important parts of the agent lifecycle, and code something that
+    does the job for you.
+  </Card>
+  <Card title="Customizable templated prompts" icon="document">
+    Customize and bring your own prompts, build on `Tera`, a jinja style
+    templating library.
+  </Card>
+  <Card title="Many existing integrations" icon="puzzle">
+    Qdrant, OpenAI, Groq, AWS Bedrock, Redis, FastEmbed, Spider and many more.
+  </Card>
+  <Card title="Easy to extend" icon="seti:crystal_embedded">
+    Write your own loaders, transformers, and storages by extending straight
+    forward traits.
+  </Card>
+  <Card title="Written in Rust" icon="seti:rust">
+    Fast, safe, and efficient. Built with Rust's async and streaming features.
+  </Card>
+  <Card title="Part of Bosun.ai" icon="rocket">
+    Part of [Bosun.ai](https://bosun.ai) and actively used in production.
+  </Card>
+  <Card title="Reference" icon="open-book">
+    Full API documentation available on
+    [docs.rs](https://docs.rs/swiftide/latest/swiftide/)
+  </Card>
 </CardGrid>

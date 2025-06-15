@@ -13,6 +13,7 @@ import { Icon } from "@astrojs/starlight/components";
 - Experimental query pipeline
 - Integrations with OpenAI, Groq, Redis, Qdrant, FastEmbed, Treesitter, and more
 - A variety of loaders, transformers, embedders, and other common, generic tools
+- Build agents with tools, lifecycle hooks, and chat completions
 - Bring your own transformers by extending straightforward traits
 - Jinja-like templating for prompts
 - Evaluate pipelines with RAGAS
@@ -32,25 +33,33 @@ For all our integrations and tools we aim to provide sane defaults to get you st
 
 ## LLMs & Embeddings
 
-| Name        | Prompting                            | Embedding                            | Feature flag | Notes                                                                                  |
-| ----------- | ------------------------------------ | ------------------------------------ | ------------ | -------------------------------------------------------------------------------------- |
-| openai      | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | openai       |                                                                                        |
-| OpenRouter  | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | open-router  |                                                                                        |
-| AWS Bedrock | <Icon name="approve-check-circle" /> |                                      | aws-bedrock  | Mistral and Titan models supported                                                     |
-| groq        | <Icon name="approve-check-circle" /> |                                      | groq         | All major models supported, uses async_openai with Groq's openai schema under the hood |
-| FastEmbed   |                                      | <Icon name="approve-check-circle" /> | fastembed    | Uses fastembed.rs under the hood, dense and sparse embedding models supported          |
-| Ollama      | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | ollama       | Ollama support                                                                         |
+| Name          | Prompting                            | Embedding                            | Agents                               | Feature flag | Notes                                                                                  |
+| ------------- | ------------------------------------ | ------------------------------------ | ------------------------------------ | ------------ | -------------------------------------------------------------------------------------- |
+| openai        | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | openai       |                                                                                        |
+| anthropic     | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | anthropic    |                                                                                        |
+| google gemini | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | gemini       |                                                                                        |
+| dashscope     | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | dashscope    |                                                                                        |
+| OpenRouter    | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | open-router  |                                                                                        |
+| AWS Bedrock   | <Icon name="approve-check-circle" /> |                                      |                                      | aws-bedrock  | Mistral and Titan models supported                                                     |
+| groq          | <Icon name="approve-check-circle" /> |                                      | <Icon name="approve-check-circle" /> | groq         | All major models supported, uses async_openai with Groq's openai schema under the hood |
+| FastEmbed     |                                      | <Icon name="approve-check-circle" /> |                                      | fastembed    | Uses fastembed.rs under the hood, dense and sparse embedding models supported          |
+| Ollama        | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | <Icon name="approve-check-circle" /> | ollama       | Ollama support                                                                         |
 
 ## Additional integrations
 
 | Name          | Feature flag | Notes                                                             |
 | ------------- | ------------ | ----------------------------------------------------------------- |
 | Qdrant        | qdrant       | Named vectors also supported.                                     |
-| Redis         | redis        | Supports caching and storage                                      |
+| Redis         | redis        | Supports caching, storage, and message history                    |
+| redb          | redb         | Caching                                                           |
 | Spider & htmd | scraping     | Scrape websites fast and convert the html to markdown             |
 | Treesitter    | tree-sitter  | Code splitting and various transformers to effectively index code |
 | Fluvio        | fluvio       | Loading data from fluvio streams                                  |
 | Lancedb       | lancedb      | Storing and retrieval from lancedb                                |
+| Duckdb        | duckdb       | Storing and retrieval from duckdb                                 |
+| pgvector      | pgvector     | Storing and retrieval from pgvector                               |
+| Kafka         | kafka        | Load and storing                                                  |
+| Parquet       | parquet      | Loading data                                                      |
 
 :::note
 Swiftide is under active development and might have more features than specified here, for an up to date list check out our api documentation [docs.rs](https://docs.rs/crate/swiftide/latest/)

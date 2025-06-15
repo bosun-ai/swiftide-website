@@ -13,7 +13,7 @@ pub trait Tool: Send + Sync + DynClone {
     async fn invoke(
         &self,
         agent_context: &dyn AgentContext,
-        raw_args: Option<&str>,
+        tool_call: &ToolCall,
     ) -> Result<ToolOutput, ToolError>;
 
     fn name(&self) -> &'static str;
@@ -96,4 +96,3 @@ impl SearchCode {
 In addition to feeding back output from tools to the llm with `ToolOutput::Text`, you can also return `ToolOutput::Stop` to stop the agent. The agent can always be resumed later.
 
 ToolErrors are typed. By default, every ToolError will hard stop the agent. If you need custom handling for an error, you can use the `after_tool` or `before_tool` lifecycle hooks to report on or modify the tool calls and results.
-
