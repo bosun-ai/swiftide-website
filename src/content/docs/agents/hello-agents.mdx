@@ -45,7 +45,7 @@ import { Steps } from "@astrojs/starlight/components";
    }
 
    impl LastPrinted {
-     pub new(filename: impl Into<PathBuf>) -> Self {
+     pub fn new(filename: impl Into<PathBuf>) -> Self {
        LastPrinted { filename: filename.into() }
      }
 
