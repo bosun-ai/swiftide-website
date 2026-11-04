@@ -1,0 +1,14 @@
+---
+/**
+ * Site title: the swiftide mark inlined (so it takes `currentColor` and follows the theme) and the
+ * name in mono. Replaces Starlight's <img> logo, which cannot inherit the text colour.
+ */
+import Mark from '../../assets/mark.svg';
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref} class="site-title sl-flex">
+	<Mark class="sw-mark" aria-hidden="true" focusable="false" />
+	<span translate="no">{siteTitle}</span>
+</a>

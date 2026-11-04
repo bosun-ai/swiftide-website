@@ -1,0 +1,29 @@
+---
+/**
+ * Hero for splash pages (the home page and 404): a left-aligned mono headline and one supporting
+ * sentence. No image and no buttons; the page body carries the first visual and the links. On the
+ * home page a metadata line shows the swiftide release the site documents.
+ */
+import { loadSwiftideContext } from '../../lib/swiftide.ts';
+
+// Starlight's page title id; the TOC and skip link point at it.
+const PAGE_TITLE_ID = '_top';
+const { entry } = Astro.locals.starlightRoute;
+const { title = entry.data.title, tagline } = entry.data.hero ?? {};
+const isHome = entry.id === 'index' || entry.id === '';
+const swiftide = isHome ? loadSwiftideContext(process.cwd()) : undefined;
+---
+
+<div class="sw-hero" data-page={isHome ? 'home' : entry.id}>
+	<h1 id={PAGE_TITLE_ID} data-page-title set:html={title} />
+	{tagline && <p class="sw-hero__tagline" set:html={tagline} />}
+	{
+		swiftide && (
+			<p class="sw-hero__meta">
+				<span>swiftide {swiftide.version}</span>
+				<span>rust</span>
+				<span>MIT</span>
+			</p>
+		)
+	}
+</div>

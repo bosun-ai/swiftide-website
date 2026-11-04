@@ -1,0 +1,14 @@
+---
+/**
+ * A task graph that fans out and joins.
+ *
+ * Inline, so it takes the page's text colour and accent in both themes. The drawing lives in
+ * src/assets/diagrams/diagram-task-graph.svg, which .md pages can also use as an image.
+ */
+import Diagram from '../../assets/diagrams/diagram-task-graph.svg';
+---
+
+<figure class="sw-diagram">
+	<Diagram />
+	<slot />
+</figure>

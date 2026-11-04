@@ -1,15 +1,83 @@
 ---
 title: Swiftide
-description: Composable LLM agents, typed task graphs and streaming indexing and query pipelines in Rust.
+description: 'Swiftide is a Rust library for building LLM applications: composable agents and harness, typed task graphs, and streaming RAG pipelines.'
 template: splash
+pagefind: false
 hero:
-  tagline: Composable LLM agents, typed task graphs and streaming indexing and query pipelines in Rust.
-  actions:
-    - text: Get started
-      link: /start/what-is-swiftide/
-    - text: GitHub
-      link: https://github.com/bosun-ai/swiftide
-      variant: minimal
+  title: Composable LLM agents and harness, typed task graphs, and streaming RAG pipelines in Rust.
+  tagline: Swiftide is a Rust library for building LLM applications. Every line of Rust on this site is an excerpt of code that compiles against the release it documents.
 ---
 
-Placeholder home page; the real landing page replaces this file.
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+```sh title="Add swiftide to a project" wrap
+cargo add swiftide --features swiftide-agents,openai
+```
+
+[Get started](/start/what-is-swiftide/) · [API reference](docsrs:swiftide/) · [GitHub](https://github.com/bosun-ai/swiftide) · [Discord](https://discord.gg/3jjXYen9UY) · [llms.txt](/llms.txt)
+
+<CardGrid>
+<Card title="Agents">
+
+A model, your tools and hooks in a loop. The agent stops when the model calls `stop`, or at a limit you set.
+
+::snippet{src="@snippets/src/landing/agent.rs" anchor="agent" title="release_notes.rs" wrap="true"}
+
+```text wrap
+→ git_log { "tag": "v0.32.0" }
+← 23 commits
+## 0.33.0
+- `Prompt` replaces `SystemPrompt` for system messages
+```
+
+[Agents →](/agents/overview/)
+
+</Card>
+<Card title="Tasks">
+
+Typed nodes and transitions. Fan out to parallel branches, join the results, pause for a human and resume.
+
+::snippet{src="@snippets/src/landing/task.rs" anchor="task" title="review.rs" wrap="true"}
+
+```text wrap
+task.run: start → [risks ∥ summary] → report
+risks    0.9s  412 tokens
+summary  1.4s  388 tokens
+Completed("Risks:\n- The retry loop in …")
+```
+
+[Tasks →](/tasks/overview/)
+
+</Card>
+<Card title="Pipelines">
+
+Stream files through chunkers, transformers and embedders into a store, then query it with a typed pipeline.
+
+::snippet{src="@snippets/src/landing/pipeline.rs" anchor="pipeline" title="ask.rs" wrap="true"}
+
+```text wrap
+indexing: 214 files → 1,906 chunks → qdrant
+query: 5 chunks retrieved
+An agent stops when the model calls the `stop` tool,
+or when it reaches the limit set with `.limit(n)`.
+```
+
+[Indexing →](/indexing/overview/) · [Querying →](/querying/overview/)
+
+</Card>
+</CardGrid>
+
+## What are you building?
+
+| You are building | Start with |
+| --- | --- |
+| A coding agent that reads, edits and runs code in a repository | [Agents](/agents/overview/) |
+| Batch automation with typed steps, parallel branches and human approval | [Tasks](/tasks/overview/) |
+| Answers over a codebase, from an index of its source | [Ask your codebase](/showcases/ask-your-codebase/) |
+| Answers over documentation, with hybrid search and reranking | [Docs Q&A](/showcases/docs-qa/) |
+
+## Integrations
+
+Each one is a Cargo feature; enable only what you use. [All integrations →](/integrations/overview/)
+
+`openai` `anthropic` `gemini` `open-router` `aws-bedrock` `groq` `ollama` `dashscope` `fastembed` `qdrant` `lancedb` `pgvector` `redis` `duckdb` `redb` `tree-sitter` `mcp` `scraping` `kafka` `fluvio` `parquet` `langfuse`

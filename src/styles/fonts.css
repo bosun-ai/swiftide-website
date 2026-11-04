@@ -1,1 +1,12 @@
-/* Font faces (Worker B: fontsource imports for the mono and body faces). */
+/*
+ * Self-hosted variable faces (fontsource). Only the latin subsets are downloaded in practice:
+ * every @font-face carries a unicode-range.
+ *
+ * Martian Mono: one family for headings, navigation, labels and code. Its width axis does the
+ * work of a second mono: ~87.5% for headings, 75% for code so a 14px line holds as many
+ * characters as JetBrains Mono.
+ * IBM Plex Sans: the reading face for running text.
+ */
+@import '@fontsource-variable/martian-mono/wdth.css';
+@import '@fontsource-variable/ibm-plex-sans/wght.css';
+@import '@fontsource-variable/ibm-plex-sans/wght-italic.css';

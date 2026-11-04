@@ -1,0 +1,276 @@
+/*
+ * Home page (src/content/docs/index.mdx, splash template) and the shared splash hero (also used by
+ * the 404 page). The home page is markdown, so its layout keys off the structure the markdown
+ * produces: terminal block, link row, CardGrid of three columns, router table, integrations line.
+ * `main:has(.sw-hero[data-page='home'])` scopes everything to the home page.
+ */
+
+/* --------------------------------------------------------------------------------------------
+ * Splash hero
+ * ------------------------------------------------------------------------------------------ */
+
+.sw-hero {
+	padding-block: clamp(1.5rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.sw-hero h1 {
+	max-width: 25em;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: clamp(1.375rem, 0.8rem + 2.6vw, 2.75rem);
+	font-weight: 500;
+	line-height: 1.12;
+	letter-spacing: -0.045em;
+	color: var(--sw-ink-strong);
+	text-wrap: balance;
+}
+
+.sw-hero__tagline {
+	max-width: 62ch;
+	margin-top: 1.25rem;
+	font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+	line-height: 1.6;
+	color: var(--sw-ink);
+}
+
+.sw-hero__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0;
+	margin-top: 1.25rem;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-text-label);
+	font-weight: 500;
+	letter-spacing: var(--sw-tracking-label);
+	text-transform: uppercase;
+	color: var(--sw-muted);
+}
+
+.sw-hero__meta > span + span::before {
+	content: '/';
+	margin-inline: 0.75em;
+	color: var(--sw-faint);
+}
+
+/* --------------------------------------------------------------------------------------------
+ * Home page
+ * ------------------------------------------------------------------------------------------ */
+
+html:has(.sw-hero[data-page='home']) {
+	--sl-content-width: 84rem;
+}
+
+@media (min-width: 72rem) {
+	html:has(.sw-hero[data-page='home']) {
+		--sl-content-pad-x: 2rem;
+	}
+}
+
+/* The edit link and last-updated date say nothing about a landing page. */
+main:has(.sw-hero[data-page='home']) footer .meta {
+	display: none;
+}
+
+/* Terminal: the first visual. One command, so it stays short. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child {
+	max-width: 46rem;
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child pre {
+	font-size: 0.9375rem;
+}
+
+/* Three excerpts side by side: smaller code, tighter frames. Long lines wrap (`wrap` on the
+   snippet) rather than scroll. */
+main:has(.sw-hero[data-page='home']) .card-grid .expressive-code {
+	--ec-codeFontSize: 0.78125rem;
+	--ec-codePadInl: 0.875rem;
+	--ec-codeLineHt: 1.65;
+}
+
+/* Below three columns there is room to scroll sideways, and wrapped Rust reads worse than a
+   scrolled line: only wrap while the excerpts sit side by side. */
+@media (max-width: 71.99rem) {
+	main:has(.sw-hero[data-page='home']) .card-grid .expressive-code pre.wrap .ec-line .code {
+		white-space: pre;
+		overflow-wrap: normal;
+	}
+}
+
+/* Wide screens: the terminal and link row sit beside the headline. The markdown wrapper is
+   flattened (display: contents) so its first two children can join the hero's grid. */
+@media (min-width: 72rem) {
+	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		column-gap: 4rem;
+		align-items: end;
+	}
+	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container > * {
+		grid-column: 1 / -1;
+		margin-top: 0;
+	}
+	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container > .sw-hero {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		min-width: 0;
+	}
+	main:has(.sw-hero[data-page='home']) .sw-hero h1 {
+		max-width: 100%;
+		font-size: clamp(2rem, 0.6rem + 2.2vw, 2.75rem);
+	}
+	main:has(.sw-hero[data-page='home']) .sl-container > .sl-markdown-content {
+		display: contents;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > * {
+		grid-column: 1 / -1;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: end;
+		max-width: none;
+		margin-bottom: 0;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .card-grid {
+		margin-top: 2.5rem;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child + p {
+		grid-column: 2;
+		grid-row: 2;
+		align-self: start;
+		margin-top: 1rem;
+		padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+	}
+}
+
+/* Link row under the terminal. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child + p {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-text-meta);
+	color: var(--sw-faint);
+	word-spacing: 0.25em;
+}
+
+/* Three columns: Agents, Tasks, Pipelines. */
+main:has(.sw-hero[data-page='home']) .card-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 3rem 2rem;
+	margin-top: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 72rem) {
+	main:has(.sw-hero[data-page='home']) .card-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	padding: 1.125rem 0 0;
+	border: 0;
+	border-top: 1px solid var(--sw-line-strong);
+	background: transparent;
+	min-width: 0;
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card > .title {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-text-label);
+	font-weight: 500;
+	letter-spacing: var(--sw-tracking-label);
+	text-transform: uppercase;
+	color: var(--sw-ink-strong);
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card .body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	margin-top: 0.75rem;
+	min-width: 0;
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card .body > * + * {
+	margin-top: 1rem;
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
+	font-size: 0.96875rem;
+	line-height: 1.55;
+	color: var(--sw-ink);
+	min-height: 3.1em;
+}
+
+main:has(.sw-hero[data-page='home']) .card-grid .card .body > .sw-source {
+	margin-top: 0.5rem;
+}
+
+/* The "Agents ->" link closes each column. */
+main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:last-child {
+	margin-top: auto;
+	padding-top: 1.25rem;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-text-meta);
+	color: var(--sw-faint);
+}
+
+/* Section headings on the home page are labels over full-width rules. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > h2 {
+	margin-top: clamp(3.5rem, 8vw, 6rem);
+	max-width: none;
+	font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > h2 + * {
+	margin-top: 1.25rem;
+}
+
+/* "What are you building?" router: a two-column table of plain text and links. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > table {
+	display: table;
+	max-width: 64rem;
+	font-size: 1rem;
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > table td {
+	padding-block: 0.875rem;
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):last-child {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-text-meta);
+}
+
+@media (min-width: 50rem) {
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):last-child {
+		width: 14rem;
+	}
+}
+
+/* Integrations: plain mono feature names. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > p:last-child {
+	max-width: 64rem;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.875rem;
+	line-height: 2;
+	color: var(--sw-faint);
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > p:last-child code {
+	padding: 0;
+	margin-inline-end: 1.5ch;
+	background: transparent;
+	font-size: inherit;
+	color: var(--sw-ink);
+	white-space: nowrap;
+}

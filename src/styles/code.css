@@ -1,1 +1,61 @@
-/* Code and output block styling beyond Expressive Code's theme (Worker B). */
+/*
+ * Code and output blocks beyond what Expressive Code's theme and styleOverrides (ec.config.mjs)
+ * cover: the narrow mono width, terminal prompts, and captured output.
+ */
+
+.expressive-code {
+	font-stretch: var(--sw-mono-narrow);
+}
+
+.expressive-code pre,
+.expressive-code code {
+	font-variant-ligatures: none;
+}
+
+/* Frame titles (file paths) and the terminal title: small mono. */
+.expressive-code .frame .header .title {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.75rem;
+	letter-spacing: 0;
+	color: var(--sw-muted);
+}
+
+.expressive-code .frame.has-title:not(.is-terminal) .header .title {
+	color: var(--sw-ink);
+}
+
+/* Terminal frames: a `$` prompt in front of every command line (not copied). */
+.expressive-code .frame.is-terminal .ec-line .code::before {
+	content: '$ ';
+	color: var(--sw-faint);
+	user-select: none;
+}
+
+/* Captured program output (```text): no frame, no fill, dim. It reads as what the code printed. */
+.expressive-code:has(pre[data-language='text']) .frame {
+	border-inline-start: 1px solid var(--sw-line-strong);
+}
+
+.expressive-code .frame pre[data-language='text'] {
+	background: transparent;
+	border: 0;
+	color: var(--sw-muted);
+	padding-block: 0.25rem;
+}
+
+.expressive-code .frame pre[data-language='text'] .ec-line .code {
+	padding-inline-start: 1rem;
+	color: var(--sw-muted);
+}
+
+.expressive-code .frame pre[data-language='text'] span {
+	--0: var(--sw-muted);
+	--1: var(--sw-muted);
+	color: var(--sw-muted);
+}
+
+/* Copy button: square and quiet. */
+.expressive-code .copy button {
+	border-radius: 0;
+}

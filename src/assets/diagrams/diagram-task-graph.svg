@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 206" width="360" height="206" role="img" aria-labelledby="sw-task-graph-t sw-task-graph-d" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" font-family="Martian Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" style="font-family:var(--sw-font-mono,ui-monospace,SFMono-Regular,Menlo,monospace);font-stretch:75%">
+	<title id="sw-task-graph-t">A task graph with fan-out and join</title>
+	<desc id="sw-task-graph-d">A start node fans out to two branches that run in parallel. A join node waits for both, then the task finishes with its output. A node can pause the task and resume it later.</desc>
+	<defs>
+		<marker id="sw-task-graph-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" stroke="currentColor" stroke-width="1.25"/></marker>
+		<marker id="sw-task-graph-aa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" style="stroke:var(--sw-accent,#0a6fa6)" stroke-width="1.25"/></marker>
+	</defs>
+	<rect x="8" y="82" width="70" height="34"/>
+	<text x="43" y="97" text-anchor="middle" stroke="none" fill="currentColor">start</text>
+	<text x="43" y="110" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.6" font-size="9">String</text>
+	<path d="M78 92 Q96 92 100 72 Q104 52 126 52" marker-end="url(#sw-task-graph-a)"/>
+	<path d="M78 106 Q96 106 100 126 Q104 146 126 146" marker-end="url(#sw-task-graph-a)"/>
+	<rect x="128" y="34" width="88" height="36"/>
+	<text x="172" y="50" text-anchor="middle" stroke="none" fill="currentColor">risks</text>
+	<text x="172" y="63" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.6" font-size="9">Prompt → String</text>
+	<rect x="128" y="128" width="88" height="36"/>
+	<text x="172" y="144" text-anchor="middle" stroke="none" fill="currentColor">summary</text>
+	<text x="172" y="157" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.6" font-size="9">Prompt → String</text>
+	<path d="M216 52 Q234 52 238 72 Q242 92 250 92" marker-end="url(#sw-task-graph-aa)" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<path d="M216 146 Q234 146 238 126 Q242 106 250 106" marker-end="url(#sw-task-graph-aa)" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<rect x="252" y="80" width="104" height="38" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<text x="304" y="97" text-anchor="middle" stroke="none" style="fill:var(--sw-accent,#0a6fa6)">report</text>
+	<text x="304" y="110" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.6" font-size="9">JoinInput&lt;String&gt;</text>
+	<text x="110" y="108" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">parallel</text>
+	<text x="258" y="140" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">join</text>
+	<path d="M304 118 V176" stroke-dasharray="3 3" marker-end="url(#sw-task-graph-a)"/>
+	<text x="308" y="168" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">finish</text>
+	<text x="8" y="196" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">any node can pause; resume() continues</text>
+</svg>

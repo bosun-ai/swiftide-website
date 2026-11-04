@@ -2,7 +2,7 @@
 /**
  * Page title row: Starlight's default title, the swiftide version badges from frontmatter
  * (`swiftide: { since, unreleased }`), and the page actions from starlight-llm-actions
- * (Copy / View as Markdown, Open in ChatGPT / Claude).
+ * (Copy / View as Markdown, Open in ChatGPT / Claude). Styled in src/styles/starlight.css.
  */
 import Default from '@astrojs/starlight/components/PageTitle.astro';
 import PageActions from 'starlight-llm-actions/components/PageActions.astro';
@@ -33,19 +33,3 @@ const badges = [
 	<PageActions />
 </div>
 
-<style>
-	.sw-title-row {
-		display: flex;
-		align-items: flex-start;
-		gap: 0.75rem;
-	}
-	.sw-title {
-		flex: 1;
-		min-width: 0;
-	}
-	.sw-title-badges {
-		display: flex;
-		gap: 0.5rem;
-		margin-top: 0.5rem;
-	}
-</style>

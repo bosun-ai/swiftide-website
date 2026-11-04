@@ -29,8 +29,8 @@ export default defineConfig({
 			title: 'swiftide',
 			description:
 				'Swiftide is a Rust library for building LLM applications: composable agents, typed task graphs and streaming indexing and query pipelines.',
-			logo: { src: './src/assets/logo.png' },
-			favicon: '/favicon32.png',
+			logo: { src: './src/assets/mark.svg', replacesTitle: false },
+			favicon: '/favicon.svg',
 			editLink: { baseUrl: 'https://github.com/bosun-ai/swiftide-website/edit/master/' },
 			lastUpdated: true,
 			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
@@ -40,8 +40,16 @@ export default defineConfig({
 				'./src/styles/starlight.css',
 				'./src/styles/prose.css',
 				'./src/styles/code.css',
+				'./src/styles/home.css',
 			],
 			head: [
+				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon32.png', sizes: '32x32', type: 'image/png' } },
+				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://swiftide.rs/og.png' } },
+				{ tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+				{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+				{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+				{ tag: 'meta', attrs: { name: 'twitter:image', content: 'https://swiftide.rs/og.png' } },
+				{ tag: 'meta', attrs: { name: 'theme-color', content: '#0e1013' } },
 				{
 					tag: 'script',
 					attrs: { defer: true, 'data-domain': 'swiftide.rs', src: 'https://plausible.io/js/script.js' },
@@ -51,7 +59,11 @@ export default defineConfig({
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/bosun-ai/swiftide' },
 				{ icon: 'discord', label: 'Discord', href: 'https://discord.gg/3jjXYen9UY' },
 			],
-			components: { PageTitle: './src/components/overrides/PageTitle.astro' },
+			components: {
+				Hero: './src/components/overrides/Hero.astro',
+				PageTitle: './src/components/overrides/PageTitle.astro',
+				SiteTitle: './src/components/overrides/SiteTitle.astro',
+			},
 			sidebar: sidebar(swiftide),
 			plugins: [
 				linksValidator({ errorOnLocalLinks: true, exclude: ['/llms*.txt', '/**/*.md'] }),
@@ -76,7 +88,7 @@ export default defineConfig({
 					].join(' '),
 					promote: ['index*', 'start/**'],
 					demote: ['cookbook/**'],
-					exclude: ['reference/changelog'],
+					exclude: ['reference/changelog', '404'],
 					customSets: [
 						{ label: 'Agents', paths: ['agents/**'], description: 'building agents with tools, hooks and executors' },
 						{ label: 'Tasks', paths: ['tasks/**'], description: 'typed task graphs with fan-out, join and pause/resume' },
