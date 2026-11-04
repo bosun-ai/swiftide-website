@@ -25,12 +25,23 @@ swiftide = { path = "../vendor/swiftide/swiftide", features = [
   "swiftide-agents",
   "json-schema",
   "metrics",
+  "tiktoken",
 ] }
 anyhow = "1"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 schemars = "1"
+# `StreamExt::next` on `ChatCompletionStream` (models/overview); swiftide does not re-export it.
+futures-util = "0.3"
+# `#[async_trait]` for the trait implementations on reference/upgrading.
+async-trait = "0.1"
+# Only for `OpenAIConfig` and `Client::with_config` on models/overview; swiftide does not re-export it.
+async-openai = { version = "0.41", default-features = false }
+# `Prompt::extend` takes a `tera::Tera`; swiftide does not re-export tera.
+tera = { version = "1.20", default-features = false }
+# `rustls::crypto::ring::default_provider` on reference/feature-flags; swiftide selects no crypto provider.
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
 
 # Snippets are read by people; a warning in one is a bug on the site.
 [lints.rust]

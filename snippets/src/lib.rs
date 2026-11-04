@@ -6,4 +6,6 @@
 //! Modules mirror the site's sections.
 
 pub mod landing;
+pub mod models;
+pub mod reference;
 pub mod start;

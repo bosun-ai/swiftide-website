@@ -62,7 +62,8 @@ function checkPages(htmlFiles: readonly string[]): Problems {
 
 /** Directive and placeholder syntax that must never survive the build. */
 const LEFTOVERS: readonly [RegExp, string][] = [
-	[/::(?:snippet|include|feature-flags|integrations)\b/, 'unexpanded block directive'],
+	// The lookbehind skips Rust paths such as `swiftide::integrations::openai`.
+	[/(?<![\w:])::(?:snippet|include|feature-flags|integrations)\b/, 'unexpanded block directive'],
 	[/(?:^|[\s>(]):unreleased\b/m, 'unexpanded :unreleased'],
 	[/\{\{\s*swiftide_[a-z_]*\s*\}\}/, 'unexpanded {{swiftide_*}} placeholder'],
 	[/\bdocsrs:[a-z]/, 'unrewritten docsrs: link'],
