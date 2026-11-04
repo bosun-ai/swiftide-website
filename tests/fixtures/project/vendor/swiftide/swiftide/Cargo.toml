@@ -1,0 +1,36 @@
+[package]
+name = "swiftide"
+
+[features]
+## By default only macros are enabled
+default = ["macros"]
+
+macros = ["dep:swiftide-macros"]
+
+all = [
+  "qdrant",
+  "openai",
+]
+
+#! ### Integrations
+
+## Enables Qdrant for storage and retrieval
+qdrant = ["swiftide-integrations/qdrant", "swiftide-core/qdrant"]
+
+## OpenAI with `Responses` support
+## across two lines
+openai = ["swiftide-integrations/openai"]
+
+# Not a doc comment
+anthropic = ["swiftide-integrations/anthropic"]
+
+#! ### Other
+
+## MCP tool support for agents (tools only)
+mcp = ["swiftide-agents", "swiftide-agents/mcp"]
+
+## GenAI agents and tools
+swiftide-agents = ["dep:swiftide-agents"]
+
+[dev-dependencies]
+qdrant = "1"

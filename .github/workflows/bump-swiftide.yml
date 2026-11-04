@@ -1,0 +1,58 @@
+name: Bump swiftide
+
+# Moves the vendor/swiftide pin to a newer swiftide commit and opens a PR.
+# Triggered by hand, or by swiftide's CI after a green master build:
+#   gh api repos/bosun-ai/swiftide-website/dispatches -f event_type=swiftide-master-green \
+#     -f 'client_payload[sha]=<sha>'
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: swiftide ref or SHA to pin
+        default: origin/master
+  repository_dispatch:
+    types: [swiftide-master-green]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+          fetch-depth: 0
+          filter: blob:none
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Rust (snippets/rust-toolchain.toml)
+        run: rustup show active-toolchain || rustup toolchain install
+        working-directory: snippets
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: snippets
+      - name: Bump and verify
+        id: bump
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ github.event.inputs.ref || github.event.client_payload.sha || 'origin/master' }}
+        run: |
+          scripts/bump-swiftide.sh "$REF"
+          echo "describe=$(git -C vendor/swiftide describe --tags --long --match 'v[0-9]*')" >> "$GITHUB_OUTPUT"
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: bump-swiftide
+          delete-branch: true
+          commit-message: "chore: pin swiftide ${{ steps.bump.outputs.describe }}"
+          title: "chore: pin swiftide ${{ steps.bump.outputs.describe }}"
+          body: |
+            Moves `vendor/swiftide` to `${{ steps.bump.outputs.describe }}`.
+
+            swiftide CI is green for this commit, and `pnpm verify` (snippets compile, identifier lint, build, dist checks) passed on it.

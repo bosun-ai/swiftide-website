@@ -1,0 +1,25 @@
+/* Content typography and site-specific elements. */
+
+/* "Source: path#Lx-Ly" line emitted after every ::snippet. */
+.sl-markdown-content .sw-source {
+	margin-top: 0.25rem;
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+}
+
+/* :unreleased and the frontmatter version badges. */
+.sw-badge {
+	display: inline-block;
+	padding: 0 0.4em;
+	border: 1px solid currentColor;
+	font-size: var(--sl-text-xs);
+	font-style: normal;
+	line-height: 1.6;
+	vertical-align: middle;
+}
+.sw-badge--unreleased {
+	color: var(--sl-color-orange-high);
+}
+.sw-badge--since {
+	color: var(--sl-color-gray-3);
+}

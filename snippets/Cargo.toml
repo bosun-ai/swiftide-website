@@ -1,0 +1,37 @@
+[package]
+name = "swiftide-docs-snippets"
+description = "Rust excerpts shown on swiftide.rs. Every snippet compiles against the pinned swiftide."
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.97"
+publish = false
+license = "MIT"
+
+# Standalone: not part of the vendored swiftide workspace.
+[workspace]
+
+[dependencies]
+# Heavy native integrations (lancedb, duckdb, fastembed, kafka, fluvio, aws-bedrock) are only
+# shown from `vendor/swiftide/examples`, which swiftide's own CI compiles.
+swiftide = { path = "../vendor/swiftide/swiftide", features = [
+  "openai",
+  "anthropic",
+  "ollama",
+  "qdrant",
+  "redis",
+  "pgvector",
+  "tree-sitter",
+  "mcp",
+  "swiftide-agents",
+  "json-schema",
+  "metrics",
+] }
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars = "1"
+
+# Snippets are read by people; a warning in one is a bug on the site.
+[lints.rust]
+warnings = "deny"

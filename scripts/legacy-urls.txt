@@ -1,0 +1,30 @@
+# Every URL of the swiftide.rs site before the 2026 refresh. `pnpm verify:dist` checks that each
+# one is still served, either as a page or as a redirect to an existing page.
+/
+/what-is-swiftide/
+/getting-started/installation/
+/getting-started/architecture-and-design/
+/getting-started/features/
+/getting-started/changelog/
+/core-concepts/indexing-pipeline/
+/core-concepts/query-pipeline/
+/core-concepts/prompting-embedding/
+/indexing/loading-data/
+/indexing/transforming-and-enriching/
+/indexing/chunking/
+/indexing/caching-and-filtering/
+/indexing/storing-results/
+/querying/transforming-queries/
+/querying/search-strategies/
+/querying/retrieving-data/
+/querying/transforming-response/
+/querying/generating-answer/
+/agents/overview/
+/agents/hello-agents/
+/agents/creating-tools/
+/agents/lifecycle-hooks/
+/in-depth/customizing-prompts/
+/in-depth/splitting-and-merging-streams/
+/in-depth/streaming-and-concurrency/
+/tutorials/indexing-and-querying-code/
+/troubleshooting/
