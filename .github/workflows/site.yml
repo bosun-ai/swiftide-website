@@ -24,7 +24,7 @@ jobs:
       - name: Install Rust (snippets/rust-toolchain.toml)
         run: rustup show active-toolchain || rustup toolchain install
         working-directory: snippets
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           workspaces: snippets
       - name: cargo check
@@ -43,7 +43,7 @@ jobs:
           filter: blob:none
       - name: Fetch swiftide tags
         run: git -C vendor/swiftide fetch --tags --quiet
-      - uses: pnpm/action-setup@v4 # version from package.json `packageManager`
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4, version from package.json packageManager
       - uses: actions/setup-node@v5
         with:
           node-version: 24
