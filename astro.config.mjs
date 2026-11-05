@@ -88,7 +88,17 @@ export default defineConfig({
 					].join(' '),
 					promote: ['index*', 'start/**'],
 					demote: ['cookbook/**'],
-					exclude: ['reference/changelog', '404'],
+					// `exclude` only applies to llms-small.txt: it keeps the start pages and core guides.
+					// Recipes, showcases, integrations and reference stay in llms-full.txt and the custom sets.
+					exclude: [
+						'404',
+						'community/**',
+						'cookbook/**',
+						'integrations/**',
+						'observability/**',
+						'reference/**',
+						'showcases/**',
+					],
 					customSets: [
 						{ label: 'Agents', paths: ['agents/**'], description: 'building agents with tools, hooks and executors' },
 						{ label: 'Tasks', paths: ['tasks/**'], description: 'typed task graphs with fan-out, join and pause/resume' },
@@ -102,7 +112,11 @@ export default defineConfig({
 					],
 					// Expressive Code's "N collapsed lines" toggle is chrome, not code; `.sw-llms-exclude`
 					// marks content kept out of every llms file (`::include{llms="false"}`).
-					customSelectors: { all: ['summary:has(.expand)', '.sw-llms-exclude'] },
+					// The small file also drops heading anchors and snippet "Source:" permalinks.
+					customSelectors: {
+						all: ['summary:has(.expand)', '.sw-llms-exclude'],
+						small: ['.sl-anchor-link', '.sw-source'],
+					},
 				}),
 			],
 		}),

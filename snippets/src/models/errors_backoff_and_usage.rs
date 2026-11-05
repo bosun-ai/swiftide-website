@@ -51,7 +51,10 @@ pub fn on_usage() -> anyhow::Result<OpenAI> {
     let openai = OpenAI::builder()
         .default_prompt_model("gpt-5-mini")
         .on_usage(|usage| {
-            println!("{} tokens in, {} out", usage.prompt_tokens, usage.completion_tokens);
+            println!(
+                "{} tokens in, {} out",
+                usage.prompt_tokens, usage.completion_tokens
+            );
             Ok(())
         })
         .build()?;

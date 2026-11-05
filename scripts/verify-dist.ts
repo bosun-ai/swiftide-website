@@ -13,7 +13,10 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const SITE = 'https://swiftide.rs';
-const LLMS_SMALL_LIMIT = 400 * 1024;
+// llms-small.txt holds the start pages and core guides (agents, tasks, indexing, querying, models);
+// recipes, showcases, integrations and reference are excluded in astro.config.mjs. The core guides
+// alone are ~560 KB since the docs rewrite, so the guard sits just above that to catch growth.
+const LLMS_SMALL_LIMIT = 600 * 1024;
 const projectRoot = path.resolve(import.meta.dirname, '..');
 const dist = path.resolve(process.argv[2] ?? path.join(projectRoot, 'dist'));
 const docsDir = path.join(projectRoot, 'src/content/docs');

@@ -4,12 +4,12 @@ use std::sync::Arc;
 
 use swiftide::{
     agents::Agent,
+    chat_completion::ChatMessage,
     integrations::{
         anthropic::Anthropic,
         ollama::Ollama,
         openai::{OpenAI, OpenAIConfig, Options, ReasoningEffort},
     },
-    chat_completion::ChatMessage,
     traits::{EmbeddingModel, SimplePrompt},
 };
 
@@ -90,7 +90,9 @@ pub async fn responses_api_reasoning() -> anyhow::Result<()> {
         .build()?;
 
     let mut agent = Agent::builder().llm(&openai).build()?;
-    agent.query("Which crate in this workspace owns the agent loop?").await?;
+    agent
+        .query("Which crate in this workspace owns the agent loop?")
+        .await?;
 
     for message in agent.history().await? {
         if let ChatMessage::Reasoning(item) = message {

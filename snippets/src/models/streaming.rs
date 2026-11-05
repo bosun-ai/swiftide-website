@@ -11,7 +11,9 @@ use swiftide::{
 pub async fn complete_stream(openai: OpenAI) -> anyhow::Result<()> {
     // ANCHOR: complete_stream
     let request = ChatCompletionRequest::builder()
-        .messages(vec![ChatMessage::new_user("Explain borrowing in Rust in three sentences.")])
+        .messages(vec![ChatMessage::new_user(
+            "Explain borrowing in Rust in three sentences.",
+        )])
         .build()?;
 
     let mut stream: ChatCompletionStream = openai.complete_stream(&request).await;
@@ -50,7 +52,11 @@ pub async fn stream_deltas(request: ChatCompletionRequest<'_>) -> anyhow::Result
             complete = Some(response);
             continue;
         }
-        if let Some(chunk) = response.delta.as_ref().and_then(|d| d.message_chunk.as_deref()) {
+        if let Some(chunk) = response
+            .delta
+            .as_ref()
+            .and_then(|d| d.message_chunk.as_deref())
+        {
             print!("{chunk}");
         }
     }

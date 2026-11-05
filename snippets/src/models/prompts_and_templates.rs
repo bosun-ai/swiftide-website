@@ -1,12 +1,8 @@
 //! Snippets for `models/prompts-and-templates`.
 
 use swiftide::{
-    agents::Agent,
-    indexing::transformers::MetadataQAText,
-    integrations::openai::OpenAI,
-    prompt::Prompt,
-    query::answers,
-    traits::SimplePrompt,
+    agents::Agent, indexing::transformers::MetadataQAText, integrations::openai::OpenAI,
+    prompt::Prompt, query::answers, traits::SimplePrompt,
 };
 
 /// A one-off template filled with two values, rendered and then sent.
@@ -26,10 +22,9 @@ pub async fn prompt_with_context(openai: OpenAI) -> anyhow::Result<()> {
 /// A Tera for-loop over a list value.
 pub fn prompt_with_loop() -> anyhow::Result<()> {
     // ANCHOR: prompt_with_loop
-    let prompt = Prompt::from(
-        "Review these files:\n{% for file in files %}- {{ file }}\n{% endfor %}",
-    )
-    .with_context_value("files", vec!["src/lib.rs", "src/main.rs"]);
+    let prompt =
+        Prompt::from("Review these files:\n{% for file in files %}- {{ file }}\n{% endfor %}")
+            .with_context_value("files", vec!["src/lib.rs", "src/main.rs"]);
     // ANCHOR_END: prompt_with_loop
     prompt.render()?;
     Ok(())
