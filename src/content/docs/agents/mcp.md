@@ -67,6 +67,12 @@ A toolbox holds one filter, and each call replaces it:
 
 Names match the tool names the server reports, exactly and without the server prefix. A whitelisted name that the server does not offer is skipped without an error.
 
+A blacklist suits a server where most tools are safe to expose. This toolbox keeps the GitHub server's read tools and hides three that write:
+
+::snippet{src="@snippets/src/agents/mcp.rs" anchor="blacklist"}
+
+`with_name` and `with_blacklist` both return `&mut Self`, so they chain on a `let mut` binding, and the toolbox itself then moves into `add_toolbox`. A tool that a new version of the server adds passes a blacklist, but not a whitelist.
+
 ## Tool names
 
 Since 0.32, Swiftide registers each MCP tool as `<server name>:<tool>`. The server name comes from the handshake, and falls back to `mcp` when it is missing or empty. The model sees the prefixed name, and Swiftide calls the server with the original one.

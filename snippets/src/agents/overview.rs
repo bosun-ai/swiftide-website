@@ -40,3 +40,19 @@ pub async fn query_and_continue() -> anyhow::Result<()> {
     // ANCHOR_END: query_and_continue
     Ok(())
 }
+
+/// Gives an agent a name that your own code can read back.
+pub fn named_agent(openai: &OpenAI) -> anyhow::Result<()> {
+    // ANCHOR: named_agent
+    let agent = Agent::builder()
+        .llm(openai)
+        .name("release-checker")
+        .build()?;
+    assert_eq!(agent.name(), "release-checker");
+
+    // Without `name`, every agent is called "unnamed_agent".
+    let unnamed = Agent::builder().llm(openai).build()?;
+    assert_eq!(unnamed.name(), "unnamed_agent");
+    // ANCHOR_END: named_agent
+    Ok(())
+}

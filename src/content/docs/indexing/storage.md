@@ -4,7 +4,7 @@ description: "Store indexed nodes with then_store_with in LanceDB, Qdrant, PgVec
 sidebar:
   order: 7
 identLint:
-  ignore: [last_updated_at, RefCell]
+  ignore: [last_updated_at, RefCell, swiftide_cache]
 ---
 
 `then_store_with` writes every node to a storage backend. You end up with nodes in LanceDB or Qdrant, a clear picture of what each backend keeps of a node, and a storage of your own built on the `Persist` trait.
@@ -74,6 +74,17 @@ DuckDB stores node by node and ignores its builder's `batch_size`. It rejects a 
 Redis works as a key-value store for nodes. `persist_key_fn` changes the key and `persist_value_fn` the value. Both take a plain `fn` pointer, so a closure that captures variables does not compile. The example writes only the metadata and raises the batch size from 10 to 50:
 
 ::snippet{src="@swiftide/examples/index_into_redis.rs" anchor="pipeline" title="examples/index_into_redis.rs"}
+
+### DuckDB
+
+No swiftide example uses DuckDB, so this section describes the builder without code. `Duckdb::builder()` returns a `DuckdbBuilder` with these methods:
+
+- `connection` takes anything that converts into a `duckdb::Connection`. Swiftide does not re-export the `duckdb` crate, so add it to your crate yourself.
+- `with_vector(field, size)` adds a vector column of `size` floats for an `EmbeddedField`, such as `EmbeddedField::Combined`.
+- `table_name` defaults to `swiftide`, and `cache_table` to `swiftide_cache`. `cache_key_prefix` prefixes the node cache keys, which also lets you invalidate the cache by hand.
+- `schema` replaces the SQL that loads the extensions and creates the table. The upsert statement is built from the table name and vectors, so keep the column names when you change it. `upsert_vectors` is the flag described above.
+
+`Duckdb` implements `Persist` for `then_store_with`, `NodeCache` for `filter_cached`, and `Retrieve` for three search strategies: `SimilaritySingleEmbedding`, `HybridSearch` and `CustomStrategy<String>`. The setup installs and loads the `vss` and `fts` extensions before it creates the table. Retrieved documents carry `id` and `path` as metadata, since no other metadata is stored. See [`DuckdbBuilder`](docsrs:swiftide/integrations/duckdb/struct.DuckdbBuilder.html) for every method.
 
 ## MemoryStorage
 

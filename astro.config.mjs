@@ -113,6 +113,8 @@ export default defineConfig({
 					// Expressive Code's "N collapsed lines" toggle is chrome, not code; `.sw-llms-exclude`
 					// marks content kept out of every llms file (`::include{llms="false"}`).
 					// The small file also drops heading anchors and snippet "Source:" permalinks.
+					// Keep headings and list items on their own lines in llms-small.txt; it is read by models, not bytes-counted.
+					minify: { whitespace: false },
 					customSelectors: {
 						all: ['summary:has(.expand)', '.sw-llms-exclude'],
 						small: ['.sl-anchor-link', '.sw-source'],

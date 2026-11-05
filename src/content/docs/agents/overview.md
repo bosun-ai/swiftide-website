@@ -3,6 +3,8 @@ title: "How agents work"
 description: "Build a Swiftide agent, run its completion and tool-call loop, and read why it stopped."
 sidebar:
   order: 1
+identLint:
+  ignore: [unnamed_agent]
 ---
 
 After this page you can build an agent, run it, continue its conversation, and read why it stopped. The larger example is the [release-notes-agent showcase](/showcases/release-notes-agent/), which drafts release notes from git history. Agents live in `swiftide::agents`, behind the `swiftide-agents` feature flag:
@@ -68,6 +70,14 @@ The showcase passes an `OpenAI` client pointed at any OpenAI-compatible endpoint
 `Agent::builder()` starts with one tool, `stop`, which the model calls when it is done. The showcase replaces it with a `stop` tool whose arguments are the release notes, so it calls `without_default_stop_tool` before `tools`. The list mixes tools from `#[swiftide::tool]` functions, a tool wrapped in `ApprovalRequired`, and a `StopWithArgs` built from a JavaScript Object Notation (JSON) schema.
 
 `add_toolbox` adds the GitHub tools from a Model Context Protocol (MCP) server when you pass `--mcp` in a repository hosted on GitHub. The MCP toolbox needs the `mcp` feature flag, which the showcase enables. The two `progress` functions take `&mut AgentBuilder` and register hooks, which keeps the builder short. The [hooks page](/agents/hooks/) shows a captured run of this agent with `claude-sonnet-5-5`.
+
+### Agent names
+
+`AgentBuilder::name` labels an agent, and `Agent::name()` reads the label back:
+
+::snippet{src="@snippets/src/agents/overview.rs" anchor="named_agent"}
+
+The name defaults to `unnamed_agent`. Swiftide only shows it in the agent's `Debug` output, so use it in your own logs or to tell agents apart in a multi-agent setup.
 
 ## Agent and application responsibilities
 

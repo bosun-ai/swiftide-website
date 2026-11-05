@@ -38,6 +38,18 @@ cargo add schemars@1 serde serde_json --features serde/derive
 
 `structured_prompt` itself needs no extra feature flag. The `json-schema` feature only derives `JsonSchema` on some of Swiftide's own types.
 
+### Schemas for Swiftide types
+
+With `json-schema`, `ToolCall`, `ToolSpec`, `ToolFeedback`, `StopReason` and the agent `State` derive `JsonSchema`. Your own types can then hold them as fields and still derive a schema, for example the request body of an approval endpoint:
+
+```sh
+cargo add swiftide@{{swiftide_version}} --features openai,swiftide-agents,json-schema
+```
+
+::snippet{src="@snippets/src/models/structured_output.rs" anchor="swiftide_type_schema"}
+
+`StopReason` and `State` live in `swiftide::agents`, so they also need the `swiftide-agents` feature flag. The `json-schema` feature adds no API of its own.
+
 ## Schema rules
 
 OpenAI clients send the schema in strict mode. This holds for Chat Completions and for the Responses application programming interface (API). Strict mode has two rules for every object in the schema.

@@ -1,12 +1,16 @@
 //! Snippets for `querying/evaluation`.
 
+use std::sync::{Arc, Mutex};
+
+use async_trait::async_trait;
 use swiftide::{
     integrations::{openai::OpenAI, qdrant::Qdrant},
     query::{
-        self, answers,
+        self, QueryEvaluation, answers,
         evaluators::ragas::{EvaluationDataSet, Ragas},
         query_transformers,
     },
+    traits::EvaluateQuery,
 };
 
 /// Evaluates a pipeline on questions with hand-written ground truths and writes the dataset.
@@ -69,5 +73,48 @@ pub async fn load_dataset(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> 
     // ANCHOR_END: load_dataset
 
     std::fs::write("ragas.json", ragas.to_json().await)?;
+    Ok(())
+}
+
+// ANCHOR: custom_evaluator
+/// Flags questions for which the retriever found nothing.
+#[derive(Clone, Default)]
+pub struct EmptyRetrievals {
+    questions: Arc<Mutex<Vec<String>>>,
+}
+
+#[async_trait]
+impl EvaluateQuery for EmptyRetrievals {
+    async fn evaluate(&self, evaluation: QueryEvaluation) -> anyhow::Result<()> {
+        if let QueryEvaluation::RetrieveDocuments(query) = evaluation
+            && query.documents().is_empty()
+        {
+            self.questions
+                .lock()
+                .unwrap()
+                .push(query.original().to_string());
+        }
+        Ok(())
+    }
+}
+// ANCHOR_END: custom_evaluator
+
+/// Runs a pipeline with the custom evaluator and prints the questions without documents.
+pub async fn custom_evaluator(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> {
+    // ANCHOR: use_custom_evaluator
+    let empty = EmptyRetrievals::default();
+
+    query::Pipeline::default()
+        .evaluate_with(empty.clone())
+        .then_transform_query(query_transformers::Embed::from_client(openai.clone()))
+        .then_retrieve(qdrant)
+        .then_answer(answers::Simple::from_client(openai))
+        .query("What does a retriever return?")
+        .await?;
+
+    for question in empty.questions.lock().unwrap().iter() {
+        println!("no documents for: {question}");
+    }
+    // ANCHOR_END: use_custom_evaluator
     Ok(())
 }

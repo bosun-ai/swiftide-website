@@ -208,6 +208,13 @@ main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
 	min-height: 3.1em;
 }
 
+/* Side by side, reserve three lines so the three excerpts start on one line. */
+@media (min-width: 72rem) {
+	main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
+		min-height: calc(3 * 1.55em);
+	}
+}
+
 main:has(.sw-hero[data-page='home']) .card-grid .card .body > .sw-source {
 	margin-top: 0.5rem;
 }

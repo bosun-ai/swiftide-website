@@ -24,11 +24,16 @@
 	text-wrap: balance;
 }
 
-.sl-markdown-content :not(h1, h2, h3, h4, h5, h6) + :is(h2):not(:where(.not-content *)) {
+/* Starlight wraps h2-h4 in .sl-heading-wrapper (with the anchor link), so space the wrapper. */
+.sl-markdown-content
+	:not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper)
+	+ :is(h2, .sl-heading-wrapper.level-h2):not(:where(.not-content *)) {
 	margin-top: 2.75rem;
 }
 
-.sl-markdown-content :not(h1, h2, h3, h4, h5, h6) + :is(h3, h4):not(:where(.not-content *)) {
+.sl-markdown-content
+	:not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper)
+	+ :is(h3, h4, .sl-heading-wrapper:is(.level-h3, .level-h4)):not(:where(.not-content *)) {
 	margin-top: 2rem;
 }
 
@@ -105,6 +110,18 @@
 	color: var(--sw-muted);
 }
 
+/* The "Reference" list closing each page: API names in compact columns rather than one long list. */
+.sl-markdown-content .sl-heading-wrapper:has(> h2#reference) + ul {
+	max-width: none;
+	columns: 14rem auto;
+	column-gap: 2rem;
+}
+
+.sl-markdown-content .sl-heading-wrapper:has(> h2#reference) + ul > li {
+	break-inside: avoid;
+	margin-block: 0 0.25rem;
+}
+
 /* Inline code: narrow mono, a tone step, no border. */
 .sl-markdown-content code:not(:where(.not-content *)) {
 	font-family: var(--sw-font-mono);
@@ -151,7 +168,7 @@
 
 .sl-markdown-content :is(th, td):not(:where(.not-content *)) {
 	border-bottom-color: var(--sw-line);
-	padding-inline: 0.625rem;
+	padding-inline: 0.5rem;
 }
 
 .sl-markdown-content td:not(:where(.not-content *)) {
@@ -306,7 +323,7 @@
 	font-stretch: var(--sw-mono-narrow);
 	font-size: 0.71875rem;
 	line-height: 1.5;
-	color: var(--sw-faint);
+	color: var(--sw-muted);
 	overflow-wrap: anywhere;
 }
 

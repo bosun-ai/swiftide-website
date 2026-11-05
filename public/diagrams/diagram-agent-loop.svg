@@ -11,7 +11,7 @@
 	<rect x="130" y="24" width="112" height="30"/>
 	<text x="186" y="42.6" text-anchor="middle" stroke="none" fill="currentColor">completion</text>
 	<path d="M186 54 V112" marker-end="url(#sw-agent-loop-a)"/>
-	<text x="192" y="88" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">tool calls</text>
+	<text x="180" y="88" text-anchor="end" stroke="none" fill="currentColor" opacity="0.6" font-size="9">tool calls</text>
 	<rect x="130" y="114" width="112" height="30"/>
 	<text x="186" y="132.6" text-anchor="middle" stroke="none" fill="currentColor">run tools</text>
 	<path d="M242 129 H286 Q300 129 300 115 V53 Q300 39 286 39 H244" marker-end="url(#sw-agent-loop-a)"/>

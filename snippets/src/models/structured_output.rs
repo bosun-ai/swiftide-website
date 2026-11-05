@@ -83,3 +83,23 @@ pub async fn agent_stop_schema(openai: OpenAI) -> anyhow::Result<Option<ReleaseS
     // ANCHOR_END: agent_stop_schema
     Ok(summary)
 }
+
+// ANCHOR: swiftide_type_schema
+/// The body your approval endpoint accepts; the `json-schema` feature flag lets it derive
+/// `JsonSchema` with Swiftide types as fields.
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ApprovalDecision {
+    /// The call the agent stopped on, as `StopReason::FeedbackRequired` reported it.
+    pub tool_call: swiftide::chat_completion::ToolCall,
+    /// The person's decision.
+    pub feedback: swiftide::traits::ToolFeedback,
+}
+
+/// Prints the JSON Schema of the approval body, for example for an OpenAPI document.
+pub fn approval_schema() -> anyhow::Result<()> {
+    let schema = schema_for!(ApprovalDecision);
+    println!("{}", serde_json::to_string_pretty(&schema)?);
+    Ok(())
+}
+// ANCHOR_END: swiftide_type_schema

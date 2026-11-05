@@ -103,6 +103,16 @@ RAGAS dataset written to examples/docs-qa/ragas.json
 
 Before retrieval was tuned, two questions scored lower. One fix added page and title to the rerank template; see [Rerank templates](/querying/reranking-and-response-transformers/#rerank-templates). The other changed the indexing prompt so code-only chunks get titles that name the API they show; see the [docs-qa showcase](/showcases/docs-qa/).
 
+## Custom evaluators
+
+Any type that implements `EvaluateQuery` can take the place of `Ragas`. The trait has one async method, `evaluate`, which receives a `QueryEvaluation`: `RetrieveDocuments` with the query after retrieval, or `AnswerQuery` with the answered query. The trait requires `Clone`, so keep shared state behind an `Arc`. This evaluator collects the questions for which the retriever found no documents:
+
+::snippet{src="@snippets/src/querying/evaluation.rs" anchor="custom_evaluator"}
+
+::snippet{src="@snippets/src/querying/evaluation.rs" anchor="use_custom_evaluator"}
+
+An error from `evaluate` fails the query, so return `Ok` for anything that should only be recorded.
+
 ## Gotchas
 
 - `evaluate_with` exists only on a pending pipeline. Call it before `then_retrieve`; its position among query transformers does not matter.

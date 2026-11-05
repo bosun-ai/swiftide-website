@@ -85,6 +85,14 @@ New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::stat
 
 Enable INFO for the `swiftide_indexing` target to see them, for example with `RUST_LOG=swiftide_indexing=info`. [Tracing](/observability/tracing/) shows the subscriber setup.
 
+### Your own collector
+
+`StatsCollector` is thread-safe and works outside a pipeline. To read the numbers of a run in code, create one yourself, share it through an `Arc`, and fill it from a closure transformer:
+
+::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="own_stats_collector"}
+
+`pipeline.stats()` works on the built pipeline until `run` takes it, and before the run every count is 0. Your collector outlives the run. `start` and `complete` set the times that `duration` and `nodes_per_second` use, and `nodes_per_second` returns `None` when no node was counted.
+
 ### Statistics gotchas
 
 - `nodes_processed` and `nodes_stored` both count the nodes that reach the end of the pipeline. They are the same number, even when the last step is not storage.

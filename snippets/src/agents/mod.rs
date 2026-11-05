@@ -5,6 +5,7 @@ pub mod contrib;
 pub mod executors;
 pub mod hooks;
 pub mod human_in_the_loop;
+pub mod mcp;
 pub mod overview;
 pub mod providers;
 pub mod stopping;

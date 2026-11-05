@@ -43,6 +43,16 @@ Where the messages live is the job of the `MessageHistory` trait. It has three r
 
 The trait requires `Send + Sync + Debug` and is declared with `#[async_trait]`, so annotate your impl the same way. `push`, `extend` and `extend_owned` have default implementations on top of `push_owned`. Implement the trait for your database and pass the value to `DefaultContext::with_message_history`. The backend only stores the list. Each completion sends the full history, cut at the latest summary, and the context's counters only decide whether a new completion runs.
 
+### Custom backend
+
+This backend keeps one conversation in a JSON file. It uses the `async-trait` crate for the `#[async_trait]` attribute:
+
+::snippet{src="@snippets/src/agents/context_and_history.rs" anchor="custom_history"}
+
+::snippet{src="@snippets/src/agents/context_and_history.rs" anchor="use_custom_history"}
+
+Every method takes `&self`, so the backend guards its own state; here a `tokio::sync::Mutex` keeps two writes from interleaving. `history` returns an empty list for a file that does not exist yet. `with_message_history` takes the value by ownership and stores it behind an `Arc`.
+
 ## Redis storage
 
 The `redis` feature flag adds a `Redis` integration that implements `MessageHistory`:
@@ -60,6 +70,10 @@ The connection opens on first use. If Redis is unreachable, the agent returns `A
 ## Approvals across restarts
 
 Approvals are not part of the message history. They live in the context's memory. When the agent stops with `StopReason::FeedbackRequired`, store the `ToolCall` it carries; the person's `ToolFeedback` comes later. Store each decision as a `(ToolCall, ToolFeedback)` pair, since `serde_json` cannot use a struct as a map key. Both types implement `Serialize` and `Deserialize`. Collect the pairs into a `HashMap` for `DefaultContext::with_tool_feedback` in the new process. [Human in the loop](/agents/human-in-the-loop/) covers approvals.
+
+::snippet{src="@snippets/src/agents/context_and_history.rs" anchor="restore_approvals"}
+
+`with_tool_feedback` accepts anything that converts into a `HashMap<ToolCall, ToolFeedback>` and adds the entries to the feedback the context already holds. The restored history still ends in the pending tool call, so `run` calls the tool again, and the tool now finds its approval.
 
 ## History rewrites
 

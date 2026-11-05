@@ -3,9 +3,10 @@
 
 use schemars::{JsonSchema, schema_for};
 use serde::Deserialize;
-use serde_json::Value;
+use serde_json::{Value, json};
 use swiftide::{
     agents::{Agent, StopReason, tools::control::AgentCanFail},
+    chat_completion::ToolOutput,
     integrations::openai::OpenAI,
 };
 
@@ -82,4 +83,31 @@ pub async fn failure_payload(openai: OpenAI) -> anyhow::Result<()> {
     }
     // ANCHOR_END: failure_payload
     Ok(())
+}
+
+/// Reads tool outputs with the accessor helpers and turns a failed deploy into a failed run.
+pub fn tool_output_accessors(openai: &OpenAI) -> anyhow::Result<Agent> {
+    // ANCHOR: tool_output_accessors
+    let agent = Agent::builder()
+        .llm(openai)
+        .after_tool(|_agent, tool_call, result| {
+            if let Ok(output) = result {
+                if let Some(text) = output.as_text() {
+                    println!("`{}` returned {} bytes", tool_call.name(), text.len());
+                } else if let Some(error) = output.as_fail().map(str::to_owned) {
+                    // A failed deploy ends the run instead of going back to the model.
+                    if tool_call.name() == "deploy" {
+                        *output = ToolOutput::agent_failed(json!({ "deploy": error }));
+                    }
+                } else if let Some(payload) = output.as_stop() {
+                    println!("stopping with {payload}");
+                } else if let Some(reason) = output.as_agent_failed() {
+                    println!("giving up: {reason}");
+                }
+            }
+            Box::pin(async { Ok(()) })
+        })
+        .build()?;
+    // ANCHOR_END: tool_output_accessors
+    Ok(agent)
 }

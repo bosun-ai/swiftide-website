@@ -86,6 +86,17 @@ Set defaults with `AwsBedrockBuilder::default_options`, or change them later wit
 
 `ReasoningEffort::Max` is meant for Claude Opus 4.6 with adaptive thinking. Set `thinking.type` to `adaptive` through `additional_model_request_fields` to use it.
 
+### Reasoning and beta headers
+
+The swiftide examples do not set these fields, so this section names them without code. Build the value with `Options::builder()` and pass the result of `build()` to `default_options`. The setters take the value itself, not an `Option`:
+
+- `reasoning_effort` takes `swiftide::integrations::aws_bedrock_v2::ReasoningEffort` (`Low`, `Medium`, `High` or `Max`). Swiftide writes it to `output_config.effort` in the model request fields.
+- `tool_strict` takes a `bool`. `false` sends tools without strict schema validation.
+- `anthropic_beta` takes a list of beta header names. Swiftide adds them to the `anthropic_beta` array in the model request fields, without duplicates.
+- `additional_model_request_fields` takes the `Document` that the two fields above are merged into.
+
+See [`OptionsBuilder` (AWS Bedrock)](docsrs:swiftide/integrations/aws_bedrock_v2/struct.OptionsBuilder.html) for every setter.
+
 ## Structured prompts
 
 `AwsBedrock` implements `DynStructuredPrompt`, so `structured_prompt::<T>` from `StructuredPrompt` works through the blanket implementation. Swiftide sends the schema as a Converse output configuration with a JSON Schema text format, then parses the reply into JSON. Whether a model accepts that format is up to Bedrock. [Structured output](/models/structured-output/) shows the call.

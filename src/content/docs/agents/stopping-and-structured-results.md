@@ -86,6 +86,14 @@ Each variant means something different for your code:
 
 `StopReason` is marked `#[non_exhaustive]`, so a `match` needs a wildcard arm. `agent.stop_reason()` returns `None` while the agent is `Pending` or `Running`. That includes a run that returned an error without recording a stop. Each variant also has an `is_*` method, and most have an `as_*` accessor such as `as_requested_by_tool`.
 
+### Tool outputs
+
+`ToolOutput` has the same kind of accessors. `as_text` and `as_fail` return the text of a `Text` or `Fail` output; `as_stop` and `as_agent_failed` return the payload of a `Stop` or `AgentFailed` output. This `after_tool` hook reads them, and turns a failed `deploy` call into a failed run with `ToolOutput::agent_failed`:
+
+::snippet{src="@snippets/src/agents/stopping.rs" anchor="tool_output_accessors"}
+
+The agent checks the output after the `after_tool` hooks run, so the rewritten output stops it with `StopReason::AgentFailed(Some(payload))`. `as_stop` and `as_agent_failed` return `None` when the output carries no payload, as with the default `stop` tool; match on `ToolOutput::Stop` or `ToolOutput::AgentFailed` to test the variant itself.
+
 ## Gotchas
 
 - To tell the cases of `NoNewMessages` apart, check whether the last assistant message has tool calls, or turn off the text-answer stop with `with_stop_on_assistant(false)` (see [Context and history](/agents/context-and-history/)).
