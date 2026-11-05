@@ -5,7 +5,6 @@
 //! that compiles, so every line a reader sees has been type-checked against the pinned swiftide.
 //! Modules mirror the site's sections.
 
-pub mod landing;
 pub mod models;
 pub mod reference;
 pub mod start;

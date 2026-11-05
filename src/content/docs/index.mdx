@@ -21,48 +21,53 @@ cargo add swiftide --features swiftide-agents,openai
 
 A model, your tools and hooks in a loop. The agent stops when the model calls `stop`, or at a limit you set.
 
-::snippet{src="@snippets/src/landing/agent.rs" anchor="agent" title="release_notes.rs" wrap="true"}
+::snippet{src="@swiftide/examples/release-notes-agent/src/agent.rs" anchor="agent" title="examples/release-notes-agent/src/agent.rs" collapse="1-7,25-33" wrap="true"}
 
 ```text wrap
-→ git_log { "tag": "v0.32.0" }
-← 23 commits
-## 0.33.0
-- `Prompt` replaces `SystemPrompt` for system messages
+→ git_log_since v0.33.0
+git_log_since ✓ 346 lines
+→ git_diff swiftide/Cargo.toml 71fa4587^..71fa4587
+→ write_changelog <32 lines>
+write_changelog ✓ wrote RELEASE_NOTES.md
+→ stop (version 0.34.0: highlights 2, breaking 1, fixes 1)
 ```
 
-[Agents →](/agents/overview/)
+[Agents →](/agents/overview/) · [Release notes agent →](/showcases/release-notes-agent/)
 
 </Card>
 <Card title="Tasks">
 
 Typed nodes and transitions. Fan out to parallel branches, join the results, pause for a human and resume.
 
-::snippet{src="@snippets/src/landing/task.rs" anchor="task" title="review.rs" wrap="true"}
+::snippet{src="@swiftide/examples/workspace-architect/src/graph.rs" anchor="graph" title="examples/workspace-architect/src/graph.rs" collapse="1-54,72-83" wrap="true"}
 
 ```text wrap
-task.run: start → [risks ∥ summary] → report
-risks    0.9s  412 tokens
-summary  1.4s  388 tokens
-Completed("Risks:\n- The retry loop in …")
+[   0.0s] analyse  started  swiftide-core
+[  14.0s] analyse  finished swiftide-langfuse in 14.0s (6 tool calls)
+[  40.5s] analyse  finished swiftide-core in 40.5s (15 tool calls)
+[  40.5s] join     10 summaries; 230s of agent work in 41s wall-clock (5.7x)
+[  68.8s] review   draft ready (11210 bytes), waiting for approval
+[  68.8s] review   draft approved
 ```
 
-[Tasks →](/tasks/overview/)
+[Tasks →](/tasks/overview/) · [Workspace architect →](/showcases/workspace-architect/)
 
 </Card>
 <Card title="Pipelines">
 
-Stream files through chunkers, transformers and embedders into a store, then query it with a typed pipeline.
+Stream files through filters, chunkers, transformers and embedders into a store. A node cache skips files that did not change.
 
-::snippet{src="@snippets/src/landing/pipeline.rs" anchor="pipeline" title="ask.rs" wrap="true"}
+::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs" wrap="true"}
 
 ```text wrap
-indexing: 214 files → 1,906 chunks → qdrant
-query: 5 chunks retrieved
-An agent stops when the model calls the `stop` tool,
-or when it reaches the limit set with `.limit(n)`.
+$ ./target/debug/ask-your-codebase index swiftide-agents --model claude-haiku-5-5
+Indexing Rust files in swiftide-agents ...
+Indexed 34 chunks from 14 new or changed files (14 files found, 0 unchanged) in 91.9s
+$ ./target/debug/ask-your-codebase index swiftide-agents --model claude-haiku-5-5
+Indexed 0 chunks from 0 new or changed files (14 files found, 14 unchanged) in 0.6s
 ```
 
-[Indexing →](/indexing/overview/) · [Querying →](/querying/overview/)
+[Indexing →](/indexing/overview/) · [Ask your codebase →](/showcases/ask-your-codebase/)
 
 </Card>
 </CardGrid>
