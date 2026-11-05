@@ -30,7 +30,7 @@ The default prompt is written for code. It asks the model to think about the dep
 
 The ask-your-codebase showcase sets its own prompt on the builder:
 
-::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="9"}
+::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="8"}
 
 `SUBQUESTIONS_PROMPT` is a constant next to the pipeline:
 

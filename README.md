@@ -49,12 +49,12 @@ Pages are markdown. On top of Starlight's syntax the site supports these directi
 ::feature-flags
 ::integrations{kind="storage"}
 
-Run `cargo add swiftide@{{swiftide_version}}`. See [`Agent`](docsrs:swiftide/agents/struct.Agent.html). :unreleased
+Run `cargo add swiftide@{{swiftide_version}}`. Read [the source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples). See [`Agent`](docsrs:swiftide/agents/struct.Agent.html). :unreleased
 ```
 
 - **`::snippet`** cuts a region out of a compiled file. `@swiftide/` points into `vendor/swiftide`, `@snippets/` into `snippets/`. Select the region with `anchor="name"`, which matches `// ANCHOR: name` and `// ANCHOR_END: name` markers in the source (nested markers are stripped, the excerpt is dedented), or temporarily with `lines="20-48"`. Optional: `title`, `collapse`, `mark`, `ins`, `del` (line ranges relative to the excerpt), `frame`, `wrap`, `lang`, and `source="false"` to drop the "Source:" permalink that is added below every snippet.
 - **`::include`** splices a markdown file in (`strip` drops matching lines, `shift` demotes headings, `llms="false"` keeps it out of the llms files). **`::feature-flags`** renders the feature flag tables from swiftide's `Cargo.toml`. **`::integrations`** renders the integrations matrix from `src/data/integrations.yaml`, optionally filtered by `kind`.
-- **`{{swiftide_version}}`** is the pinned release (e.g. `0.33.0`); **`docsrs:`** links point at docs.rs for that release; **`:unreleased`** marks APIs that are on swiftide master but not released yet. Frontmatter `swiftide: { since: "0.32", unreleased: true }` adds the same badges next to the page title. In `.mdx` pages `{` starts a JSX expression, so `{{swiftide_version}}` only works in `.md` pages.
+- **`{{swiftide_version}}`** is the pinned release (e.g. `0.33.0`) and **`{{swiftide_sha}}`** the full pinned commit, for GitHub URLs, `git checkout` and `cargo add --rev`; **`docsrs:`** links point at docs.rs for that release; **`:unreleased`** marks APIs that are on swiftide master but not released yet. Frontmatter `swiftide: { since: "0.32", unreleased: true }` adds the same badges next to the page title. In `.mdx` pages `{` starts a JSX expression, so the `{{…}}` placeholders only work in `.md` pages.
 
 Anything that cannot be resolved (missing file or anchor, unknown attribute, out-of-range `mark`, unknown placeholder) fails the build with the page and line.
 
@@ -73,14 +73,6 @@ git commit -m "chore: pin swiftide $(git -C vendor/swiftide describe --tags)"
 ```
 
 The script refuses commits whose swiftide CI is not green, stages the new gitlink, updates `snippets/Cargo.lock` and runs `pnpm verify`. The `Bump swiftide` workflow does the same and opens a PR; swiftide's CI can trigger it with a `swiftide-master-green` repository dispatch.
-
-> **Before merging the `refresh` branch:** `.gitmodules` currently points at a local swiftide worktree (branch `docs/showcases`, not yet pushed). Once that branch is merged upstream, point the submodule at GitHub and re-pin:
->
-> ```sh
-> git config -f .gitmodules submodule.vendor/swiftide.url https://github.com/bosun-ai/swiftide.git
-> git config -f .gitmodules submodule.vendor/swiftide.branch master
-> git submodule sync && scripts/bump-swiftide.sh origin/master
-> ```
 
 ## For LLMs and coding agents
 

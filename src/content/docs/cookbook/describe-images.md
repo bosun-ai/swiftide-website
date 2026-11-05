@@ -21,16 +21,13 @@ cargo run -p swiftide-examples --example describe-image
 
 The examples crate turns on every integration, so the first build compiles all of them. It needs `cmake` and the Protocol Buffers compiler (`protoc`) on your machine.
 
-To use the code in your own crate, add the OpenAI client, which sits behind the `openai` feature flag, the `base64` crate to encode the image, and `rustls` for the crypto provider:
+To use the code in your own crate, add the OpenAI client, which sits behind the `openai` feature flag, and the `base64` crate to encode the image:
 
 ```sh
 cargo add swiftide@{{swiftide_version}} --features openai
 cargo add base64@0.22 anyhow
 cargo add tokio --features macros,rt-multi-thread
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
-
-Swiftide does not pick a Transport Layer Security (TLS) crypto provider for you. Install one at the start of `main`, before you build the client. [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the two lines you need.
 
 ## Client
 

@@ -8,11 +8,6 @@ use swiftide::{
 /// Asks one question, reads how the agent stopped, then continues the conversation.
 pub async fn query_and_continue() -> anyhow::Result<()> {
     // ANCHOR: query_and_continue
-    // Swiftide's HTTP clients use rustls without a crypto provider; install one first.
-    rustls::crypto::ring::default_provider()
-        .install_default()
-        .map_err(|_| anyhow::anyhow!("a rustls crypto provider was already installed"))?;
-
     // Reads OPENAI_API_KEY from the environment.
     let openai = OpenAI::builder()
         .default_prompt_model("gpt-5-mini")

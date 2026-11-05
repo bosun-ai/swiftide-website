@@ -16,7 +16,6 @@ cargo add swiftide@{{swiftide_version}} --features langfuse,openai
 cargo add tracing anyhow
 cargo add tracing-subscriber --features env-filter
 cargo add tokio --features macros,rt-multi-thread
-cargo add rustls --no-default-features --features aws_lc_rs,std
 ```
 
 The `langfuse` feature flag adds `swiftide::langfuse`. `LangfuseLayer::default()` reads its settings from the environment:
@@ -134,7 +133,6 @@ RUST_LOG=swiftide=debug,langfuse=debug cargo run --example langfuse
 - **One trace per layer.** The first span creates a trace named with the current Unix timestamp, and every later span joins it. A long-running server puts all requests in one trace; wrap each request in a span of your own to group its observations; they still share the one trace.
 - **Retries.** `LanguageModelWithBackOff` calls the inner client again per attempt, so each attempt is its own GENERATION observation.
 - **Rejected events.** When Langfuse rejects single events in a batch with 429 or 5xx, they are sent at most three times. Other rejected events are dropped with the WARN event "Dropping Langfuse events that will not be retried". When the whole request fails (wrong keys, network error, Langfuse down, a batch over 3.5 MB), the whole batch is lost: the sender logs an ERROR, or `flush` returns the error.
-- **Crypto provider.** Flags such as `openai` turn on rustls without a crypto provider. `LangfuseLayer::default()` and `Configuration::default()` then panic when they build their HTTP client, even for an `http` URL. Install a provider at the start of `main`, before the layer. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 - **Tokio.** `default`, `from_config` and every new span spawn Tokio tasks, and panic outside a runtime.
 
 ## Reference

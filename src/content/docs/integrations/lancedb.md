@@ -52,7 +52,7 @@ Only string values are stored. A number, a list or an object in that field is wr
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs"}
 
-`LanceDB` implements the `Retrieve` trait for `SimilaritySingleEmbedding`. The search runs a nearest-neighbour query on the single vector column and returns `top_k` rows, 10 by default. Keep the explicit type on `search`, or the build fails with E0283, as [SimilaritySingleEmbedding type annotations](/reference/troubleshooting-and-faq/#similaritysingleembedding-type-annotations) explains.
+`LanceDB` implements the `Retrieve` trait for `SimilaritySingleEmbedding`. The search runs a nearest-neighbour query on the single vector column and returns `top_k` rows, 10 by default. `SimilaritySingleEmbedding::default()` is the search without a filter, and `with_top_k` chains onto it. :unreleased
 
 The query needs an embedding, so an `Embed` query transformer runs before `then_retrieve`. Use the same model that embedded the chunks. A query without an embedding fails with `No embedding for query`.
 
@@ -89,7 +89,7 @@ Swiftide does not re-export the `lancedb` crate. Add it at the version Swiftide 
 cargo add lancedb@0.33 --no-default-features
 ```
 
-Swiftide's integration test [`swiftide/tests/lancedb.rs`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide/tests/lancedb.rs) builds a custom vector search with `from_async_query`.
+Swiftide's integration test [`swiftide/tests/lancedb.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide/tests/lancedb.rs) builds a custom vector search with `from_async_query`.
 
 ## Remote storage
 

@@ -17,7 +17,6 @@ Add Swiftide with the `openai` and `qdrant` feature flags, plus the runtime and 
 cargo add swiftide@{{swiftide_version}} --features openai,qdrant
 cargo add tokio --features macros,rt-multi-thread
 cargo add tracing-subscriber --features env-filter
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
 Set `OPENAI_API_KEY` and start Qdrant on `localhost:6334`, or point `QDRANT_URL` somewhere else; [Running Qdrant](/integrations/qdrant/#local-instance-and-connection) has the Docker command. Run the examples from the root of the swiftide repository, because they load `README.md` and `LICENSE` by relative path:
@@ -26,8 +25,6 @@ Set `OPENAI_API_KEY` and start Qdrant on `localhost:6334`, or point `QDRANT_URL`
 cargo run -p swiftide-examples --example index-markdown-metadata
 cargo run -p swiftide-examples --example store-multiple-vectors
 ```
-
-Swiftide does not select a Transport Layer Security (TLS) crypto provider. In your own binary, install a rustls crypto provider at the start of `main`; see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 
 ## Metadata transformers
 

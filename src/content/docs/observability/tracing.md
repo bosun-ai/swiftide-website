@@ -1,13 +1,13 @@
 ---
 title: "Tracing"
-description: "Log and trace Swiftide agents, tasks and pipelines with tracing-subscriber, hide the ERROR line of every retried model call, and export spans to OpenTelemetry."
+description: "Log and trace Swiftide agents, tasks and pipelines with tracing-subscriber, read the logs of retried model calls, and export spans to OpenTelemetry."
 sidebar:
   order: 1
 identLint:
   ignore: [answer_question, total_nodes, responses_stream, then_store_with_batched, "Instrument::instrument", ".or_current()"]
 ---
 
-Here you set up a subscriber that prints Swiftide's logs and spans, keeps retried model calls from filling your terminal with errors, and sends the spans to an OpenTelemetry (OTel) collector.
+Here you set up a subscriber that prints Swiftide's logs and spans, keeps failed model calls from showing up twice, and sends the spans to an OpenTelemetry (OTel) collector.
 
 ```sh
 cargo add tracing
@@ -96,17 +96,19 @@ Every Swiftide span the query opens becomes a child of `answer_question`. The sa
 
 ## Retry errors
 
-Retries are opt-in: you wrap the client in `LanguageModelWithBackOff` yourself. It logs nothing and calls the inner client again for each attempt. The OpenAI-compatible, `Anthropic` and `AwsBedrock` clients instrument `prompt` and `complete` with `err`, so every failed attempt logs an ERROR under `swiftide_integrations`. `async_openai`, the HTTP client underneath, logs server errors at WARN.
+Retries are opt-in: you wrap the client in `LanguageModelWithBackOff` yourself. Each failed attempt it retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When it gives up, it logs the final error once at ERROR, as `Language model request failed, giving up`. :unreleased Both events have the target `swiftide_core::indexing_decorators`.
 
-Hide them with the directives the showcases use:
+The OpenAI-compatible, `Anthropic` and `AwsBedrock` clients instrument `prompt`, `complete` and, where they have it, `structured_prompt` with `err(level = "warn")`. So every failed call also logs its error at WARN under `swiftide_integrations`, with or without retries. :unreleased `async_openai`, the HTTP client underneath, logs server errors at WARN.
 
-- `swiftide_integrations=off` drops the per-attempt errors.
+Hide the duplicates with the directives the showcases use:
+
+- `swiftide_integrations=off` drops the clients' per-call warnings.
 - `async_openai=error` drops the client's warnings.
 - `swiftide_agents=off` drops every agent event: returned errors, failed hooks, tool retries and `Agent loop limit reached`.
 
 `off` removes a target's spans too. Put these directives on the terminal layer with `with_filter`, as the OpenTelemetry snippet does. Otherwise the exporter loses the model-call spans and, with `swiftide_agents=off`, every agent span.
 
-The final error still reaches your code. [Errors, backoff, usage and tokens](/models/errors-backoff-and-usage/) covers when a call is retried.
+The final error still reaches your code, and the ERROR from `LanguageModelWithBackOff` stays visible. [Errors, backoff, usage and tokens](/models/errors-backoff-and-usage/) covers when a call is retried.
 
 ## Noisy events
 
@@ -133,7 +135,7 @@ The exporter posts spans to `http://localhost:4318/v1/traces`. `OTEL_EXPORTER_OT
 - Indexing step spans are TRACE. Enable them only to follow single nodes or batches.
 - Swiftide instruments indexing and query pipeline steps, tools and hooks with `.or_current()`. The agent `step` and `task.step` spans do not use it. When such a span is filtered out, the spans inside it attach to the enclosing span.
 - A hook that returns an error logs `Error in <hook type> hook` at ERROR, and the agent carries on. `swiftide_agents=off` hides it.
-- An `https` collector needs Transport Layer Security (TLS) in the exporter's HTTP client. Enable a TLS feature of `opentelemetry-otlp`, such as `reqwest-rustls`. Swiftide's own clients need an installed rustls crypto provider; see [Troubleshooting and FAQ](/reference/troubleshooting-and-faq/).
+- An `https` collector needs Transport Layer Security (TLS) in the exporter's HTTP client. Enable a TLS feature of `opentelemetry-otlp`, such as `reqwest-rustls`.
 
 ## Reference
 

@@ -130,7 +130,7 @@ An error from `evaluate` fails the query, so return `Ok` for anything that shoul
 - [`QueryEvaluation`](docsrs:swiftide/query/enum.QueryEvaluation.html)
 - [`query::Pipeline`](docsrs:swiftide/query/struct.Pipeline.html)
 - [`Query`](docsrs:swiftide/query/struct.Query.html)
-- [docs-qa source on GitHub](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/docs-qa)
+- [docs-qa source on GitHub](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/docs-qa)
 
 ## Next
 

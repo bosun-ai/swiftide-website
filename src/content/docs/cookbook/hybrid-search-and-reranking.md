@@ -26,7 +26,7 @@ cargo add tokio --features full
 cargo add tracing-subscriber
 ```
 
-`tree-sitter` is only needed for the code chunker in the hybrid example. In your own binary, install a rustls crypto provider at the start of `main`; see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
+`tree-sitter` is only needed for the code chunker in the hybrid example.
 
 ## Hybrid indexing
 

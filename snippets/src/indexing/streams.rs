@@ -46,12 +46,14 @@ pub async fn split_merge() -> anyhow::Result<()> {
     let markdown = markdown.then_chunk(ChunkMarkdown::from_chunk_range(100..2048));
     let code = code.then_chunk(ChunkCode::try_for_language("rust")?);
 
-    markdown
+    // One set of statistics for both branches
+    let stats = markdown
         .merge(code)
         .then_store_with(MemoryStorage::default())
         .run()
         .await?;
     // ANCHOR_END: split_merge
+    println!("Stored {} chunks", stats.nodes_stored);
     Ok(())
 }
 

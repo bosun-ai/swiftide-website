@@ -50,12 +50,10 @@ uuid = "1"
 # `#[indexing_transformer]` expands to paths in `swiftide_core` and `derive_builder` (indexing/transformers-and-metadata).
 swiftide-core = { path = "../vendor/swiftide/swiftide-core" }
 derive_builder = "0.20"
-# Only for `OpenAIConfig` and `Client::with_config` on models/overview; swiftide does not re-export it.
+# `Client::with_config` for the Azure, remote Ollama and OpenRouter configs on integrations/openai, integrations/openai-compatible and agents/providers-and-reasoning; `OpenAI::builder().api_base(..)` covers only `OpenAIConfig`, and swiftide does not re-export async-openai.
 async-openai = { version = "0.41", default-features = false }
 # `Prompt::extend` takes a `tera::Tera`; swiftide does not re-export tera.
 tera = { version = "1.20", default-features = false }
-# `rustls::crypto::ring::default_provider` on reference/feature-flags; swiftide selects no crypto provider.
-rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
 
 # `QueryBuilder` for a PgVector `CustomStrategy` on querying/retrieval-and-search-strategies; swiftide does not re-export sqlx.
 sqlx = { version = "0.9", default-features = false, features = ["postgres"] }

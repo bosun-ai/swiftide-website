@@ -17,7 +17,7 @@ cargo add swiftide@{{swiftide_version}} --features openai
 
 `default_prompt_model` sets the model for `prompt`, `structured_prompt`, `complete` and `complete_stream`. `default_embed_model` sets the model for `embed`. The client has no default model. A call without one fails with a permanent error that says `Model not set`.
 
-Without a `client(..)` call, the builder creates an `async_openai::Client` with `OpenAIConfig::default()`. That configuration reads `OPENAI_API_KEY` and `OPENAI_BASE_URL` from the environment, and `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID` when they are set. The base URL defaults to `https://api.openai.com/v1`.
+Unless you call `api_base`, `api_key` or `client(..)`, the builder creates an `async_openai::Client` with `OpenAIConfig::default()`. That configuration reads `OPENAI_API_KEY` and `OPENAI_BASE_URL` from the environment, and `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID` when they are set. The base URL defaults to `https://api.openai.com/v1`.
 
 `OpenAI` implements `SimplePrompt`, `ChatCompletion`, `EmbeddingModel` and `StructuredPrompt`. So one client serves a large language model (LLM) transformer, the `Embed` batch transformer, an answer generator and `Agent::builder().llm(&openai)`. Agents also need the `swiftide-agents` feature flag. Cloning the client is cheap: the clones share one HTTP client.
 
@@ -25,15 +25,15 @@ Without a `client(..)` call, the builder creates an `async_openai::Client` with 
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 
-The ask-your-codebase showcase sends its prompts to any OpenAI-compatible endpoint. `LlmEndpoint` holds the base URL, key and model from the command line. `with_api_base` and `with_api_key` override the base URL and key from the environment. `OpenAIConfig::new()` still reads `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID`, and sends them as headers when they are set, also to a third-party gateway. The showcase picks the Responses API or Chat Completions from a command-line flag.
+The ask-your-codebase showcase sends its prompts to any OpenAI-compatible endpoint. `LlmEndpoint` holds the base URL, key and model from the command line. `api_base` and `api_key` on the builder override the base URL and key from the environment. :unreleased Everything else still comes from `OpenAIConfig::default()`, so `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID` are sent as headers when they are set, also to a third-party gateway. The showcase picks the Responses API or Chat Completions from a command-line flag.
 
-Swiftide re-exports `OpenAIConfig`, `AzureConfig` and `ReasoningEffort` from `async-openai` at `swiftide::integrations::openai`. It does not re-export `async_openai::Client`, so add the crate at the version Swiftide uses:
+The showcase wraps the client in `LanguageModelWithBackOff`. Transient errors, such as rate limits and outages, are retried with exponential backoff until `max_elapsed_time_sec` runs out. Permanent errors, including quota and billing errors that arrive as HTTP 429, return at once. `LlmEndpoint::client` returns `Arc<dyn SimplePrompt>`, so the rest of the showcase is provider-independent. [Errors, backoff, usage and tokens](/models/errors-backoff-and-usage/) covers the settings.
+
+For anything the two setters do not cover, such as a custom HTTP client or another configuration type, pass a whole `async_openai::Client` to `client(..)`. It replaces what `api_base` and `api_key` set, and whichever you call last wins. :unreleased Swiftide re-exports `OpenAIConfig`, `AzureConfig` and `ReasoningEffort` from `async-openai` at `swiftide::integrations::openai`. It does not re-export `async_openai::Client`, so add the crate at the version Swiftide uses:
 
 ```sh
 cargo add async-openai@0.41 --no-default-features
 ```
-
-The showcase wraps the client in `LanguageModelWithBackOff`. Transient errors, such as rate limits and outages, are retried with exponential backoff until `max_elapsed_time_sec` runs out. Permanent errors, including quota and billing errors that arrive as HTTP 429, return at once. `LlmEndpoint::client` returns `Arc<dyn SimplePrompt>`, so the rest of the showcase is provider-independent. [Errors, backoff, usage and tokens](/models/errors-backoff-and-usage/) covers the settings.
 
 ## Azure OpenAI
 
@@ -41,9 +41,9 @@ Azure OpenAI uses its own URL scheme and authentication header, so it needs `Azu
 
 ::snippet{src="@snippets/src/integrations/openai.rs" anchor="azure"}
 
-`OpenAI` is a type alias for `GenericOpenAI<OpenAIConfig>`. For Azure you build a `GenericOpenAI<AzureConfig>` through `GenericOpenAIBuilder`. It has the same builder methods and implements the same model traits.
+`OpenAI` is a type alias for `GenericOpenAI<OpenAIConfig>`. For Azure you build a `GenericOpenAI<AzureConfig>` through `GenericOpenAIBuilder` and pass the client with `client(..)`. `api_base` and `api_key` exist only on the `OpenAI` builder. The Azure client implements the same model traits.
 
-`with_api_base` takes the resource URL without a path. Requests go to `{api_base}/openai/deployments/{deployment_id}/...`, with `api-version` as a query parameter and the key in an `api-key` header. Without `with_api_key`, `AzureConfig` falls back to `OPENAI_API_KEY`.
+`AzureConfig::with_api_base` takes the resource URL without a path. Requests go to `{api_base}/openai/deployments/{deployment_id}/...`, with `api-version` as a query parameter and the key in an `api-key` header. Without `with_api_key`, `AzureConfig` falls back to `OPENAI_API_KEY`.
 
 A deployment serves one model, so build one client per deployment, for example one for chat and one for embeddings. Set `default_prompt_model` or `default_embed_model` anyway: Swiftide refuses to send a request without a model, even though Azure routes by deployment.
 
@@ -83,7 +83,6 @@ With `reasoning_effort` set, the client asks for reasoning summaries and encrypt
 
 - Some OpenAI-compatible gateways cap unset `max_completion_tokens` at 4096 and truncate silently; see [OpenAI-compatible providers](/integrations/openai-compatible/#gotchas).
 - A gateway's Responses API has to match OpenAI's response schema exactly. The captured docs-qa run uses Chat Completions, its default, because its gateway returns `"input_tokens_details": null`, which `async-openai` rejects.
-- Swiftide selects no Transport Layer Security (TLS) crypto provider. Install one at the start of `main`, or building the client panics. See [Crypto provider](/integrations/overview/#crypto-provider).
 
 ## Reference
 

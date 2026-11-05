@@ -1,10 +1,10 @@
 ---
 title: "Upgrading"
-description: "Code changes needed to move between Swiftide releases from 0.23 to 0.33, newest first."
+description: "Code changes needed to move between Swiftide releases from 0.23 to 0.33, and to swiftide master, newest first."
 sidebar:
   order: 4
 identLint:
-  ignore: [SystemPrompt, ChatCompletionError, Template, transitions_to_done, build_anthropic_family, impls, closures, done, current_input, current_output, node_at, node_at_index, TransitionPayload, ParamSpec, "tasks::impls", "tasks::closures::SyncFn"]
+  ignore: [install_default, SystemPrompt, ChatCompletionError, Template, transitions_to_done, build_anthropic_family, impls, closures, done, current_input, current_output, node_at, node_at_index, TransitionPayload, ParamSpec, "tasks::impls", "tasks::closures::SyncFn"]
 ---
 
 By the end of this page your code compiles against swiftide {{swiftide_version}}. Breaking changes land in minor releases, so upgrade one minor version at a time. Sections run newest first. Start at the section after your current release and work up. Releases without a section, such as 0.25 to 0.26 and 0.28 to 0.30, need no code changes.
@@ -12,6 +12,34 @@ By the end of this page your code compiles against swiftide {{swiftide_version}}
 ```sh
 cargo add swiftide@{{swiftide_version}}
 ```
+
+## Unreleased
+
+These changes are on swiftide `master` and not in {{swiftide_version}}. :unreleased
+
+### Pipeline statistics
+
+::snippet{src="@snippets/src/reference/upgrading.rs" anchor="pipeline_stats"}
+
+`indexing::Pipeline::run` returns `Result<PipelineStats>` instead of `Result<()>`. `pipeline.run().await?;` keeps compiling. A function that returns `pipeline.run().await` as its `Result<()>` tail expression needs `pipeline.run().await?; Ok(())`.
+
+`stats_collector()` returns `&Arc<StatsCollector>`, shared with the running pipeline. Clone the `Arc` before `run` to watch the pipeline while it runs. Before, cloning the collector made a copy that never changed. Each branch of `split_by` gets its own collector, seeded with the statistics so far. `merge` keeps the collector of the pipeline it is called on, so the merged run reports both branches. See [Metrics and statistics](/observability/metrics-and-statistics/).
+
+### Search strategy setters
+
+::snippet{src="@snippets/src/reference/upgrading.rs" anchor="search_strategy_setters"}
+
+`with_top_k` on `SimilaritySingleEmbedding`, and `with_top_k`, `with_top_n`, `with_dense_vector_field` and `with_sparse_vector_field` on `HybridSearch`, take `self` and return `Self`. Replace `let mut s = Strategy::default(); s.with_top_k(n);` with `let s = Strategy::default().with_top_k(n);`, and drop `.to_owned()` after a setter chain.
+
+`SimilaritySingleEmbedding::default()` exists only for the strategy without a filter, so it no longer needs a type annotation. Build a filtered strategy with `from_filter` or `with_filter`. `HybridSearch::default()` still needs the annotation on stores that implement the retriever for more than one filter type. `SearchStrategy` no longer requires `Default`.
+
+### TLS
+
+Swiftide's HTTP clients no longer need a crypto provider from your application. Each one uses a process-wide rustls provider if you installed one, and otherwise its own. You can remove the `rustls` dependency and the `install_default` call from `main`, or keep them to choose the provider. See [TLS](/reference/feature-flags/#tls).
+
+### OpenAI-compatible endpoints
+
+`OpenAI::builder().api_base(url).api_key(key)` points the OpenAI client at another endpoint without `async-openai`'s `OpenAIConfig`. `.client(..)` still takes a full client and replaces both; whichever is called last wins. See [OpenAI-compatible providers](/integrations/openai-compatible/).
 
 ## 0.33
 
@@ -21,7 +49,7 @@ Swiftide now needs Rust 1.97 or newer. `ReasoningItem.id` is now an `Option<Stri
 
 ### TLS crypto provider
 
-Swiftide no longer picks a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
+In 0.33.0, Swiftide does not pick a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). On `master` the clients no longer need it; see [TLS](#tls).
 
 ### System prompts
 

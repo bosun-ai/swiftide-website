@@ -8,6 +8,7 @@ use swiftide::{
         IndexingStream, Pipeline, TextNode,
         loaders::FileLoader,
         persist::MemoryStorage,
+        statistics::PipelineStats,
         transformers::{ChunkMarkdown, MetadataQAText, MetadataSummary, MetadataTitle},
     },
     integrations::openai::OpenAI,
@@ -15,7 +16,7 @@ use swiftide::{
 };
 
 /// One client for every LLM transformer, set once on the pipeline.
-pub async fn default_llm_client(openai: OpenAI) -> anyhow::Result<()> {
+pub async fn default_llm_client(openai: OpenAI) -> anyhow::Result<PipelineStats> {
     // ANCHOR: default_llm_client
     Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
         // Set the client before the steps that use it
@@ -86,7 +87,7 @@ impl WithBatchIndexingDefaults for DropRepeatedChunks {}
 // ANCHOR_END: batch_transformer
 
 /// Both custom transformers in a pipeline.
-pub async fn custom_steps() -> anyhow::Result<()> {
+pub async fn custom_steps() -> anyhow::Result<PipelineStats> {
     // ANCHOR: custom_steps
     Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
         .then_chunk(ChunkMarkdown::from_chunk_range(100..1500))

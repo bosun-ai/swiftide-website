@@ -3,6 +3,8 @@ title: "How indexing works"
 description: "An indexing pipeline streams nodes from a loader through filters, transformers, chunkers and embedders into storage, and the pipeline does its work only when you await run()."
 sidebar:
   order: 1
+identLint:
+  ignore: [downcast_ref]
 ---
 
 You can read a Swiftide indexing pipeline line by line and know when each step runs. The example comes from the [ask-your-codebase](/showcases/ask-your-codebase/) showcase. It prepares the source files of a codebase for retrieval-augmented generation (RAG): it splits them into chunks, describes each chunk with a large language model (LLM), embeds it, and stores it in LanceDB.
@@ -24,7 +26,7 @@ Each node passes through the steps from top to bottom until a step drops it:
 7. `MetadataQACode` asks the LLM which questions each chunk answers and stores them as metadata.
 8. `then_in_batch` with `Embed` embeds each chunk and its metadata with FastEmbed, on the central processing unit (CPU). `with_batch_size` sets 32 nodes per call. Without it, a batch holds 256 nodes.
 9. `then_store_with` writes each node to storage. `codebase.vector_store()` builds a `LanceDB` store, see [Storage](/indexing/storage/).
-10. `run().await` drives the stream to the end.
+10. `run().await` drives the stream to the end and returns the run's statistics as `stats`.
 
 ## Nodes
 
@@ -72,15 +74,15 @@ The pipeline methods only describe the stream, but their arguments run while you
 1. It calls `setup` on every storage backend. LanceDB creates its table here if it is missing.
 2. It pulls nodes through the stream until the stream ends. Some steps spawn Tokio tasks, so `run` needs a Tokio runtime.
 3. It marks the source nodes in the node cache, but only after the stream ended without an error.
-4. It logs `Pipeline completed` at info level, see [Statistics](/indexing/streams-and-concurrency/#statistics).
+4. It logs `Pipeline completed` at info level and returns the same numbers as `PipelineStats`, see [Statistics](/indexing/streams-and-concurrency/#statistics).
 
-`run` returns `Result<()>`, not the nodes. The showcase counts nodes with pass-through closures such as `.then(files_found.count())`, including one after `then_store_with`.
+`run` returns `Result<PipelineStats>`, not the nodes. :unreleased The showcase reads the number of stored chunks from `stats.nodes_stored`. It counts files with pass-through closures such as `.then(files_found.count())`, because the statistics count nodes at the end of the stream, after chunking.
 
 `then`, `then_chunk`, `then_in_batch` and storage work on several nodes at once and pass them on as they finish, see [Streams and concurrency](/indexing/streams-and-concurrency/). The showcase passes `.concurrency(concurrent_requests)` to `MetadataQACode` to bound requests to the LLM.
 
 ### Errors and the node cache
 
-The first error stops the run, and `run` returns it, see [Errors](/indexing/streams-and-concurrency/#errors). A source node is cached only when at least one of its chunks reached the end and none of them failed, and [When nodes are cached](/indexing/caching/#when-nodes-are-cached) covers the consequences.
+The first error stops the run, and `run` returns it, see [Errors](/indexing/streams-and-concurrency/#errors). It is the error the step failed with, so a `LanguageModelError` can be recovered with `downcast_ref`. :unreleased A source node is cached only when at least one of its chunks reached the end and none of them failed, and [When nodes are cached](/indexing/caching/#when-nodes-are-cached) covers the consequences.
 
 ## Output
 
@@ -104,18 +106,18 @@ The node cache drops all 14 files at step 4, so no prompt is sent.
 
 ## Feature flags
 
-`Pipeline`, `FileLoader` and `Embed` need no feature flag. The showcase turns off the defaults and turns on `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai`.
+`Pipeline`, `FileLoader` and `Embed` need no feature flag. The showcase turns off the defaults and turns on `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai`. It uses APIs from swiftide master, such as the statistics that `run` returns, so it depends on swiftide from git until the next release:
 
 ```sh
-cargo add swiftide@{{swiftide_version}} --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
-cargo add rustls@0.23 --no-default-features --features aws_lc_rs,std
+cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
 ```
 
-Since 0.33 Swiftide picks no crypto provider for rustls. The showcase installs aws-lc-rs at the start of `main`, before it builds a client, see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). [Feature flags](/reference/feature-flags/) lists every flag.
+TLS needs no setup, because swiftide's HTTP clients bring their own rustls crypto provider ([TLS](/integrations/overview/#tls)). [Feature flags](/reference/feature-flags/) lists every flag.
 
 ## Reference
 
 - [`indexing::Pipeline`](docsrs:swiftide/indexing/struct.Pipeline.html)
+- [`PipelineStats`](docsrs:swiftide/indexing/statistics/struct.PipelineStats.html)
 - [`Node`](docsrs:swiftide/indexing/struct.Node.html)
 - [`TextNode`](docsrs:swiftide/indexing/type.TextNode.html)
 - [`EmbedMode`](docsrs:swiftide/indexing/enum.EmbedMode.html)

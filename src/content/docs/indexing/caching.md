@@ -133,7 +133,7 @@ Clearing the cache does not touch the storage. A changed file's new chunks get n
 - [`Redis`](docsrs:swiftide/integrations/redis/struct.Redis.html)
 - [`Duckdb`](docsrs:swiftide/integrations/duckdb/struct.Duckdb.html)
 - [Feature flags](/reference/feature-flags/)
-- [ask-your-codebase source](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/ask-your-codebase)
+- [ask-your-codebase source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/ask-your-codebase)
 
 ## Next
 

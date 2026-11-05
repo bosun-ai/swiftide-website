@@ -2,6 +2,7 @@
 
 use swiftide::{
     agents::Agent,
+    chat_completion::errors::LanguageModelError,
     indexing::{
         self,
         loaders::FileLoader,
@@ -14,7 +15,7 @@ use swiftide::{
 /// Logs failed nodes and keeps indexing instead of stopping at the first error.
 pub async fn pipeline_errors(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> {
     // ANCHOR: pipeline_errors
-    indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
+    let stats = indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
         .then_chunk(ChunkMarkdown::from_chunk_range(100..2048))
         .then_in_batch(Embed::new(openai))
         .log_errors()
@@ -22,7 +23,31 @@ pub async fn pipeline_errors(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<(
         .then_store_with(qdrant)
         .run()
         .await?;
+    println!("{} nodes stored", stats.nodes_stored);
     // ANCHOR_END: pipeline_errors
+    Ok(())
+}
+
+/// Tells a model failure apart from other errors that stop a pipeline.
+pub async fn language_model_error(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> {
+    // ANCHOR: language_model_error
+    let result = indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
+        .then_chunk(ChunkMarkdown::from_chunk_range(100..2048))
+        .then_in_batch(Embed::new(openai))
+        .then_store_with(qdrant)
+        .run()
+        .await;
+
+    if let Err(error) = result {
+        match error.downcast_ref::<LanguageModelError>() {
+            Some(LanguageModelError::ContextLengthExceeded(_)) => {
+                eprintln!("a chunk is too large for the embedding model: {error:#}");
+            }
+            Some(model_error) => eprintln!("the model failed: {model_error}"),
+            None => return Err(error),
+        }
+    }
+    // ANCHOR_END: language_model_error
     Ok(())
 }
 

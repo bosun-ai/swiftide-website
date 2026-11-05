@@ -41,8 +41,8 @@ pub async fn own_database(openai: OpenAI) -> anyhow::Result<()> {
 pub async fn filter_on_path(openai: OpenAI, pgvector: PgVector) -> anyhow::Result<()> {
     // ANCHOR: filter
     // `FileLoader::new("docs")` stores paths with the `docs/` prefix, and the match is exact
-    let mut search = SimilaritySingleEmbedding::from_filter("path = docs/README.md".to_string());
-    search.with_top_k(5);
+    let search =
+        SimilaritySingleEmbedding::from_filter("path = docs/README.md".to_string()).with_top_k(5);
 
     let pipeline = query::Pipeline::from_search_strategy(search)
         .then_transform_query(query_transformers::Embed::from_client(openai.clone()))

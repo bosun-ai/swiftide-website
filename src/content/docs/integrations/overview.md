@@ -39,17 +39,11 @@ Turn these on only in the crates that need them.
 
 The `all` flag turns on ten common integrations, but not `anthropic`, `lancedb`, `mcp` or `swiftide-agents`. It also includes `fastembed` and `aws-bedrock`, so it builds slowly. [The all bundle](/reference/feature-flags/#the-all-bundle) lists exactly what it includes.
 
-## Crypto provider
+## TLS
 
-The reqwest-based clients, which are the OpenAI family and Anthropic, use rustls and leave the choice of crypto provider to your application. Install one at the start of `main`, before you build the first of these clients:
+The HTTP (Hypertext Transfer Protocol) clients use rustls for TLS (Transport Layer Security) and need no setup: each uses the rustls crypto provider your application installed, or else its own. :unreleased The exception is Redis over `rediss://`, where Swiftide installs aws-lc-rs as the process-wide provider before connecting if none is installed, so install yours before the first Redis call to use another. :unreleased
 
-::snippet{src="@snippets/src/reference/feature_flags.rs" anchor="crypto_provider"}
-
-```sh
-cargo add rustls@0.23 --no-default-features --features ring,std
-```
-
-Without a provider, building one of these clients panics. Two integrations do not need this step. The `aws-bedrock` client selects aws-lc-rs itself. The `fastembed` model download goes through native TLS (Transport Layer Security), which means OpenSSL on Linux. [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the panic message and the aws-lc-rs alternative.
+The `fastembed` model download goes through native TLS, which means OpenSSL on Linux.
 
 ## Matrix columns
 

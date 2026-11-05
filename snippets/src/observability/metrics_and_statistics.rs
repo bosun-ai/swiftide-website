@@ -6,8 +6,7 @@ use std::sync::{
 };
 
 use swiftide::indexing::{
-    self, TextNode, loaders::FileLoader, persist::MemoryStorage, statistics::StatsCollector,
-    transformers::ChunkMarkdown,
+    self, TextNode, loaders::FileLoader, persist::MemoryStorage, transformers::ChunkMarkdown,
 };
 
 /// Counts the chunks that reach storage with a pass-through closure transformer.
@@ -35,39 +34,44 @@ pub async fn count_nodes() -> anyhow::Result<u64> {
     Ok(chunks_stored)
 }
 
-/// Records a run's numbers in a `StatsCollector` the caller owns, because `run` consumes the
-/// pipeline and its own collector with it.
-pub async fn own_stats_collector() -> anyhow::Result<()> {
-    // ANCHOR: own_stats_collector
-    let stats = Arc::new(StatsCollector::new());
-    let count_chunk = {
-        let stats = Arc::clone(&stats);
-        move |node: TextNode| -> anyhow::Result<TextNode> {
-            stats.increment_nodes_processed(1);
-            Ok(node)
-        }
-    };
-
+/// Reads the statistics `run` returns at the end of a run.
+pub async fn run_stats() -> anyhow::Result<()> {
+    // ANCHOR: run_stats
     let pipeline =
         indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
             .then_chunk(ChunkMarkdown::from_chunk_range(100..2048))
-            .then_store_with(MemoryStorage::default())
-            .then(count_chunk);
+            .then_store_with(MemoryStorage::default());
 
-    // The pipeline's own collector can be read before the run; it is still empty.
-    assert_eq!(pipeline.stats().nodes_processed, 0);
-
-    stats.start();
-    pipeline.run().await?;
-    stats.complete();
-
-    let run = stats.get_stats();
+    let stats = pipeline.run().await?;
     println!(
         "Stored {} chunks in {:?} ({:.1} chunks/s)",
-        run.nodes_processed,
-        run.duration().unwrap_or_default(),
-        run.nodes_per_second().unwrap_or_default(),
+        stats.nodes_stored,
+        stats.duration().unwrap_or_default(),
+        stats.nodes_per_second().unwrap_or_default(),
     );
-    // ANCHOR_END: own_stats_collector
+    // ANCHOR_END: run_stats
+    Ok(())
+}
+
+/// Watches a running pipeline through a handle on its shared collector.
+pub async fn watch_run() -> anyhow::Result<()> {
+    // ANCHOR: watch_run
+    let pipeline =
+        indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
+            .then_chunk(ChunkMarkdown::from_chunk_range(100..2048))
+            .then_store_with(MemoryStorage::default());
+
+    // Take the handle before `run` consumes the pipeline
+    let collector = Arc::clone(pipeline.stats_collector());
+    let running = tokio::spawn(pipeline.run());
+
+    while !running.is_finished() {
+        println!("Stored {} chunks so far", collector.get_stats().nodes_stored);
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    }
+
+    let stats = running.await??;
+    println!("Stored {} chunks", stats.nodes_stored);
+    // ANCHOR_END: watch_run
     Ok(())
 }

@@ -1,17 +1,15 @@
 ---
 title: "Installation"
-description: "Add swiftide with the feature flags you need, tokio and a rustls crypto provider, set your API keys, and run a first program that prints one answer from a model."
+description: "Add swiftide with the feature flags you need and tokio, set your API keys, and run a first program that prints one answer from a model."
 sidebar:
   order: 2
-identLint:
-  ignore: [aws_lc_rs, install_default, map_err, "rustls::crypto::aws_lc_rs::default_provider", "CryptoProvider::install_default"]
 ---
 
 You end with a Rust binary on swiftide {{swiftide_version}} that prints one answer from a model. The page also lists the environment variables, feature flags and local servers the rest of the site uses.
 
 ## Dependencies
 
-Swiftide {{swiftide_version}} needs Rust 1.97 or newer, its minimum supported Rust version (MSRV). Create a binary crate and add four dependencies:
+Swiftide {{swiftide_version}} needs Rust 1.97 or newer, its minimum supported Rust version (MSRV). Create a binary crate and add three dependencies:
 
 ```sh
 cargo new hello-swiftide
@@ -19,10 +17,9 @@ cd hello-swiftide
 cargo add swiftide@{{swiftide_version}} --features swiftide-agents,openai
 cargo add tokio --features macros,rt-multi-thread
 cargo add anyhow
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
-`openai` compiles the OpenAI client. `swiftide-agents` is for [Your first agent](/start/your-first-agent/); this page does not use it yet. tokio runs the async `main`, and anyhow carries its errors. rustls supplies the crypto provider that the program installs.
+`openai` compiles the OpenAI client. `swiftide-agents` is for [Your first agent](/start/your-first-agent/); this page does not use it yet. tokio runs the async `main`, and anyhow carries its errors.
 
 ## First program
 
@@ -32,11 +29,9 @@ Replace `src/main.rs` with this program:
 
 `OpenAI::builder()` without a `client(..)` call reads `OPENAI_API_KEY` from the environment, and `OPENAI_BASE_URL` when it is set. `default_prompt_model` sets the model that `prompt` uses. `prompt` comes from the `SimplePrompt` trait, which the `use` line imports. It takes a `Prompt`, which `.into()` builds from a string.
 
-### Crypto provider
+### TLS
 
-Since 0.33, Swiftide does not select a Transport Layer Security (TLS) provider. Its Hypertext Transfer Protocol (HTTP) clients use rustls without a crypto provider, so your application installs one. Do it at the start of `main`, before you build the first client. Without a provider, building the client panics.
-
-This program uses ring. Three of the showcases use aws-lc-rs instead: they call `rustls::crypto::aws_lc_rs::default_provider()` and turn on the `aws_lc_rs` feature of rustls in place of `ring`. Either works. `install_default` fails when the process already has a provider, and `map_err` turns that failure into an anyhow error.
+Swiftide's Hypertext Transfer Protocol (HTTP) clients use rustls for Transport Layer Security (TLS), with the HTTP client's own crypto provider, so the program needs no TLS setup. A provider that your application installs for the whole process takes precedence. [TLS](/reference/feature-flags/#tls) covers the one exception, Redis over `rediss://`.
 
 ## API keys
 
@@ -108,7 +103,7 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg17
 
 ## Common errors
 
-- **The program panics with "No rustls crypto provider is configured"**: install a provider before the first client. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). The Anthropic client panics with "No provider set" instead.
+- **The program panics with "No rustls crypto provider is configured"**: you are on the 0.33.0 release. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 - **Error E0432, "unresolved import"**: the feature flag behind that module is off. Add it with `cargo add swiftide@{{swiftide_version}} --features <flag>`.
 - **An authentication error (HTTP 401)**: `OPENAI_API_KEY` is missing or empty. The client builds without a key, so the error shows up at the first request.
 
@@ -121,7 +116,6 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg17
 - [`GenericOpenAIBuilder`](docsrs:swiftide/integrations/openai/struct.GenericOpenAIBuilder.html)
 - [`SimplePrompt`](docsrs:swiftide/traits/trait.SimplePrompt.html)
 - [`Prompt`](docsrs:swiftide/prompt/struct.Prompt.html)
-- [`CryptoProvider::install_default`](https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#method.install_default) in rustls
 
 ## Next
 

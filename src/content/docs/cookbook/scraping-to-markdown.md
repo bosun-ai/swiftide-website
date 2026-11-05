@@ -90,8 +90,6 @@ The loader calls `tokio::spawn` inside `Pipeline::from_loader`. Building the pip
 
 The chunks carry no embeddings. To search them, add an embedder with `then_in_batch(Embed::new(...))` and store the nodes in a vector database such as Qdrant. [Rich metadata and multiple vectors](/cookbook/rich-metadata-and-multiple-vectors/) shows that shape with markdown files.
 
-An embedder makes Hypertext Transfer Protocol (HTTP) calls through Swiftide's clients. If the binary then panics about a missing rustls crypto provider, see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
-
 ## Reference
 
 - [`ScrapingLoader`](docsrs:swiftide/integrations/scraping/struct.ScrapingLoader.html)

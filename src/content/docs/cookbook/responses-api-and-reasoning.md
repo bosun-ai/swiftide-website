@@ -31,8 +31,6 @@ cargo run -p swiftide-examples --example responses-api
 cargo run -p swiftide-examples --example responses-api-reasoning
 ```
 
-Swiftide does not pick a Transport Layer Security (TLS) crypto provider for its Hypertext Transfer Protocol (HTTP) clients. In your own binary, install a rustls provider at the start of `main`, as described in [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
-
 ## Imports and types
 
 The anchored excerpts from `responses_api.rs` leave out its imports and its two argument types. Here they are:

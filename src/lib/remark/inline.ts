@@ -1,7 +1,8 @@
 /**
  * Author-facing placeholders that are not directives:
  *
- * - `{{swiftide_version}}` in text, inline code, code blocks, URLs and directive attributes.
+ * - `{{swiftide_version}}` (pinned release) and `{{swiftide_sha}}` (pinned commit) in text, inline code,
+ *   code blocks, URLs and directive attributes.
  * - `docsrs:<crate>/<path>` link targets, rewritten to the pinned docs.rs version.
  *
  * Any other `{{swiftide_*}}` placeholder is an error, so typos never reach a page.
@@ -16,7 +17,8 @@ const PLACEHOLDER = /\{\{\s*(swiftide_[A-Za-z0-9_]*)\s*\}\}/g;
 export function substitute(value: string, swiftide: SwiftideContext): string {
 	return value.replace(PLACEHOLDER, (_match, name: string) => {
 		if (name === 'swiftide_version') return swiftide.version;
-		throw new SnippetError(`Unknown placeholder {{${name}}}. Only {{swiftide_version}} exists.`);
+		if (name === 'swiftide_sha') return swiftide.sha;
+		throw new SnippetError(`Unknown placeholder {{${name}}}. Only {{swiftide_version}} and {{swiftide_sha}} exist.`);
 	});
 }
 

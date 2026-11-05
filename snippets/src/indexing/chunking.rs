@@ -5,13 +5,14 @@ use swiftide::{
         IndexingStream, Pipeline, TextNode,
         loaders::FileLoader,
         persist::MemoryStorage,
+        statistics::PipelineStats,
         transformers::{ChunkCode, ChunkMarkdown, ChunkText},
     },
     integrations::treesitter::SupportedLanguages,
 };
 
 /// Tree-sitter chunkers with the default size and with a byte range.
-pub async fn code_chunkers() -> anyhow::Result<()> {
+pub async fn code_chunkers() -> anyhow::Result<PipelineStats> {
     // ANCHOR: code_chunkers
     // At most 1500 bytes per chunk, the default
     let python = ChunkCode::try_for_language("python")?;

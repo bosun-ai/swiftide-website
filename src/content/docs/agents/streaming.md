@@ -47,7 +47,7 @@ The release-notes-agent showcase streams its draft. The release notes are the `m
 
 The hook writes `message_chunk` to stdout. It then walks the entries of `tool_calls_chunk`, keeps the `write_changelog` call, and hands its id and accumulated arguments to `DraftPreview`. It flushes stdout after every chunk.
 
-[`DraftPreview`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/release-notes-agent/src/draft.rs) lives in `draft.rs`. Every chunk repeats the whole argument text, so the preview tracks how much it has shown. It decodes the complete part of the `markdown` value in the growing JSON (JavaScript Object Notation) text, stopping before an unfinished escape sequence. It returns only the text it has not returned before. A new call id starts a fresh preview.
+[`DraftPreview`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/draft.rs) lives in `draft.rs`. Every chunk repeats the whole argument text, so the preview tracks how much it has shown. It decodes the complete part of the `markdown` value in the growing JSON (JavaScript Object Notation) text, stopping before an unfinished escape sequence. It returns only the text it has not returned before. A new call id starts a fresh preview.
 
 The hook is a `Fn` closure, so it cannot change what it captures, and it must be `Clone`. State that changes from chunk to chunk goes behind an `Arc<Mutex<_>>`, as `preview` does here.
 

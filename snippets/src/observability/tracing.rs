@@ -18,7 +18,7 @@ use tracing_subscriber::{
 /// Prints Swiftide's logs to stderr. `RUST_LOG` replaces the default filter.
 pub fn init_logging() -> Result<()> {
     let filter = EnvFilter::try_from_default_env()
-        // Hide the ERROR line of every failed attempt of a retried model call.
+        // Hide the clients' own WARN line for every failed model call and the HTTP client's warnings.
         .unwrap_or_else(|_| EnvFilter::new("info,swiftide_integrations=off,async_openai=error"));
 
     tracing_subscriber::registry()

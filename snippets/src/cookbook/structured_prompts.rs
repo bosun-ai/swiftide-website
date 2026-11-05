@@ -1,4 +1,4 @@
-//! Snippets for `cookbook/structured-prompts`: the imports and crypto provider a binary needs
+//! Snippets for `cookbook/structured-prompts`: the imports and client a binary needs
 //! before it calls `structured_prompt`.
 
 // ANCHOR: imports
@@ -9,10 +9,6 @@ use swiftide::{integrations, traits::StructuredPrompt as _};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    rustls::crypto::ring::default_provider()
-        .install_default()
-        .expect("install the rustls crypto provider");
-
     let client = integrations::openai::OpenAI::builder()
         .default_prompt_model("gpt-5-mini")
         .build()?;

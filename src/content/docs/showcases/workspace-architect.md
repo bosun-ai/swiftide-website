@@ -4,17 +4,16 @@ description: "A typed task graph that runs one agent per crate of a Cargo worksp
 sidebar:
   order: 3
 identLint:
-  ignore: [JsonSchema, aws_lc_rs]
+  ignore: [JsonSchema]
 ---
 
 This showcase gives you a command-line interface (CLI) that drafts an `ARCHITECTURE.md` for any Cargo workspace. A task graph discovers the crates, runs one agent per crate in parallel, joins their reports, has a model write the document, and pauses until you approve it. Only then does it write the file.
 
-The crate lives in the swiftide repository under `examples/workspace-architect`. It is not in the {{swiftide_version}} tag: until the showcases reach master, they live on the `docs/showcases` branch. Clone the repository and run the commands below from its root:
+The crate lives in the swiftide repository under `examples/workspace-architect`. It is on master, not in the {{swiftide_version}} tag. Clone the repository and run the commands below from its root:
 
 ```sh
 git clone https://github.com/bosun-ai/swiftide
 cd swiftide
-git checkout docs/showcases
 ```
 
 ## Prerequisites
@@ -24,9 +23,9 @@ git checkout docs/showcases
 - `cargo`, `sh`, `find`, `sort` and `grep` on your `PATH`. The discover step runs `cargo metadata`. The agent tools run `find` piped into `sort` through a shell, and `grep`.
 - The feature flags `swiftide-agents`, `swiftide-tasks` and `openai`, plus the default `macros`. `swiftide-agents` already turns on `swiftide-tasks`.
 - A direct `schemars` dependency with the `derive` feature, for the `JsonSchema` derive on `CrateReport`.
-- A direct `rustls` dependency with the `aws_lc_rs` feature.
+- Swiftide from master until the next release: the model client sets the endpoint with `api_base` and `api_key` on the `OpenAI` builder, which {{swiftide_version}} does not have. :unreleased
 
-Swiftide does not select a Transport Layer Security (TLS) crypto provider, so `main` installs the rustls aws-lc-rs provider before anything else ([Crypto provider](/reference/feature-flags/#crypto-provider)). No Docker or database is needed.
+TLS needs no setup, because swiftide's HTTP clients bring their own rustls crypto provider ([TLS](/integrations/overview/#tls)). No Docker or database is needed.
 
 ## Task graph
 

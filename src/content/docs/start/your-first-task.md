@@ -9,7 +9,7 @@ You end this page with a `Task<String, String>` that turns a list of crate names
 
 ## Dependencies
 
-The task needs no model, so the `swiftide-tasks` feature flag is enough, and with no client to build there is no crypto provider to install. `swiftide-agents` also turns `swiftide-tasks` on.
+The task needs no model, so the `swiftide-tasks` feature flag is enough. `swiftide-agents` also turns `swiftide-tasks` on.
 
 ```sh
 cargo add swiftide@{{swiftide_version}} --features swiftide-tasks

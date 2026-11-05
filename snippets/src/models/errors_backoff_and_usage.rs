@@ -3,7 +3,12 @@
 use swiftide::{
     CharEstimator,
     chat_completion::{ChatCompletionRequest, ChatMessage, Usage, errors::LanguageModelError},
-    indexing::{BackoffConfiguration, LanguageModelWithBackOff},
+    indexing::{
+        self, BackoffConfiguration, LanguageModelWithBackOff,
+        loaders::FileLoader,
+        persist::MemoryStorage,
+        transformers::{ChunkMarkdown, Embed, MetadataQAText},
+    },
     integrations::{openai::OpenAI, tiktoken::TikToken},
     prompt::Prompt,
     traits::{ChatCompletion, EstimateTokens, SimplePrompt},
@@ -23,6 +28,32 @@ pub async fn match_errors(openai: OpenAI) -> anyhow::Result<()> {
         Err(error @ LanguageModelError::PermanentError(_)) => return Err(error.into()),
     }
     // ANCHOR_END: match_errors
+    Ok(())
+}
+
+/// Finds the model error that stopped an indexing pipeline.
+pub async fn pipeline_errors(openai: OpenAI) -> anyhow::Result<()> {
+    // ANCHOR: pipeline_errors
+    let result = indexing::Pipeline::from_loader(FileLoader::new("docs").with_extensions(&["md"]))
+        .then_chunk(ChunkMarkdown::from_chunk_range(100..2048))
+        .then(MetadataQAText::new(openai.clone()))
+        .then_in_batch(Embed::new(openai))
+        .then_store_with(MemoryStorage::default())
+        .run()
+        .await;
+
+    if let Err(error) = result {
+        let model_error = error
+            .chain()
+            .find_map(|cause| cause.downcast_ref::<LanguageModelError>());
+        match model_error {
+            Some(LanguageModelError::TransientError(_)) => {
+                eprintln!("the provider is overloaded, run the pipeline again later: {error}");
+            }
+            _ => return Err(error),
+        }
+    }
+    // ANCHOR_END: pipeline_errors
     Ok(())
 }
 

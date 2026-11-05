@@ -22,10 +22,7 @@ To copy a recipe into your own crate, add the `swiftide` line from its section, 
 # in your own crate
 cargo add tokio --features full
 cargo add tracing-subscriber
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
-
-Swiftide's Hypertext Transfer Protocol (HTTP) clients use rustls without a Transport Layer Security (TLS) crypto provider. The examples get one from another dependency of the examples crate. Your own binary installs one at the start of `main`; see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 
 ## Ollama
 

@@ -13,14 +13,13 @@ After this page you can build an agent, run it, continue its conversation, and r
 cargo add swiftide@{{swiftide_version}} --features openai,swiftide-agents
 cargo add tokio --features full
 cargo add anyhow
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
 ## A minimal agent
 
 ::snippet{src="@snippets/src/agents/overview.rs" anchor="query_and_continue"}
 
-Swiftide's HTTP (Hypertext Transfer Protocol) clients use rustls without a crypto provider. The snippet installs `ring` before it builds a client. [Feature flags](/reference/feature-flags/#crypto-provider) explains why. `OpenAI::builder()` reads `OPENAI_API_KEY` from the environment.
+`OpenAI::builder()` reads `OPENAI_API_KEY` from the environment.
 
 `llm` takes any `ChatCompletion` that is `Clone` and clones it into the agent. `build` fails without it. `system_prompt` takes anything that converts into a `Prompt`. The agent has no system prompt unless you set one. `limit` caps the completions in one run.
 

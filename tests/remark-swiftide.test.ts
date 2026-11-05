@@ -154,8 +154,18 @@ describe('inline rewriting', () => {
 		);
 	});
 
+	it('substitutes the pinned commit everywhere authors write it', async () => {
+		const sha = '0123456789abcdef0123456789abcdef01234567';
+		const out = await markdown(
+			'Run `git checkout {{swiftide_sha}}`, see [the source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples).\n\n```sh\ncargo add swiftide --git https://github.com/bosun-ai/swiftide --rev {{swiftide_sha}}\n```',
+		);
+		expect(out).toBe(
+			`Run \`git checkout ${sha}\`, see [the source](https://github.com/bosun-ai/swiftide/tree/${sha}/examples).\n\n\`\`\`sh\ncargo add swiftide --git https://github.com/bosun-ai/swiftide --rev ${sha}\n\`\`\``,
+		);
+	});
+
 	it('rejects unknown placeholders but leaves template syntax alone', async () => {
-		await expect(markdown('{{swiftide_sha}}')).rejects.toThrow(/Unknown placeholder \{\{swiftide_sha\}\}/);
+		await expect(markdown('{{swiftide_tag}}')).rejects.toThrow(/Unknown placeholder \{\{swiftide_tag\}\}/);
 		expect(await markdown('```jinja\n{{ question }}\n```')).toBe('```jinja\n{{ question }}\n```');
 	});
 

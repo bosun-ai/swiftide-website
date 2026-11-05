@@ -17,7 +17,6 @@ cd first-agent
 cargo add swiftide@{{swiftide_version}} --features swiftide-agents,openai
 cargo add tokio --features macros,rt-multi-thread
 cargo add anyhow serde
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
 `swiftide-agents` adds `swiftide::agents`. The tool attribute comes from `macros`, which is on by default. Its generated code derives serde's traits for the tool arguments, so your crate depends on serde.
@@ -28,7 +27,7 @@ The tool and the imports go at the top of `src/main.rs`:
 
 ::snippet{src="@snippets/src/start/your_first_agent.rs" anchor="tool" title="src/main.rs"}
 
-`main` installs the crypto provider, builds the agent and prints its answer:
+`main` builds the agent and prints its answer:
 
 ::snippet{src="@snippets/src/start/your_first_agent.rs" anchor="main" title="src/main.rs"}
 

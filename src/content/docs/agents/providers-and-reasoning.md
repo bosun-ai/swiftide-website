@@ -15,7 +15,7 @@ You end up with one agent definition that runs on whichever provider you pick at
 
 `AgentBuilder::llm` takes a reference to any client that implements `ChatCompletion + Clone + 'static`. It stores a boxed clone, so `Agent` has no type parameter for the provider. The tools, hooks and system prompt stay the same whichever client you pass.
 
-The Azure client needs the `async-openai` crate as a direct dependency, because Swiftide does not re-export its client type:
+The Azure client needs the `async-openai` crate as a direct dependency, because Swiftide does not re-export its client type. `api_base` and `api_key` on the builder only configure the `OpenAI` client, so Azure passes a full client to `client(..)`:
 
 ```sh
 cargo add async-openai@0.41 --no-default-features
@@ -33,7 +33,7 @@ cargo add swiftide@{{swiftide_version}} --features swiftide-agents,openai,anthro
 
 Every chat client implements `ChatCompletion`. [Providers](/models/overview/#providers) lists each client with its feature flag, and [OpenAI-compatible endpoints](/models/overview/#openai-compatible-endpoints) covers gateways and base URLs.
 
-The ask-your-codebase showcase builds its client from a base URL and a flag for the Responses API, so the same binary runs against OpenAI or a gateway:
+The ask-your-codebase showcase builds its client from a base URL, a key and a flag for the Responses API, so the same binary runs against OpenAI or a gateway. `api_base` and `api_key` replace the `OpenAIConfig` client of 0.33.0: :unreleased
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 

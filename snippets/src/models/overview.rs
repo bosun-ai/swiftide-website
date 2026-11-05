@@ -8,7 +8,7 @@ use swiftide::{
     integrations::{
         anthropic::Anthropic,
         ollama::Ollama,
-        openai::{OpenAI, OpenAIConfig, Options, ReasoningEffort},
+        openai::{OpenAI, Options, ReasoningEffort},
     },
     traits::{EmbeddingModel, SimplePrompt},
 };
@@ -52,12 +52,9 @@ pub async fn trait_objects(openai: OpenAI) -> anyhow::Result<()> {
 /// An OpenAI-compatible server on a custom base URL.
 pub fn custom_base_url() -> anyhow::Result<()> {
     // ANCHOR: custom_base_url
-    let config = OpenAIConfig::new()
-        .with_api_base("http://localhost:8000/v1")
-        .with_api_key("not-needed-locally");
-
     let local = OpenAI::builder()
-        .client(async_openai::Client::with_config(config))
+        .api_base("http://localhost:8000/v1")
+        .api_key("not-needed-locally")
         .default_prompt_model("qwen2.5-coder")
         .build()?;
     // ANCHOR_END: custom_base_url

@@ -1,10 +1,10 @@
 ---
 title: "Troubleshooting and FAQ"
-description: "Fixes for the errors people hit most with Swiftide: pipeline failures, the rustls panic, missing features, unreachable stores, rejected tool schemas, runaway agents and silent streaming."
+description: "Fixes for the errors people hit most with Swiftide: pipeline failures, the rustls panic on 0.33.0, missing features, unreachable stores, rejected tool schemas, runaway agents and silent streaming."
 sidebar:
   order: 5
 identLint:
-  ignore: [HashMap, aws_lc_rs, "rustls::crypto::aws_lc_rs::default_provider"]
+  ignore: [HashMap, downcast_ref, chain, "CryptoProvider::install_default"]
 ---
 
 Each heading on this page names a symptom. Find yours, apply the fix, and your code runs again. Answers to frequently asked questions (FAQ) close the page.
@@ -13,29 +13,27 @@ Each heading on this page names a symptom. Find yours, apply the fix, and your c
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="pipeline_errors"}
 
-An indexing pipeline stops at the first node that fails, and `run` returns that error.
+An indexing pipeline stops at the first node that fails, and `run` returns that error. When it finishes, `run` returns the pipeline statistics, such as `nodes_stored`. :unreleased
 
 `log_errors` logs each error at `ERROR` level and passes it on. `filter_errors` then drops the errors, so the other nodes still reach storage. Keep `log_errors` first: `filter_errors` on its own drops errors without a trace. Both only see errors from the steps before them, so place them after the steps you want to cover. A storage error still stops the pipeline: Qdrant rejects a node without vectors, so embed first.
 
 `log_all` also logs every node at `DEBUG` level. `filter` keeps each `Result` its closure returns `true` for, so you can skip one kind of error. The logs need a `tracing` subscriber; see [Tracing](/observability/tracing/).
 
+::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="language_model_error"}
+
+The error a step fails with reaches `run` unchanged. :unreleased A failed model call stays a `LanguageModelError`, so `downcast_ref` tells it apart from a storage or loader error, and `chain()` finds it when other code wrapped it in context. `ContextLengthExceeded` means a chunk is too large for the model; lower the chunker's maximum size.
+
 ## Crypto provider panic
 
-Building a model client panics:
-
 ```text
-No rustls crypto provider is configured. When using the `rustls-no-provider` feature you must install a crypto provider before building a Client. For example: `rustls::crypto::aws_lc_rs::default_provider().install_default().unwrap();` See https://docs.rs/rustls/latest/rustls/#cryptography-providers for details.
+No rustls crypto provider is configured. When using the `rustls-no-provider` feature you must install a crypto provider before building a Client.
 ```
 
-Since 0.33, Swiftide's HTTP clients use rustls without a crypto provider. Install one at the start of `main`, before you build the first client:
+Swiftide's HTTP clients need no TLS (Transport Layer Security) setup. Each one uses the process-wide rustls crypto provider if your application installed one, and otherwise its own. Redis over `rediss://` needs a process-wide provider, and Swiftide installs aws-lc-rs before it connects if none is installed. [TLS](/reference/feature-flags/#tls) has the details.
 
-::snippet{src="@snippets/src/reference/feature_flags.rs" anchor="crypto_provider"}
+The 0.33.0 release still builds its clients without a provider. There, building a client panics with this message, or with `No provider set` for the Anthropic client. Install a provider with rustls's `CryptoProvider::install_default` at the start of `main`, or move to a release with this fix.
 
-```sh
-cargo add rustls@0.23 --no-default-features --features ring,std
-```
-
-To use aws-lc-rs instead, call `rustls::crypto::aws_lc_rs::default_provider()` and turn on the `aws_lc_rs` feature of `rustls` instead of `ring`. [Crypto provider](/reference/feature-flags/#crypto-provider) explains why Swiftide leaves the choice to you. The Anthropic client, behind the `anthropic` flag, panics with `No provider set` instead, and the same fix applies.
+Another crate in your application that builds its own rustls configuration also relies on the process-wide provider. When the build compiles in both ring and aws-lc-rs, for example with `openai` and `qdrant`, that crate panics until your application installs one.
 
 ## Missing features
 
@@ -94,7 +92,9 @@ In the hook, `delta.message_chunk` holds the new text. The OpenAI client also pu
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="similarity_annotation"}
 
-`SimilaritySingleEmbedding::default()` fails with error E0283, "type annotations needed". The search strategy is generic over its filter type, and Qdrant, PgVector and LanceDB implement the retriever for more than one. Rust does not use the default type parameter to pick an implementation. Name the filter type, as in the snippet, or start from `query::Pipeline::default()`.
+In 0.33.0, `SimilaritySingleEmbedding::default()` fails with error E0283, "type annotations needed". The search strategy is generic over its filter type, and Qdrant, PgVector and LanceDB implement the retriever for more than one. Rust does not use the default type parameter to pick an implementation. Name the filter type, as in the snippet, or start from `query::Pipeline::default()`.
+
+On `master`, `default()` exists only for the strategy without a filter, so it infers. :unreleased Build a filtered strategy with `from_filter` or `with_filter`. `HybridSearch::default()` still needs the annotation on stores with both implementations.
 
 ## FAQ
 
@@ -121,6 +121,7 @@ Swiftide is part of the [bosun.ai](https://bosun.ai) project, and Bosun runs it 
 - [`StopReason`](docsrs:swiftide/agents/enum.StopReason.html)
 - [`DefaultContext`](docsrs:swiftide/agents/struct.DefaultContext.html)
 - [`SimilaritySingleEmbedding`](docsrs:swiftide/query/search_strategies/struct.SimilaritySingleEmbedding.html)
+- [`LanguageModelError`](docsrs:swiftide/chat_completion/errors/enum.LanguageModelError.html)
 - [`ToolSpec`](docsrs:swiftide/chat_completion/struct.ToolSpec.html)
 - [`ToolSpecBuilder`](docsrs:swiftide/chat_completion/struct.ToolSpecBuilder.html)
 - [`Qdrant`](docsrs:swiftide/integrations/qdrant/struct.Qdrant.html)

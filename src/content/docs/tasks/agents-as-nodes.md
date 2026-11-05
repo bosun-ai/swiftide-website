@@ -31,8 +31,6 @@ cargo add schemars@1 --features derive
 cargo add serde_json thiserror
 ```
 
-Swiftide selects no TLS (Transport Layer Security) crypto provider, so your app installs a rustls provider before it calls a model. [Troubleshooting and FAQ](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the call.
-
 ## Custom agent node
 
 The workspace-architect showcase fans out one agent per publishable crate of a Cargo workspace, and each branch returns a `CrateSummary`. The node holds the model client, not an agent:

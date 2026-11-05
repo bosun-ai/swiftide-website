@@ -122,7 +122,6 @@ fluvio produce hello-rust
 - **Loaders panic when you build the pipeline.** `Pipeline::from_loader` starts the loader, so the Kafka loader panics there when it cannot create the consumer or subscribe, and the Fluvio loader panics there when it cannot connect. For Kafka that means an invalid configuration; an unreachable broker does not panic, and the loader keeps waiting.
 - **Fluvio needs a multi-thread runtime.** The Fluvio loader connects inside `tokio::task::block_in_place`, which panics on a current-thread Tokio runtime. `#[tokio::main]` uses a multi-thread runtime by default.
 - **FastEmbed downloads its model.** The first `FastEmbed::try_default()` downloads the embedding model from Hugging Face.
-- **Model clients need a crypto provider.** If you add a model client that uses Hypertext Transfer Protocol (HTTP) such as `OpenAI` to the same binary, install a rustls crypto provider first. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 
 ## Reference
 

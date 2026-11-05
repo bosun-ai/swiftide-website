@@ -31,9 +31,7 @@ pub async fn qdrant_filter(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()>
     .then_answer(answers::Simple::from_client(openai));
 
     // The same filter on a hybrid search applies to the dense and the sparse search
-    let _hybrid = HybridSearch::from_filter(only_readme)
-        .with_top_n(20)
-        .to_owned();
+    let _hybrid = HybridSearch::from_filter(only_readme).with_top_n(20);
     // ANCHOR_END: qdrant_filter
 
     let _answer = pipeline.query("How do I install Swiftide?").await?;
@@ -45,8 +43,8 @@ pub async fn pgvector_filter(openai: OpenAI, pgvector: PgVector) -> anyhow::Resu
     // ANCHOR: pgvector_filter
     // `path` must be a metadata field on the table: `PgVector::builder().with_metadata("path")`.
     // Swiftide does not add it for you; insert `path` into each node's metadata while indexing.
-    let mut search = SimilaritySingleEmbedding::from_filter("path = README.md".to_string());
-    search.with_top_k(5);
+    let search =
+        SimilaritySingleEmbedding::from_filter("path = README.md".to_string()).with_top_k(5);
 
     let pipeline = query::Pipeline::from_search_strategy(search)
         .then_transform_query(query_transformers::Embed::from_client(openai.clone()))

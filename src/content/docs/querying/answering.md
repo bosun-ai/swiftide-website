@@ -13,7 +13,7 @@ The last step of a query pipeline sends the question and the retrieved documents
 cargo add swiftide@{{swiftide_version}} --features openai,qdrant
 ```
 
-::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="15-22"}
+::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="14-21"}
 
 ## The answer generator
 

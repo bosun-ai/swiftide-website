@@ -1,4 +1,5 @@
-//! Snippets for `reference/upgrading`: the code each breaking release from 0.23 to 0.33 needs.
+//! Snippets for `reference/upgrading`: the code each breaking release from 0.23 to 0.33, and
+//! swiftide master, needs.
 
 use std::{borrow::Cow, sync::Arc};
 
@@ -9,15 +10,37 @@ use swiftide::{
         ChatMessage, Tool, ToolCall, ToolOutput, ToolSpec,
         errors::{LanguageModelError, ToolError},
     },
-    indexing::TextNode,
+    indexing::{self, TextNode, persist::MemoryStorage, statistics::PipelineStats},
     integrations::openai::OpenAI,
     prompt::Prompt,
+    query::search_strategies::{HybridSearch, SimilaritySingleEmbedding},
     tasks::{NodeError, Task, TaskRunOutcome},
     traits::{
         AgentContext, Command, CommandError, CommandOutput, ExecutorExt, SimplePrompt,
         ToolExecutor, ToolFeedback, Transformer,
     },
 };
+
+/// Unreleased: `run` returns the pipeline statistics.
+pub async fn pipeline_stats() -> anyhow::Result<PipelineStats> {
+    // ANCHOR: pipeline_stats
+    let stats = indexing::Pipeline::from_stream(vec![TextNode::new("hello")])
+        .then_store_with(MemoryStorage::default())
+        .run()
+        .await?;
+    println!("{} nodes stored", stats.nodes_stored);
+    // ANCHOR_END: pipeline_stats
+    Ok(stats)
+}
+
+/// Unreleased: search strategy setters take `self` and chain from `default()`.
+pub fn search_strategy_setters() -> (SimilaritySingleEmbedding, HybridSearch) {
+    // ANCHOR: search_strategy_setters
+    let similarity = SimilaritySingleEmbedding::default().with_top_k(20);
+    let hybrid = HybridSearch::<()>::default().with_top_k(20).with_top_n(5);
+    // ANCHOR_END: search_strategy_setters
+    (similarity, hybrid)
+}
 
 /// 0.33: the system prompt is a `Prompt`; a `before_all` hook can fill its values.
 pub async fn system_prompt(openai: OpenAI) -> anyhow::Result<()> {

@@ -29,7 +29,7 @@ Nothing in the crate is enabled by default. Pick one feature flag per capability
 Each one turns on `agents-contrib`, which turns on `swiftide-agents`. The plain `agents-contrib` flag only exposes the crate as `swiftide::agents_contrib`. Because the crate is unreleased, depend on swiftide from Git, pinned to the commit this page describes:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --rev e09a3e90d3eecdaffa08818a661efc3ecec08321 --features openai,agents-contrib-file-tools,agents-contrib-planning
+cargo add swiftide --git https://github.com/bosun-ai/swiftide --rev {{swiftide_sha}} --features openai,agents-contrib-file-tools,agents-contrib-planning
 cargo add tokio --features full
 cargo add anyhow
 ```
@@ -114,12 +114,12 @@ The model you pass to `llm` writes the summary from the history, a Git diff and 
 
 The contrib types are unreleased, so these links point at the pinned source on GitHub.
 
-- [swiftide-agents-contrib README](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/README.md)
-- [`ReadFile`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/tools/read_file.rs), [`ExactReplace`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/tools/exact_replace.rs), [`ApplyPatch`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/tools/apply_patch/mod.rs)
-- [`UpdatePlan`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/tools/update_plan.rs)
-- [`ToolSummarizer`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/hooks/tool_summarizer.rs), [`ContextCompression`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/hooks/context_compression.rs)
-- [`LazyExecutor`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/executors/lazy.rs), [`ToolExecutorExt`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/src/executors/traits.rs)
-- [contrib examples](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/swiftide-agents-contrib/examples)
+- [swiftide-agents-contrib README](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/README.md)
+- [`ReadFile`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/read_file.rs), [`ExactReplace`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/exact_replace.rs), [`ApplyPatch`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/apply_patch/mod.rs)
+- [`UpdatePlan`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/update_plan.rs)
+- [`ToolSummarizer`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/hooks/tool_summarizer.rs), [`ContextCompression`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/hooks/context_compression.rs)
+- [`LazyExecutor`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/executors/lazy.rs), [`ToolExecutorExt`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/executors/traits.rs)
+- [contrib examples](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/swiftide-agents-contrib/examples)
 - [`AgentBuilder::add_tool`](docsrs:swiftide/agents/struct.AgentBuilder.html#method.add_tool), [`AgentBuilder::after_tool`](docsrs:swiftide/agents/struct.AgentBuilder.html#method.after_tool)
 - [`DefaultContext::from_executor`](docsrs:swiftide/agents/struct.DefaultContext.html#method.from_executor)
 - [`LocalExecutor`](docsrs:swiftide/agents/tools/local_executor/struct.LocalExecutor.html)

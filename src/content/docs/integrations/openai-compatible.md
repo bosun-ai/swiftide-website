@@ -62,7 +62,7 @@ The Ollama example above uses `llama3.1`. Pull that one to run it.
 cargo add async-openai@0.41 --no-default-features
 ```
 
-`OllamaConfig` sends no `Authorization` header and reads no environment variable. For an Ollama server behind a proxy that checks a bearer token, use `OpenAI` with an `OpenAIConfig` instead. See [Other gateways](#other-gateways).
+`OllamaConfig` sends no `Authorization` header and reads no environment variable. For an Ollama server behind a proxy that checks a bearer token, use `OpenAI` with `api_base` and `api_key` instead. :unreleased See [Other gateways](#other-gateways).
 
 ## Groq
 
@@ -96,7 +96,7 @@ The first client reads `OPENROUTER_API_KEY`. The second takes the key from an `O
 
 ## Other gateways
 
-The configuration types of `Groq`, `Gemini` and `Dashscope` are private. To use another key variable or another base URL with them, use `OpenAI` with an `OpenAIConfig`:
+The configuration types of `Groq`, `Gemini` and `Dashscope` are private. To use another key variable or another base URL with them, use `OpenAI` with `api_base` and `api_key`. :unreleased
 
 ::snippet{src="@snippets/src/integrations/openai_compatible.rs" anchor="gateway"}
 
@@ -111,7 +111,6 @@ For vLLM, LiteLLM or a company gateway, see [Custom base URL](/integrations/open
 - Every client uses the Chat Completions API by default. `use_responses_api(true)` exists on every builder, but only some providers serve the Responses API.
 - For request fields that only one provider knows, set `extra_body` in `Options`. Only `complete` and `complete_stream` send it. `prompt`, `structured_prompt` and `embed` do not. See [Extra request fields](/models/overview/#extra-request-fields).
 - Some gateways cap the output at 4096 tokens when `max_completion_tokens` is unset. Set it in `Options`, because a cut-off answer looks complete.
-- Swiftide selects no Transport Layer Security (TLS) crypto provider. Install one at the start of `main`. See [Crypto provider](/integrations/overview/#crypto-provider).
 
 ## Reference
 
@@ -120,7 +119,6 @@ For vLLM, LiteLLM or a company gateway, see [Custom base URL](/integrations/open
 - [`GenericOpenAIBuilder`](docsrs:swiftide/integrations/openai/struct.GenericOpenAIBuilder.html)
 - [`Options`](docsrs:swiftide/integrations/openai/struct.Options.html)
 - [`OpenAI`](docsrs:swiftide/integrations/openai/type.OpenAI.html)
-- [`OpenAIConfig`](docsrs:swiftide/integrations/openai/struct.OpenAIConfig.html)
 - [`Ollama`](docsrs:swiftide/integrations/ollama/type.Ollama.html)
 - [`OllamaConfig`](docsrs:swiftide/integrations/ollama/config/struct.OllamaConfig.html)
 - [`OllamaConfig::with_api_base`](docsrs:swiftide/integrations/ollama/config/struct.OllamaConfig.html#method.with_api_base)

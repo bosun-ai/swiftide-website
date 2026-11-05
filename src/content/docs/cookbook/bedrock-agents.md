@@ -72,7 +72,6 @@ After `query` returns, `agent.stop_reason()` tells you which one happened. Branc
 - To keep the agent going after a text answer, give it a `DefaultContext` with `with_stop_on_assistant(false)`. Then only the `stop` tool or the limit ends the run.
 - A second `query` on the same agent starts with a fresh loop counter, so it gets six completions again.
 - Bedrock has its own `Options` and its own `ReasoningEffort` with `Low`, `Medium`, `High` and `Max`. They are not the OpenAI types. See [AWS Bedrock settings](/models/overview/#aws-bedrock-settings).
-- If your binary also builds a Swiftide client that uses Hypertext Transfer Protocol (HTTP), such as `OpenAI`, install a rustls crypto provider at the start of `main`. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 
 ## Gotchas
 

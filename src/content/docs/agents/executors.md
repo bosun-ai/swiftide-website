@@ -105,7 +105,7 @@ When a shell command starts with `#!`, the local executor starts the interpreter
 
 ## Argument validation
 
-A working directory is not a sandbox: it only chooses where a command starts. An absolute path, a `..` or a `;` in a shell string still reaches the rest of the machine. Parse model arguments into a type that cannot hold a bad value first. The release-notes-agent showcase validates every argument with `Revision` and `RepoPath` in [`src/git.rs`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/release-notes-agent/src/git.rs). The same pattern for your own tool:
+A working directory is not a sandbox: it only chooses where a command starts. An absolute path, a `..` or a `;` in a shell string still reaches the rest of the machine. Parse model arguments into a type that cannot hold a bad value first. The release-notes-agent showcase validates every argument with `Revision` and `RepoPath` in [`src/git.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/git.rs). The same pattern for your own tool:
 
 ::snippet{src="@snippets/src/agents/executors.rs" anchor="validated_path"}
 

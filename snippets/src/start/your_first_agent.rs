@@ -30,9 +30,6 @@ async fn git_log_since(context: &dyn AgentContext, tag: &str) -> Result<ToolOutp
 // ANCHOR: main
 #[tokio::main]
 pub async fn main() -> anyhow::Result<()> {
-    rustls::crypto::ring::default_provider()
-        .install_default()
-        .map_err(|_| anyhow::anyhow!("a rustls crypto provider was already installed"))?;
     let tag = std::env::args()
         .nth(1)
         .context("usage: first-agent <tag>")?;

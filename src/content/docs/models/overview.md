@@ -61,19 +61,13 @@ To retry rate limits and server errors, wrap the client in `LanguageModelWithBac
 
 ## OpenAI-compatible endpoints
 
-A server that speaks the OpenAI API works with the `OpenAI` client. Point the client at it with a custom base Uniform Resource Locator (URL):
+A server that speaks the OpenAI API works with the `OpenAI` client. Point the client at it with `api_base` and `api_key` on the builder. :unreleased
 
 ::snippet{src="@snippets/src/models/overview.rs" anchor="custom_base_url"}
 
-Swiftide re-exports `OpenAIConfig` from the `async-openai` crate at `swiftide::integrations::openai`. It does not re-export `async_openai::Client`, so add the crate yourself:
-
-```sh
-cargo add async-openai@0.41 --no-default-features
-```
-
 With a single endpoint you can skip the code. The default `OpenAI` client reads `OPENAI_BASE_URL` and `OPENAI_API_KEY` from the environment when you build it.
 
-Azure OpenAI does not work with `OpenAIConfig` and a custom base URL. Use `GenericOpenAI<AzureConfig>` instead. Swiftide re-exports `AzureConfig` next to `OpenAIConfig`.
+For a custom HTTP (Hypertext Transfer Protocol) client or another configuration type, pass an `async_openai::Client` to `client(..)` instead. Azure OpenAI needs that route with `GenericOpenAI<AzureConfig>`; [Azure OpenAI](/integrations/openai/#azure-openai) shows it.
 
 The hosted-provider clients have the base URL already set and read their key from the environment:
 

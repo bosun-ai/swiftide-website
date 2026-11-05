@@ -133,8 +133,8 @@ docs-qa's `--recreate` flag drops the Qdrant collection before indexing. For inc
 - [`Redis`](docsrs:swiftide/integrations/redis/struct.Redis.html)
 - [`Kafka`](docsrs:swiftide/integrations/kafka/struct.Kafka.html)
 - [`EmbeddedField`](docsrs:swiftide/indexing/enum.EmbeddedField.html)
-- [ask-your-codebase source](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/ask-your-codebase)
-- [docs-qa source](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/docs-qa)
+- [ask-your-codebase source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/ask-your-codebase)
+- [docs-qa source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/docs-qa)
 
 ## Next
 

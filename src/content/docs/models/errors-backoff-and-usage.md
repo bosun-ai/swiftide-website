@@ -3,6 +3,8 @@ title: "Errors, backoff, usage and tokens"
 description: "Tell transient from permanent model errors, retry with LanguageModelWithBackOff, record token usage with on_usage, and estimate tokens with CharEstimator or tiktoken."
 sidebar:
   order: 5
+identLint:
+  ignore: ["chain()"]
 ---
 
 By the end of this page your OpenAI-compatible or `AwsBedrock` client retries rate limits on its own, reports the tokens each call used, and you can estimate the size of a prompt before you send it.
@@ -31,6 +33,14 @@ To build a variant yourself, call `LanguageModelError::transient`, `permanent` o
 
 To return a variant with `?` or `.into()`, bind the whole `LanguageModelError` (`error @ ...`). The `Box<dyn Error + Send + Sync>` inside a variant does not convert into `anyhow::Error`.
 
+### Errors from a pipeline
+
+When a step of an indexing pipeline fails on a model call, `run` returns an `anyhow::Error` with the `LanguageModelError` still inside. So you can tell a rate limit from a broken request. :unreleased
+
+::snippet{src="@snippets/src/models/errors_backoff_and_usage.rs" anchor="pipeline_errors"}
+
+`downcast_ref::<LanguageModelError>()` on the error works too. Searching `chain()` also finds the model error when a step added context around it.
+
 ## Backoff
 
 ::snippet{src="@snippets/src/models/errors_backoff_and_usage.rs" anchor="backoff_configuration"}
@@ -47,6 +57,8 @@ It never retries an `Anthropic` rate limit, because `Anthropic` marks it permane
 - `max_elapsed_time_sec`: the time budget in seconds, including time spent inside calls. The decorator returns the last error as soon as the next wait would pass it, often before the full budget. The default is 60.
 
 `Default::default()` gives you these defaults.
+
+Every failed attempt that the decorator retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When the decorator gives up, it logs the final error once at ERROR, also for a permanent error that it never retried. :unreleased Only `prompt` and `complete` log these events.
 
 For `complete_stream` the decorator does not send the request again. Your stream still receives every error. After each one, transient or permanent, the decorator waits for the next interval before it reads on. Once `max_elapsed_time_sec` is used up, the stream ends after the last error. The budget restarts after every successful item. OpenAI-compatible streams end after their first error, so the wait only delays that end.
 

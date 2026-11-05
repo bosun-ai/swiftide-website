@@ -9,17 +9,19 @@ A search strategy decides how many documents come back and how a retriever finds
 
 ## Similarity search
 
-::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="1-2"}
+::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs" mark="1"}
 
 `SimilaritySingleEmbedding` searches with the dense embedding that the `Embed` query transformer put on the query. It returns `top_k` documents. The default is 10. ask-your-codebase searches a LanceDB table and sets `top_k` from its `--top-k` flag, which defaults to 20.
 
-`with_top_k` takes `&mut self` and returns `&mut Self`, so bind the strategy with `let mut` or end a builder chain with `.to_owned()`. Name its type, as above, or the compiler stops with E0283; see [Troubleshooting](/reference/troubleshooting-and-faq/#similaritysingleembedding-type-annotations).
+`with_top_k` takes the strategy by value and returns it, so it chains onto `default()` or `from_filter`. :unreleased `SimilaritySingleEmbedding::default()` exists only for the unfiltered strategy, so its filter type is inferred as `()`, even on stores that also retrieve with a typed filter. For a filtered search, start from `from_filter` or call `with_filter`, as in [Filters](#filters).
 
 ## Hybrid search
 
 ::snippet{src="@swiftide/examples/docs-qa/src/query.rs" anchor="hybrid" title="examples/docs-qa/src/query.rs"}
 
-`HybridSearch` combines a keyword or sparse search with a dense search. `top_n` caps the candidates of each search. `top_k` caps the documents that come back. Both default to 10. docs-qa fetches 20 candidates and later reranks them down to 10.
+`HybridSearch` combines a keyword or sparse search with a dense search. `top_n` caps the candidates of each search. `top_k` caps the documents that come back. Both default to 10. docs-qa fetches 20 candidates and later reranks them down to 10. `with_top_n`, `with_top_k`, `with_dense_vector_field` and `with_sparse_vector_field` take the strategy by value and return it, so they chain without `.to_owned()`. :unreleased
+
+`HybridSearch` implements `Default` for every filter type. When nothing else fixes the filter type, name it, as docs-qa does with `HybridSearch<Filter>` in its return type, or the compiler stops with E0283.
 
 On Qdrant, the query needs a dense and a sparse embedding, so the pipeline runs both query transformers before it retrieves. The example creates two FastEmbed models in its setup: `fastembed` for dense and `fastembed_sparse` for sparse embeddings.
 

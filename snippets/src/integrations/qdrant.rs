@@ -24,8 +24,7 @@ pub async fn filter(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> {
         ..Default::default()
     };
 
-    let mut similarity = SimilaritySingleEmbedding::from_filter(guides.clone());
-    similarity.with_top_k(5);
+    let similarity = SimilaritySingleEmbedding::from_filter(guides.clone()).with_top_k(5);
 
     let pipeline = query::Pipeline::from_search_strategy(similarity)
         .then_transform_query(query_transformers::Embed::from_client(openai.clone()))
@@ -33,7 +32,7 @@ pub async fn filter(openai: OpenAI, qdrant: Qdrant) -> anyhow::Result<()> {
         .then_answer(answers::Simple::from_client(openai));
 
     // On a hybrid search, the filter applies to the dense and the sparse candidates
-    let hybrid = HybridSearch::from_filter(guides).with_top_n(20).to_owned();
+    let hybrid = HybridSearch::from_filter(guides).with_top_n(20);
     // ANCHOR_END: filter
 
     let _hybrid_pipeline = query::Pipeline::from_search_strategy(hybrid);

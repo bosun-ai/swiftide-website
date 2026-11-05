@@ -3,6 +3,8 @@ title: "Streams and concurrency"
 description: "Set how many nodes an indexing pipeline processes at once, throttle it, split and merge its stream, and drop failed nodes without losing good ones."
 sidebar:
   order: 8
+identLint:
+  ignore: [downcast_ref, chain]
 ---
 
 You set how many nodes each step of an indexing pipeline handles at once, how fast they reach a slow step, which steps they pass through, and what happens to the ones that fail. The pipeline is a stream of nodes, and every step is a stage on that stream.
@@ -33,6 +35,8 @@ A transformer, batch transformer or chunker can bring its own limit through `con
 
 `merge` joins two pipelines with the same node type into one stream. Node cache registrations and recorded failures of both sides are combined, so a `filter_cached` inside either branch still marks its sources and failures in the other branch keep them out of the cache.
 
+Each branch of `split_by` gets its own statistics collector, seeded with a copy of what was collected before the split, so a branch you run on its own reports only its own nodes. A collector handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on, so `run` after the merge returns one `PipelineStats` for both branches. :unreleased
+
 ### Split gotchas
 
 - `split_by` is not lazy. It spawns a task that starts reading the stream at once and sends each item into one of two channels that hold 1000 items each.
@@ -46,6 +50,8 @@ A transformer, batch transformer or chunker can bring its own limit through `con
 
 `run` stops at the first error a step returns and returns that error, and a node cache marks nothing from a failed run. The steps above drop failed nodes so the run continues.
 
+The returned error is the one the step failed with, even when a batch step follows it. A `LanguageModelError` from an LLM transformer can be recovered with `downcast_ref` or found in `chain()`, see [Errors, backoff and usage](/models/errors-backoff-and-usage/). :unreleased
+
 - `filter` keeps an item when the closure returns true. It sees nodes and errors, so it can drop specific errors as well as nodes. This one drops empty files and keeps every error.
 - `log_errors` logs each error at ERROR level and passes it on.
 - `filter_errors` drops errors without logging them.
@@ -55,7 +61,7 @@ Order matters. `filter_errors` before `log_errors` leaves nothing to log. Each p
 
 ### Errors before a batch step
 
-A batch step collects nodes until it has a full batch. Those are `then_in_batch`, and `then_store_with` when the storage has a batch size. When an error reaches it, the step emits the nodes it has collected so far together with that error as one error item. `filter_errors` after the batch step then drops those good nodes too, without a trace. With a batch size of 64, one failed LLM call can drop up to 63 good chunks.
+A batch step collects nodes until it has a full batch. Those are `then_in_batch`, and `then_store_with` when the storage has a batch size. When an error reaches it, the step passes the error on and drops the nodes it has collected so far, without a trace. A `filter_errors` after the batch step keeps the run going, but those good nodes are already gone. With a batch size of 64, one failed LLM call can drop up to 63 good chunks.
 
 Those dropped nodes are not recorded as failed. When other chunks of the same source complete, the node cache marks that source and the next run skips it. Put a `filter_errors` pair before every batch step, as the snippet does before `then_in_batch`.
 
@@ -63,7 +69,7 @@ The source of a node that fails in a transformer stays out of the node cache, so
 
 ## Statistics
 
-`run` takes the pipeline by value, so read a run's counts from the INFO event `Pipeline completed` that it logs at the end. [Metrics and pipeline statistics](/observability/metrics-and-statistics/) covers `Pipeline::stats`, its limits and how the ask-your-codebase showcase counts nodes itself.
+`run` returns the `PipelineStats` of the run, with node counts, token usage and timing, as `let stats = pipeline.run().await?;`. :unreleased It also logs them as the INFO event `Pipeline completed`. `run` takes the pipeline by value, and `stats()` before `run` returns the empty initial statistics. To watch a run while it is going, clone the handle from `stats_collector()` before you call `run`. [Pipeline statistics](/observability/metrics-and-statistics/#pipeline-statistics) shows both.
 
 ## Streams
 
@@ -75,7 +81,7 @@ When you build a pipeline with `Pipeline::from_stream`, a `Result<Vec<..>>` that
 
 ## Reference
 
-- [`Pipeline`](docsrs:swiftide/indexing/struct.Pipeline.html) (`with_concurrency`, `throttle`, `then`, `then_chunk`, `then_in_batch`, `then_store_with`, `split_by`, `merge`, `filter`, `filter_cached`, `filter_errors`, `log_all`, `log_errors`, `log_nodes`, `from_stream`, `run`)
+- [`Pipeline`](docsrs:swiftide/indexing/struct.Pipeline.html) (`with_concurrency`, `throttle`, `then`, `then_chunk`, `then_in_batch`, `then_store_with`, `split_by`, `merge`, `filter`, `filter_cached`, `filter_errors`, `log_all`, `log_errors`, `log_nodes`, `from_stream`, `run`, `stats`, `stats_collector`)
 - [`IndexingStream`](docsrs:swiftide/indexing/struct.IndexingStream.html)
 - [`Transformer`](docsrs:swiftide/traits/trait.Transformer.html) (`concurrency`)
 - [`BatchableTransformer`](docsrs:swiftide/traits/trait.BatchableTransformer.html) (`concurrency`)

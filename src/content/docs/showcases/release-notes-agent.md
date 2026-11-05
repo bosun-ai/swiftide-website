@@ -4,7 +4,7 @@ description: "An agent that reads git history through scoped tools, streams a re
 sidebar:
   order: 2
 identLint:
-  ignore: [WriteChangelogArgs, schema_for, JsonSchema, TokioChildProcess, aws_lc_rs, SystemPrompt, get_pull_request, get_issue]
+  ignore: [WriteChangelogArgs, schema_for, JsonSchema, TokioChildProcess, SystemPrompt, get_pull_request, get_issue]
 ---
 
 You end up with a command-line agent that drafts release notes for the commits since your last tag. It streams the draft to your terminal and writes `RELEASE_NOTES.md` only after you answer `y`. The code lives in `examples/release-notes-agent` of the swiftide repository.
@@ -16,18 +16,17 @@ You end up with a command-line agent that drafts release notes for the commits s
 - For `--mcp`: Node.js (`npx`) and `GITHUB_PERSONAL_ACCESS_TOKEN` or `GITHUB_TOKEN`.
 - For `--trace`: `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY`, and optionally `LANGFUSE_URL`.
 
-The CLI also reads variables from a `.env` file, found in the current directory or the nearest parent, or from the file you pass with `--env-file`. Like every showcase, `main` installs the rustls `aws_lc_rs` crypto provider at startup, because swiftide selects none ([Crypto provider](/reference/feature-flags/#crypto-provider)).
+The CLI also reads variables from a `.env` file, found in the current directory or the nearest parent, or from the file you pass with `--env-file`. TLS needs no setup, because swiftide's HTTP clients bring their own rustls crypto provider ([TLS](/integrations/overview/#tls)).
 
-The crate turns off default features and enables the feature flags `macros`, `swiftide-agents`, `openai`, `mcp` and `langfuse`. The excerpts below also need `async-trait`, because `#[derive(Tool)]` expands to `#[async_trait]`, plus `schemars`, `rmcp` and `rustls`:
+The crate turns off default features and enables the feature flags `macros`, `swiftide-agents`, `openai`, `mcp` and `langfuse`. The excerpts below also need `async-trait`, because `#[derive(Tool)]` expands to `#[async_trait]`, plus `schemars` and `rmcp`. The model client sets the endpoint with `api_base` and `api_key` on the `OpenAI` builder, which is on swiftide master but not in {{swiftide_version}} :unreleased, so depend on swiftide from git until the next release:
 
 ```sh
-cargo add swiftide@{{swiftide_version}} --no-default-features --features macros,swiftide-agents,openai,mcp,langfuse
+cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features macros,swiftide-agents,openai,mcp,langfuse
 cargo add async-trait schemars --features schemars/derive
 cargo add rmcp --features client,transport-child-process
-cargo add rustls --no-default-features --features aws_lc_rs,std
 ```
 
-The example itself builds against the swiftide workspace through a path dependency, not the released crate.
+The example itself builds against the swiftide workspace through a path dependency.
 
 ## Architecture
 
@@ -109,10 +108,10 @@ The step counter resets on every `query()` and `run()`. When the agent reaches t
 
 ## Commands
 
-The crate is not in the {{swiftide_version}} tag. Until the showcases reach master, clone the branch that contains them:
+The crate is on master, not in the {{swiftide_version}} tag. Clone the repository:
 
 ```sh
-git clone --branch docs/showcases https://github.com/bosun-ai/swiftide
+git clone https://github.com/bosun-ai/swiftide
 cd swiftide
 ```
 

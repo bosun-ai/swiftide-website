@@ -58,9 +58,13 @@ A contrib flag never registers a tool or changes an agent by itself. You still a
 
 The `groq`, `gemini`, `ollama`, `open-router` and `dashscope` clients build on the OpenAI client. Each of these flags also compiles `swiftide::integrations::openai`.
 
-## Crypto provider
+## TLS
 
-The integrations crate always compiles its HTTP (Hypertext Transfer Protocol) clients with rustls and no crypto provider, whatever flags you pick. `default-features = false` on `swiftide` does not change this. Your application installs a provider before it builds the first client; [Troubleshooting and FAQ](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the call and the `rustls` dependency.
+Integrations that make HTTP (Hypertext Transfer Protocol) calls use rustls for TLS (Transport Layer Security) and need no setup, whatever flags you pick. Each HTTP client uses the process-wide rustls crypto provider if your application installed one, and otherwise its own: aws-lc-rs, or ring for `anthropic`. `anthropic` uses rustls even when another crate turns on native TLS.
+
+Redis over `rediss://` is the exception. The Redis client needs a process-wide provider, so before it connects Swiftide installs aws-lc-rs if your application has not installed one. To use a different provider, install it before the first Redis call.
+
+In the {{swiftide_version}} release the clients have no provider of their own; see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 
 ## Flag tables
 

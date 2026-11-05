@@ -22,21 +22,21 @@ Swiftide is pre-1.0, and minor releases break APIs. Release 0.33 changed system 
 
 ## Release status
 
-The skill, `context7.json` and the four showcase crates are in the swiftide commit these docs pin. They are not in the {{swiftide_version}} release and not yet on the swiftide `master` branch. :unreleased Until they reach `master`, the install command and the Context7 setup below find nothing, and you get the files from the [pinned commit](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321) instead.
+The skill, `context7.json` and the four showcase crates are on the swiftide `master` branch, which these docs pin. They are not in the {{swiftide_version}} release. :unreleased The skill describes `master`, so a few of its rules, such as the one on TLS, do not hold for {{swiftide_version}}.
 
 ## Skill
 
-The Swiftide skill is a set of instructions that the agent loads when the task needs it. Once it is on `master`, install it with the `skills` CLI from npm (needs Node.js):
+The Swiftide skill is a set of instructions that the agent loads when the task needs it. Install it with the `skills` CLI from npm (needs Node.js):
 
 ```sh
 npx skills add bosun-ai/swiftide
 ```
 
-Until then, copy the [`skills/swiftide`](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/skills/swiftide) folder from the pinned commit into the skills directory of your agent.
+Without Node.js, copy the [`skills/swiftide`](https://github.com/bosun-ai/swiftide/tree/cea196aa07c31a3b8fa64916cbbd40c36833f62b/skills/swiftide) folder from the pinned commit into the skills directory of your agent.
 
-`SKILL.md` targets 0.33. It covers feature flags, the rustls crypto provider, tools, hooks, structured stops, human approval, MCP (Model Context Protocol) toolboxes, tasks and pipelines, and ends with a checklist. Four reference files go deeper: `agents.md`, `tasks.md`, `pipelines.md` and `integrations.md`. Every snippet in them is copied from compiled code in the swiftide repository, and names its source file.
+`SKILL.md` targets 0.33. It covers feature flags, OpenAI-compatible endpoints, tools, hooks, structured stops, human approval, MCP (Model Context Protocol) toolboxes, tasks and pipelines, and ends with a checklist. Four reference files go deeper: `agents.md`, `tasks.md`, `pipelines.md` and `integrations.md`. Every snippet in them is copied from compiled code in the swiftide repository, and names its source file.
 
-The agent picks the skill up when a Rust project depends on swiftide or one of its crates, when you ask for an agent, task graph or RAG (retrieval-augmented generation) pipeline in Rust, or when it fixes a missing feature flag or crypto provider.
+The agent picks the skill up when a Rust project depends on swiftide or one of its crates, when you ask for an agent, task graph or RAG (retrieval-augmented generation) pipeline in Rust, or when it fixes a missing feature flag.
 
 ## Context7
 
@@ -44,7 +44,7 @@ The agent picks the skill up when a Rust project depends on swiftide or one of i
 
 Context7 indexes the default branch, which can hold APIs that are not released yet. Check what it returns against the version in your `Cargo.lock`.
 
-The pinned commit adds a [`context7.json`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/context7.json). :unreleased Once it is on `master`, it limits the index to `examples`, `skills` and the source folders of the crates, and adds ten rules that the AGENTS.md block below also covers. Until then, Context7 indexes the default branch without it.
+The repository's [`context7.json`](https://github.com/bosun-ai/swiftide/blob/cea196aa07c31a3b8fa64916cbbd40c36833f62b/context7.json) limits the index to `examples`, `skills` and the source folders of the crates, and adds nine rules that the AGENTS.md block below also covers.
 
 ## llms.txt files
 
@@ -83,7 +83,7 @@ Pin the version in the URL so the agent does not read a newer release. `latest` 
 
 ## Examples
 
-The [examples directory](https://github.com/bosun-ai/swiftide/tree/master/examples) holds the single-file examples. The four [showcases](/showcases/release-notes-agent/) are in the [pinned commit](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples) only. :unreleased Each showcase has a README, an `OUTPUT.md` with output from a real run, and source that this site excerpts.
+The [examples directory](https://github.com/bosun-ai/swiftide/tree/master/examples) holds the single-file examples. The four [showcases](/showcases/release-notes-agent/) are on [`master`](https://github.com/bosun-ai/swiftide/tree/cea196aa07c31a3b8fa64916cbbd40c36833f62b/examples) only. :unreleased Each showcase has a README, an `OUTPUT.md` with output from a real run, and source that this site excerpts.
 
 From the root of a checkout of the pinned commit, an agent can run them. `hello-agents` uses Gemini and needs `GEMINI_API_KEY`. `ask-your-codebase` needs `OPENAI_API_KEY`, and its first run downloads an embedding model of about 600 MB.
 
@@ -113,10 +113,8 @@ trusting examples written for older releases.
   and tasks, needs its own flag.
 - With `default-features = false`, add `macros` back. Tools and structured stops also need
   `schemars` (with `derive`) and `serde`.
-- Install a rustls crypto provider at the start of `main`, before the first client, e.g.
-  `rustls::crypto::aws_lc_rs::default_provider().install_default()`. That needs a direct
-  dependency on `rustls` 0.23 with the `aws_lc_rs` and `std` features. Swiftide enables rustls
-  without choosing a provider. Unless another dependency selects one, building a client panics.
+- TLS needs no setup: the HTTP clients use rustls with their own crypto provider. Do not add
+  `rustls` or call `install_default()` unless the app wants a specific provider.
 - Tools: `#[swiftide::tool]` on an async fn that takes `&dyn AgentContext` and returns
   `Result<ToolOutput, ToolError>`. The doc comment is the tool description and a `# Arguments`
   list describes the arguments. Use `#[derive(Tool)]` for a tool with state. Return
@@ -145,23 +143,22 @@ trusting examples written for older releases.
   returns `TaskRunOutcome::Completed(output)` or `TaskRunOutcome::Paused`; continue a paused
   task with `task.resume()`.
 - OpenAI-compatible endpoints go through the `openai` flag:
-  `OpenAI::builder().client(async_openai::Client::with_config(OpenAIConfig::new().with_api_base(..).with_api_key(..)))`.
-  Swiftide does not re-export `async_openai`; add `async-openai` 0.41, the version swiftide uses.
+  `OpenAI::builder().api_base("http://127.0.0.1:8080/v1").api_key(key)`. The URL includes the
+  version prefix. `.client(..)` replaces both; whichever is called last wins.
 - AWS Bedrock is `swiftide::integrations::aws_bedrock_v2` (the Converse API), behind the
   `aws-bedrock` flag.
 - MCP tools are named `<server>:<tool>`. OpenAI rejects `:` in tool names, so rename them.
 - Pipelines: use the same embedding model for indexing and querying, and set the vector store's
   `vector_size` to that model's dimensions. Wrap LLM clients used during indexing in
   `LanguageModelWithBackOff`.
-- Before finishing: run `cargo check` with the exact features, and confirm `main` installs the
-  crypto provider before the first request.
+- Before finishing: run `cargo check` with the exact features.
 ```
 
-[Installation](/start/installation/) shows the ring equivalent of the crypto provider line.
+The block describes swiftide `master`. :unreleased On {{swiftide_version}}, replace the TLS rule with the provider setup from [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic), and pass an OpenAI-compatible endpoint as `.client(async_openai::Client::with_config(config))`, where `config` is an `OpenAIConfig` with the base URL and key.
 
 ## Verification
 
-Ask the agent to finish with the checks from the skill. `cargo check` with the exact feature flags in `Cargo.toml` catches a missing flag as an unresolved import (error E0432). Running the binary once catches a missing crypto provider, which panics when the first client is built.
+Ask the agent to finish with the checks from the skill. `cargo check` with the exact feature flags in `Cargo.toml` catches a missing flag as an unresolved import (error E0432).
 
 ## Reference
 
@@ -171,13 +168,13 @@ Ask the agent to finish with the checks from the skill. `cargo check` with the e
 - [`Prompt`](docsrs:swiftide/prompt/struct.Prompt.html)
 - [`ApprovalRequired`](docsrs:swiftide/agents/tools/control/struct.ApprovalRequired.html) and [`StopWithArgs`](docsrs:swiftide/agents/tools/control/struct.StopWithArgs.html)
 - [`Task`](docsrs:swiftide/tasks/struct.Task.html), [`Transition`](docsrs:swiftide/tasks/struct.Transition.html) and [`TaskRunOutcome`](docsrs:swiftide/tasks/enum.TaskRunOutcome.html)
-- [`OpenAI`](docsrs:swiftide/integrations/openai/type.OpenAI.html) and [`OpenAIConfig`](docsrs:swiftide/integrations/openai/struct.OpenAIConfig.html)
+- [`OpenAI`](docsrs:swiftide/integrations/openai/type.OpenAI.html) and [`OpenAIBuilder`](docsrs:swiftide/integrations/openai/type.OpenAIBuilder.html)
 - [`aws_bedrock_v2`](docsrs:swiftide/integrations/aws_bedrock_v2/index.html)
 - [`LanguageModelWithBackOff`](docsrs:swiftide/indexing/struct.LanguageModelWithBackOff.html)
-- [`skills/swiftide/SKILL.md`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/skills/swiftide/SKILL.md) at the pinned commit
+- [`skills/swiftide/SKILL.md`](https://github.com/bosun-ai/swiftide/blob/cea196aa07c31a3b8fa64916cbbd40c36833f62b/skills/swiftide/SKILL.md) at the pinned commit
 - [Feature flags](/reference/feature-flags/)
 - [Upgrading](/reference/upgrading/)
-- [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic)
+- [TLS](/reference/feature-flags/#tls)
 
 ## Next
 

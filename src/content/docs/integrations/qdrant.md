@@ -105,11 +105,11 @@ The collection needs a sparse vector for the same field. Without a sparse embedd
 
 Both search strategies take a Qdrant `Filter`, as in the similarity snippet. Swiftide re-exports the client crate at `swiftide::integrations::qdrant::qdrant_client`. Conditions match payload keys, including any metadata field. An array of strings matches any of its values as keywords. An owned `String` that contains whitespace becomes a full-text match instead of a keyword match. A full-text match needs a full-text payload index on that field, which Swiftide does not create. Without one, Qdrant matches the text as an exact substring.
 
-Qdrant implements hybrid search only for `HybridSearch<Filter>`. Write that type even when you set no filter. For `SimilaritySingleEmbedding`, Qdrant accepts both `Filter` and no filter, so `SimilaritySingleEmbedding::default()` as an expression needs a type annotation; see [type annotations](/reference/troubleshooting-and-faq/#similaritysingleembedding-type-annotations).
+Qdrant implements hybrid search only for `HybridSearch<Filter>`. Write that type even when you set no filter. For `SimilaritySingleEmbedding`, Qdrant accepts both `Filter` and no filter. `SimilaritySingleEmbedding::default()` is the search without a filter and needs no type annotation. :unreleased
 
 ## Gotchas
 
-- In 0.33, retrieved content is `Debug`-quoted, with escaped newlines. docs-qa wraps the retriever in [`CleanQdrant`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/docs-qa/src/retrieval.rs) (the `self.qdrant` in the query pipeline snippet above), which restores the text before reranking and answering.
+- In 0.33, retrieved content is `Debug`-quoted, with escaped newlines. docs-qa wraps the retriever in [`CleanQdrant`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/retrieval.rs) (the `self.qdrant` in the query pipeline snippet above), which restores the text before reranking and answering.
 - A changed vector size, distance or set of vectors needs a new collection.
 - A changed chunk gets a new point ID, and the old point stays. docs-qa's `--recreate` flag drops the collection first.
 - Retrieved documents keep every payload key except `content` as metadata.
@@ -130,7 +130,7 @@ Qdrant implements hybrid search only for `HybridSearch<Filter>`. Write that type
 - [`Retrieve`](docsrs:swiftide/traits/trait.Retrieve.html)
 - [`SimilaritySingleEmbedding`](docsrs:swiftide/query/search_strategies/struct.SimilaritySingleEmbedding.html)
 - [`HybridSearch`](docsrs:swiftide/query/search_strategies/struct.HybridSearch.html)
-- [docs-qa source](https://github.com/bosun-ai/swiftide/tree/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/docs-qa)
+- [docs-qa source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/docs-qa)
 
 ## Next
 

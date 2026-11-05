@@ -18,10 +18,7 @@ cargo add swiftide@{{swiftide_version}} --features openai,swiftide-agents
 cargo add schemars@1 serde serde_json --features serde/derive
 cargo add tokio --features full
 cargo add anyhow async-trait
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
-
-Swiftide selects no Transport Layer Security (TLS) crypto provider. Your binary installs the rustls provider at the start of `main` (see [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic)). The examples crate in the swiftide repository gets one through another dependency, so the examples run without that step.
 
 Every agent below borrows an OpenAI client built like this:
 

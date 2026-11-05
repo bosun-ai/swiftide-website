@@ -15,8 +15,6 @@ cargo add rmcp@2.1 --features client,transport-child-process
 cargo add tokio --features macros,rt-multi-thread,process,time
 ```
 
-Swiftide's HTTP (Hypertext Transfer Protocol) clients use rustls without a crypto provider, so your `main` installs one before it builds the first client. [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the call.
-
 ## Child process toolbox
 
 The release-notes-agent showcase reads pull requests through the GitHub MCP server when you pass `--mcp`:

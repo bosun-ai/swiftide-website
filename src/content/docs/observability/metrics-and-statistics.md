@@ -77,37 +77,36 @@ Embeddings have no completion, so `completion_tokens` grows by 0.
 
 ## Pipeline statistics
 
-New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::stats` returns a `PipelineStats` snapshot of it, and `Pipeline::stats_collector` returns the collector itself.
+New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::run` returns a `PipelineStats` snapshot of it at the end of the run. :unreleased
 
-`PipelineStats` holds node counts, per-model `token_usage` and timing, with helpers such as `duration` and `nodes_per_second`.
+::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="run_stats"}
 
-`Pipeline::run` takes the pipeline by value, so you cannot call `stats` during or after a run, although its API docs say you can. Read the numbers of a run from tracing instead. At the end of a successful run, `run` logs one INFO event, `Pipeline completed`, with the fields `nodes_processed`, `nodes_stored`, `total_tokens`, `total_requests`, `elapsed_secs` and `nodes_per_sec`.
+`PipelineStats` holds node counts, per-model `token_usage` and timing, with helpers such as `duration` and `nodes_per_second`. `run` also logs one INFO event at the end of a successful run, `Pipeline completed`, with the fields `nodes_processed`, `nodes_stored`, `total_tokens`, `total_requests`, `elapsed_secs` and `nodes_per_sec`. Enable INFO for the `swiftide_indexing` target to see it, for example with `RUST_LOG=swiftide_indexing=info`. [Tracing](/observability/tracing/) shows the subscriber setup.
 
-Enable INFO for the `swiftide_indexing` target to see them, for example with `RUST_LOG=swiftide_indexing=info`. [Tracing](/observability/tracing/) shows the subscriber setup.
+### Watch a run in progress
 
-### Your own collector
+`run` takes the pipeline by value. To read the numbers while it runs, clone the collector handle first. `Pipeline::stats_collector` returns the `Arc<StatsCollector>` the pipeline shares with every step. :unreleased
 
-`StatsCollector` is thread-safe and works outside a pipeline. To read the numbers of a run in code, create one yourself, share it through an `Arc`, and fill it from a closure transformer:
+::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="watch_run"}
 
-::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="own_stats_collector"}
+`nodes_stored` goes up as nodes reach the end of the pipeline. `nodes_processed` is set once, when the stream is done. `Pipeline::stats` returns the same snapshot as `collector.get_stats()`; before the run every count is 0.
 
-`pipeline.stats()` works on the built pipeline until `run` takes it, and before the run every count is 0. Your collector outlives the run. `start` and `complete` set the times that `duration` and `nodes_per_second` use, and `nodes_per_second` returns `None` when no node was counted.
+`split_by` gives each branch its own collector, seeded with the counts so far, so a handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on. :unreleased
 
 ### Statistics gotchas
 
-- `nodes_processed` and `nodes_stored` both count the nodes that reach the end of the pipeline. They are the same number, even when the last step is not storage.
-- Nothing in Swiftide records token usage, failed nodes or transformations into the collector during a run. `total_tokens` and `total_requests` in the `Pipeline completed` event are always 0. So are `nodes_failed` and `transformations_applied`.
-- Each step you add copies the collector instead of sharing it, so a transformer cannot write into it during the run.
-- The event and the `total_nodes` span field only appear when the run succeeds. If a node error reaches the end of the stream, `run` returns the error and logs neither.
+- `nodes_processed` and `nodes_stored` both count the nodes that reach the end of the pipeline. After a run they are the same number, even when the last step is not storage.
+- Nothing in Swiftide records token usage, failed nodes or transformations into the collector during a run. `total_tokens` and `total_requests` are always 0, and so are `nodes_failed` and `transformations_applied`. To record them yourself, call `record_token_usage`, `increment_nodes_failed` or `increment_transformations` on the shared handle.
+- The returned stats, the event and the `total_nodes` span field only exist when the run succeeds. If a node error reaches the end of the stream, `run` returns the error instead.
 - For token totals per pipeline, give the client of each pipeline its own `metric_metadata` label. The counters add up across all runs of the process, so take per-run numbers as differences in your backend.
 
 ## Node counters
 
-The ask-your-codebase showcase reports its counts without `stats`. It threads three counting transformers through its pipeline:
+The ask-your-codebase showcase takes the chunk count from the stats that `run` returns, and counts files with transformers of its own. :unreleased
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs"}
 
-`files_found.count()` sees every source file that passes the test-file filter. `files_changed.count()` sits after `filter_cached`, so it only sees files the [node cache](/indexing/caching/) did not skip. `chunks_indexed.count()` sits after storage. Each `Tally` wraps an `Arc<AtomicU64>`, and the showcase measures the elapsed time with its own `Instant`.
+`files_found.count()` sees every source file that passes the test-file filter. `files_changed.count()` sits after `filter_cached`, so it only sees files the [node cache](/indexing/caching/) did not skip. `stats.nodes_stored` is the number of chunks that reached storage. Each `Tally` wraps an `Arc<AtomicU64>`, and the showcase measures the elapsed time with its own `Instant`, so the time includes loading the models.
 
 The same pattern as a closure [transformer](/indexing/transformers-and-metadata/):
 
@@ -115,7 +114,7 @@ The same pattern as a closure [transformer](/indexing/transformers-and-metadata/
 
 A closure from `TextNode` to `anyhow::Result<TextNode>` is a transformer. This one adds 1 to a shared counter and returns the node unchanged. Steps run nodes concurrently, so the counter is an atomic behind an `Arc`, and the closure holds its own clone of it.
 
-The showcase prints these lines from its counters. It indexed the `swiftide-agents` crate with `claude-haiku-5-5` through an OpenAI-compatible gateway, and FastEmbed embeddings on the CPU:
+The showcase prints these lines from its counters and the run's stats. It indexed the `swiftide-agents` crate with `claude-haiku-5-5` through an OpenAI-compatible gateway, and FastEmbed embeddings on the CPU:
 
 ```text
 Indexed 34 chunks from 14 new or changed files (14 files found, 0 unchanged) in 91.9s

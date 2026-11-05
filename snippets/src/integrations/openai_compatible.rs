@@ -9,7 +9,7 @@ use swiftide::{
     integrations::{
         ollama::{Ollama, config::OllamaConfig},
         open_router::{OpenRouter, config::OpenRouterConfig},
-        openai::{OpenAI, OpenAIConfig},
+        openai::OpenAI,
         qdrant::Qdrant,
     },
     query::{self, answers, query_transformers},
@@ -90,12 +90,9 @@ pub fn openrouter() -> anyhow::Result<()> {
 /// Groq with a key from another variable, through the plain OpenAI client.
 pub fn gateway() -> anyhow::Result<()> {
     // ANCHOR: gateway
-    let config = OpenAIConfig::new()
-        .with_api_base("https://api.groq.com/openai/v1")
-        .with_api_key(std::env::var("TEAM_GROQ_KEY")?);
-
     let groq = OpenAI::builder()
-        .client(async_openai::Client::with_config(config))
+        .api_base("https://api.groq.com/openai/v1")
+        .api_key(std::env::var("TEAM_GROQ_KEY")?)
         .default_prompt_model("llama-3.3-70b-versatile")
         .build()?;
     // ANCHOR_END: gateway

@@ -21,7 +21,7 @@ cargo add swiftide@{{swiftide_version}} --features openai,swiftide-agents
 
 The system prompt of an agent is a `Prompt`. `AgentBuilder::system_prompt` takes anything that converts into one, so a `&'static str`, a `String` or a finished `Prompt` all work. The showcase passes the result of this method to `system_prompt` in its `build` function.
 
-`SYSTEM_PROMPT` is [`src/system_prompt.md`](https://github.com/bosun-ai/swiftide/blob/e09a3e90d3eecdaffa08818a661efc3ecec08321/examples/release-notes-agent/src/system_prompt.md), included at compile time with `include_str!`. It is a Tera template, the Jinja-style template language Swiftide renders prompts with. Its last lines show how it handles optional values:
+`SYSTEM_PROMPT` is [`src/system_prompt.md`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/system_prompt.md), included at compile time with `include_str!`. It is a Tera template, the Jinja-style template language Swiftide renders prompts with. Its last lines show how it handles optional values:
 
 ```text
 {% if github %}

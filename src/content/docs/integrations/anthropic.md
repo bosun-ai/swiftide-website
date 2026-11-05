@@ -13,10 +13,9 @@ You end up with an `Anthropic` client that sends prompts and chat completions to
 cargo add swiftide@{{swiftide_version}} --features anthropic,swiftide-agents
 cargo add tokio --features full
 cargo add anyhow futures-util
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
-The snippets use `tokio` and `anyhow` around the calls. The streaming snippet needs `futures_util::StreamExt` for `stream.next()`, which Swiftide does not re-export. `rustls` supplies the crypto provider.
+The snippets use `tokio` and `anyhow` around the calls. The streaming snippet needs `futures_util::StreamExt` for `stream.next()`, which Swiftide does not re-export.
 
 ## Client
 
@@ -28,7 +27,7 @@ The client implements `SimplePrompt` and `ChatCompletion`. You can pass it to in
 
 `on_usage` receives the token counts of each call. On `prompt` and `complete` the client awaits it, and an `Err` from the callback fails the call. Use `on_usage_async` for a callback that awaits. [Usage callbacks](/models/errors-backoff-and-usage/#usage-callbacks) compares this with the other clients.
 
-Swiftide builds the HTTP (Hypertext Transfer Protocol) client with rustls and no crypto provider, so building the client panics until you install one at the start of `main`. See [Crypto provider](/integrations/overview/#crypto-provider).
+Swiftide builds the HTTP (Hypertext Transfer Protocol) client with rustls, even when another crate turns on native TLS (Transport Layer Security) for reqwest. :unreleased It uses the rustls crypto provider your application installed, or else ring, so it needs no setup; see [TLS](/integrations/overview/#tls).
 
 ## Models
 

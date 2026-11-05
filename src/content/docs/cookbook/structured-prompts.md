@@ -11,14 +11,13 @@ This recipe asks an OpenAI model for three questions about Rust and reads them f
 
 ## Setup
 
-Add Swiftide with the `openai` feature flag. Add schemars, serde and serde_json for the response type, tokio and anyhow for `main`, and rustls for the crypto provider:
+Add Swiftide with the `openai` feature flag. Add schemars, serde and serde_json for the response type, and tokio and anyhow for `main`:
 
 ```sh
 cargo add swiftide@{{swiftide_version}} --features openai
 cargo add schemars@1 serde serde_json --features serde/derive
 cargo add anyhow
 cargo add tokio --features macros,rt-multi-thread
-cargo add rustls@0.23 --no-default-features --features ring,std
 ```
 
 Set `OPENAI_API_KEY` and run the example from the root of the swiftide repository:
@@ -34,8 +33,6 @@ The example needs no extra setup inside the swiftide repository. Your own binary
 ::snippet{src="@snippets/src/cookbook/structured_prompts.rs" anchor="imports"}
 
 `structured_prompt::<T>` is a method of the `StructuredPrompt` trait. The import `StructuredPrompt as _` brings the method into scope without the name. Leave it out and the call fails to compile with `no method named structured_prompt`.
-
-Swiftide selects no Transport Layer Security (TLS) crypto provider. Install a rustls provider at the start of `main`, before you build the client. [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows the panic you get otherwise.
 
 `OpenAI` is a type alias of `GenericOpenAI` for the OpenAI endpoint. A structured prompt uses the default prompt model, so set one with `default_prompt_model`. Without it the call fails with `LanguageModelError::PermanentError("Model not set")`.
 

@@ -19,7 +19,7 @@ cargo add metrics@0.24
 cargo add tokio --features macros,rt-multi-thread
 ```
 
-Other clients that emit counters need their own feature flag as well: `anthropic`, `aws-bedrock`, `ollama` or `groq`. In your own binary, install a rustls crypto provider at the start of `main`, before you build the first client. [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic) shows how.
+Other clients that emit counters need their own feature flag as well: `anthropic`, `aws-bedrock`, `ollama` or `groq`.
 
 To run the example itself, clone the swiftide repository, set `OPENAI_API_KEY`, and start Qdrant on `localhost:6334` (or set `QDRANT_URL`). Then run from the repository root:
 
