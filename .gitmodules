@@ -1,4 +1,4 @@
 [submodule "vendor/swiftide"]
 	path = vendor/swiftide
-	url = /Users/timonv/projects/swiftide-wt-docs-showcases
+	url = https://github.com/bosun-ai/swiftide.git
 	branch = docs/showcases
