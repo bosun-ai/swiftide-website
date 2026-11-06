@@ -123,7 +123,7 @@ describe('other directives', () => {
 	it('renders the integrations matrix and filters by kind', async () => {
 		const all = await markdown('::integrations');
 		expect(all).toContain('| Integration');
-		expect(all).toContain('[`OpenAI`](https://docs.rs/swiftide/0.33.0/swiftide/integrations/openai/type.OpenAI.html)');
+		expect(all).toContain('[`OpenAI`](https://docs.rs/swiftide/0.33/swiftide/integrations/openai/type.OpenAI.html)');
 		expect(all).toContain(`[\`hello.rs\`](${fixtureSwiftide.ghBlob}examples/hello.rs)`);
 		expect(all).toContain('[integrations/openai](/integrations/openai/)');
 		expect(all).toContain('LLM, Embeddings');
@@ -134,7 +134,7 @@ describe('other directives', () => {
 	});
 
 	it('renders :unreleased per target', async () => {
-		expect(await markdown('New API :unreleased')).toBe('New API (unreleased: on swiftide master, not yet in 0.33.0)');
+		expect(await markdown('New API :unreleased')).toBe('New API (unreleased: on swiftide master, not yet in 0.33)');
 		const tree = html('New API :unreleased');
 		expect(JSON.stringify(tree)).toContain('"sw-badge--unreleased"');
 	});
@@ -150,7 +150,7 @@ describe('inline rewriting', () => {
 			'Run `cargo add swiftide@{{swiftide_version}}`, version {{ swiftide_version }}.\n\n```sh\ncargo add swiftide@{{swiftide_version}}\n```',
 		);
 		expect(out).toBe(
-			'Run `cargo add swiftide@0.33.0`, version 0.33.0.\n\n```sh\ncargo add swiftide@0.33.0\n```',
+			'Run `cargo add swiftide@0.33`, version 0.33.\n\n```sh\ncargo add swiftide@0.33\n```',
 		);
 	});
 
@@ -171,10 +171,10 @@ describe('inline rewriting', () => {
 
 	it('rewrites docsrs: links and definitions', async () => {
 		expect(await markdown('[Agent](docsrs:swiftide/agents/struct.Agent.html)')).toBe(
-			'[Agent](https://docs.rs/swiftide/0.33.0/swiftide/agents/struct.Agent.html)',
+			'[Agent](https://docs.rs/swiftide/0.33/swiftide/agents/struct.Agent.html)',
 		);
 		expect(await markdown('[core][c]\n\n[c]: docsrs:swiftide_core')).toContain(
-			'[c]: https://docs.rs/swiftide-core/0.33.0/swiftide_core/',
+			'[c]: https://docs.rs/swiftide-core/0.33/swiftide_core/',
 		);
 		await expect(markdown('[x](docsrs:tokio)')).rejects.toThrow(/Unknown crate "tokio"/);
 	});
@@ -214,8 +214,8 @@ describe('mdx flattening', () => {
 
 describe('versionNote', () => {
 	it('describes the frontmatter badges', () => {
-		expect(versionNote({ unreleased: true }, '0.33.0')).toBe('_Unreleased: on swiftide master, not yet in 0.33.0._');
-		expect(versionNote({ since: '0.32' }, '0.33.0')).toBe('_Available since swiftide 0.32._');
-		expect(versionNote(undefined, '0.33.0')).toBeUndefined();
+		expect(versionNote({ unreleased: true }, '0.33')).toBe('_Unreleased: on swiftide master, not yet in 0.33._');
+		expect(versionNote({ since: '0.32' }, '0.33')).toBe('_Available since swiftide 0.32._');
+		expect(versionNote(undefined, '0.33')).toBeUndefined();
 	});
 });

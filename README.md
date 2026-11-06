@@ -54,7 +54,7 @@ Run `cargo add swiftide@{{swiftide_version}}`. Read [the source](https://github.
 
 - **`::snippet`** cuts a region out of a compiled file. `@swiftide/` points into `vendor/swiftide`, `@snippets/` into `snippets/`. Select the region with `anchor="name"`, which matches `// ANCHOR: name` and `// ANCHOR_END: name` markers in the source (nested markers are stripped, the excerpt is dedented), or temporarily with `lines="20-48"`. Optional: `title`, `collapse`, `mark`, `ins`, `del` (line ranges relative to the excerpt), `frame`, `wrap`, `lang`, and `source="false"` to drop the "Source:" permalink that is added below every snippet.
 - **`::include`** splices a markdown file in (`strip` drops matching lines, `shift` demotes headings, `llms="false"` keeps it out of the llms files). **`::feature-flags`** renders the feature flag tables from swiftide's `Cargo.toml`. **`::integrations`** renders the integrations matrix from `src/data/integrations.yaml`, optionally filtered by `kind`.
-- **`{{swiftide_version}}`** is the pinned release (e.g. `0.33.0`) and **`{{swiftide_sha}}`** the full pinned commit, for GitHub URLs, `git checkout` and `cargo add --rev`; **`docsrs:`** links point at docs.rs for that release; **`:unreleased`** marks APIs that are on swiftide master but not released yet. Frontmatter `swiftide: { since: "0.32", unreleased: true }` adds the same badges next to the page title. In `.mdx` pages `{` starts a JSX expression, so the `{{…}}` placeholders only work in `.md` pages.
+- **`{{swiftide_version}}`** is the pinned release line (e.g. `0.33`) and **`{{swiftide_sha}}`** the full pinned commit, for GitHub URLs, `git checkout` and `cargo add --rev`; **`docsrs:`** links point at docs.rs for that release; **`:unreleased`** marks APIs that are on swiftide master but not released yet. Frontmatter `swiftide: { since: "0.32", unreleased: true }` adds the same badges next to the page title. In `.mdx` pages `{` starts a JSX expression, so the `{{…}}` placeholders only work in `.md` pages.
 
 Anything that cannot be resolved (missing file or anchor, unknown attribute, out-of-range `mark`, unknown placeholder) fails the build with the page and line.
 
@@ -62,7 +62,7 @@ To show new Rust code, add it to `snippets/src/<section>/<topic>.rs` inside a fu
 
 ## The swiftide pin
 
-`vendor/swiftide` is a git submodule. Its recorded commit (the gitlink) is the single source of the version the site documents: `src/lib/swiftide.ts` derives the docs.rs URLs and the GitHub permalinks from it, and reads the release from the `swiftide` crate's `Cargo.toml` at that commit (release-plz bumps the manifest in the release commit, so this is right even before the tag is pushed). The build fails if the checkout does not match the pin.
+`vendor/swiftide` is a git submodule. Its recorded commit (the gitlink) is the single source of the version the site documents: `src/lib/swiftide.ts` derives the docs.rs URLs and the GitHub permalinks from it, and reads the release from the `swiftide` crate's `Cargo.toml` at that commit (release-plz bumps the manifest in the release commit, so this is right even before the tag is pushed). The site shows the release line (major.minor, e.g. `0.34`) of that manifest version, which docs.rs and `cargo add` both resolve to the newest patch. The build fails if the checkout does not match the pin.
 
 To move the pin:
 

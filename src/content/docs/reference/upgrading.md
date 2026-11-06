@@ -47,7 +47,7 @@ Swiftide now needs Rust 1.97 or newer. `ReasoningItem.id` is now an `Option<Stri
 
 ### TLS crypto provider
 
-In 0.33.0, Swiftide does not pick a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). Since 0.34 the clients no longer need it; see [TLS](#tls).
+In 0.33, Swiftide does not pick a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). Since 0.34 the clients no longer need it; see [TLS](#tls).
 
 ### System prompts
 

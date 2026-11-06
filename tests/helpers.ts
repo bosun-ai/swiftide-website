@@ -10,8 +10,8 @@ export const fixtureSwiftide: SwiftideContext = {
 	sha: '0123456789abcdef0123456789abcdef01234567',
 	shortSha: '012345678',
 	tag: 'v0.33.0',
-	version: '0.33.0',
+	version: '0.33',
 	crates: ['swiftide', 'swiftide_agents', 'swiftide_core'],
-	docsRsBase: 'https://docs.rs/swiftide/0.33.0/swiftide/',
+	docsRsBase: 'https://docs.rs/swiftide/0.33/swiftide/',
 	ghBlob: 'https://github.com/bosun-ai/swiftide/blob/0123456789abcdef0123456789abcdef01234567/',
 };

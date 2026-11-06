@@ -29,7 +29,7 @@ The macro generates three items from `git_log_since`:
 - a function `git_log_since()` that returns it as a `Box<dyn Tool>`, ready for `AgentBuilder::tools`,
 - an argument struct `GitLogSinceArgs` that derives serde and `JsonSchema`. Its schema forbids extra properties, but deserialization ignores keys it does not know.
 
-The tool name the model sees is the function name, `git_log_since`. Since 0.33.0, the description is the doc comment text before the first heading. Each item under `# Arguments` describes one argument. A `# Parameters` heading works the same way.
+The tool name the model sees is the function name, `git_log_since`. Since 0.33, the description is the doc comment text before the first heading. Each item under `# Arguments` describes one argument. A `# Parameters` heading works the same way.
 
 The tools parse the model's strings into `Revision` and `RepoPath` before they call `context.executor()`, because the `LocalExecutor` in this example does not sandbox anything. See [Executors](/agents/executors/).
 

@@ -1,19 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { docsRsUrl, parsePackageVersion, swiftidePermalink } from '../src/lib/swiftide.ts';
+import { docsRsUrl, parsePackageVersion, releaseLine, swiftidePermalink } from '../src/lib/swiftide.ts';
 import { fixtureSwiftide } from './helpers.ts';
 
 describe('docsRsUrl', () => {
 	it('maps crate paths to the pinned version', () => {
 		expect(docsRsUrl(fixtureSwiftide, 'swiftide/agents/struct.Agent.html')).toBe(
-			'https://docs.rs/swiftide/0.33.0/swiftide/agents/struct.Agent.html',
+			'https://docs.rs/swiftide/0.33/swiftide/agents/struct.Agent.html',
 		);
-		expect(docsRsUrl(fixtureSwiftide, 'swiftide_core')).toBe('https://docs.rs/swiftide-core/0.33.0/swiftide_core/');
+		expect(docsRsUrl(fixtureSwiftide, 'swiftide_core')).toBe('https://docs.rs/swiftide-core/0.33/swiftide_core/');
 		expect(docsRsUrl(fixtureSwiftide, 'swiftide_core#traits')).toBe(
-			'https://docs.rs/swiftide-core/0.33.0/swiftide_core/#traits',
+			'https://docs.rs/swiftide-core/0.33/swiftide_core/#traits',
 		);
 	});
 	it('rejects unknown crates', () => {
 		expect(() => docsRsUrl(fixtureSwiftide, 'tokio/index.html')).toThrow(/Unknown crate "tokio"/);
+	});
+});
+
+describe('releaseLine', () => {
+	it('drops the patch version', () => {
+		expect(releaseLine('0.34.0')).toBe('0.34');
+		expect(releaseLine('1.2.13')).toBe('1.2');
+	});
+	it('maps a pre-release to its release line', () => {
+		expect(releaseLine('0.35.0-rc.1')).toBe('0.35');
 	});
 });
 

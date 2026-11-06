@@ -10,6 +10,10 @@
  * releases with release-plz: the release PR bumps the manifests and the `v<version>` tag lands on
  * that same commit later, and between releases the manifest still names the last release. So the
  * manifest is right at any pin, including a release commit whose tag is not pushed yet.
+ *
+ * The site shows the release line (`0.34`), not the patch version (`0.34.0`). docs.rs resolves
+ * `<crate>/0.34/` to the newest 0.34.x build and `cargo add swiftide@0.34` is a valid semver
+ * requirement, so the line stays correct across patch releases.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -24,13 +28,17 @@ export interface SwiftideContext {
 	/** Full commit SHA recorded by the gitlink. */
 	readonly sha: string;
 	readonly shortSha: string;
-	/** Release tag of `version`, e.g. `v0.34.0`. It may not be pushed yet for a fresh release. */
+	/** Release tag of the full crate version, e.g. `v0.34.0`. It may not be pushed yet for a fresh release. */
 	readonly tag: string;
-	/** Version of the `swiftide` crate at `sha`, e.g. `0.34.0`: the release the pin belongs to. */
+	/**
+	 * Release line (`<major>.<minor>`) of the `swiftide` crate at `sha`, e.g. `0.34`. Everything the
+	 * site shows uses it: docs.rs resolves `<crate>/0.34/` to the newest 0.34.x build and
+	 * `cargo add swiftide@0.34` is a valid semver requirement.
+	 */
 	readonly version: string;
 	/** Crate names (underscored) that live in the swiftide workspace, e.g. `swiftide_core`. */
 	readonly crates: readonly string[];
-	/** `https://docs.rs/swiftide/<version>/swiftide/` */
+	/** `https://docs.rs/swiftide/<version>/swiftide/`, e.g. `https://docs.rs/swiftide/0.34/swiftide/` */
 	readonly docsRsBase: string;
 	/** `https://github.com/bosun-ai/swiftide/blob/<sha>/` */
 	readonly ghBlob: string;
@@ -98,6 +106,12 @@ export function parsePackageVersion(crateToml: string, workspaceToml: string): s
 		: quotedVersion(tableValue(crateToml, 'package', 'version'));
 }
 
+/** The release line `<major>.<minor>` of a semver version: `0.34.0` and `0.34.0-rc.1` give `0.34`. */
+export function releaseLine(version: string): string {
+	const [major, minor] = version.split('.', 2);
+	return `${major}.${minor}`;
+}
+
 function swiftideVersion(dir: string): string {
 	const crateManifest = path.join(dir, 'swiftide', 'Cargo.toml');
 	const version = existsSync(crateManifest)
@@ -136,12 +150,13 @@ export function loadSwiftideContext(projectRoot: string): SwiftideContext {
 				'Run `git submodule update` to go back to the pin, or `git add vendor/swiftide` to move it.',
 		);
 	}
-	const version = swiftideVersion(dir);
+	const fullVersion = swiftideVersion(dir);
+	const version = releaseLine(fullVersion);
 	return {
 		dir,
 		sha,
 		shortSha: sha.slice(0, 9),
-		tag: `v${version}`,
+		tag: `v${fullVersion}`,
 		version,
 		crates: workspaceCrates(dir),
 		docsRsBase: `https://docs.rs/swiftide/${version}/swiftide/`,

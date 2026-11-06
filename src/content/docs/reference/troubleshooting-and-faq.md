@@ -1,6 +1,6 @@
 ---
 title: "Troubleshooting and FAQ"
-description: "Fixes for the errors people hit most with Swiftide: pipeline failures, the rustls panic on 0.33.0, missing features, unreachable stores, rejected tool schemas, runaway agents and silent streaming."
+description: "Fixes for the errors people hit most with Swiftide: pipeline failures, the rustls panic on 0.33, missing features, unreachable stores, rejected tool schemas, runaway agents and silent streaming."
 sidebar:
   order: 5
 identLint:
@@ -31,7 +31,7 @@ No rustls crypto provider is configured. When using the `rustls-no-provider` fea
 
 Swiftide's HTTP clients need no TLS (Transport Layer Security) setup. Each one uses the process-wide rustls crypto provider if your application installed one, and otherwise its own. Redis over `rediss://` needs a process-wide provider, and Swiftide installs aws-lc-rs before it connects if none is installed. [TLS](/reference/feature-flags/#tls) has the details.
 
-On 0.33.0, Swiftide builds its clients without a provider, so building a client panics with this message, or with `No provider set` for the Anthropic client. Install a provider with rustls's `CryptoProvider::install_default` at the start of `main`, or upgrade to {{swiftide_version}}.
+On 0.33, Swiftide builds its clients without a provider, so building a client panics with this message, or with `No provider set` for the Anthropic client. Install a provider with rustls's `CryptoProvider::install_default` at the start of `main`, or upgrade to {{swiftide_version}}.
 
 Another crate in your application that builds its own rustls configuration also relies on the process-wide provider. When the build compiles in both ring and aws-lc-rs, for example with `openai` and `qdrant`, that crate panics until your application installs one.
 
@@ -92,7 +92,7 @@ In the hook, `delta.message_chunk` holds the new text. The OpenAI client also pu
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="similarity_annotation"}
 
-`SimilaritySingleEmbedding::default()` exists only for the strategy without a filter, so its filter type is inferred. Build a filtered strategy with `from_filter` or `with_filter`. On 0.33.0, `default()` fails with error E0283, "type annotations needed"; name the filter type, as in the snippet.
+`SimilaritySingleEmbedding::default()` exists only for the strategy without a filter, so its filter type is inferred. Build a filtered strategy with `from_filter` or `with_filter`. On 0.33, `default()` fails with error E0283, "type annotations needed"; name the filter type, as in the snippet.
 
 `HybridSearch::default()` still needs the annotation on stores that implement the retriever for more than one filter type. The search strategy is generic over its filter type, and Rust does not use the default type parameter to pick an implementation.
 
