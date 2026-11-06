@@ -15,7 +15,7 @@ cargo add swiftide@{{swiftide_version}} --features tree-sitter
 
 The `tree-sitter` feature flag adds the grammars and the transformers `ChunkCode`, `MetadataQACode`, `MetadataRefsDefsCode`, `OutlineCodeTreeSitter` and `CompressCodeOutline`. They are re-exported at `swiftide::indexing::transformers`, next to the other transformers. `SupportedLanguages` sits at `swiftide::integrations::treesitter`.
 
-The `tree-sitter-perl` feature flag adds Perl and turns on `tree-sitter` too. :unreleased
+The `tree-sitter-perl` feature flag adds Perl and turns on `tree-sitter` too.
 
 ## Supported languages
 
@@ -39,7 +39,7 @@ The `tree-sitter-perl` feature flag adds Perl and turns on `tree-sitter` too. :u
 | Elixir | `elixir` | ex, exs | no | no |
 | HTML | `html` | html, htm, xhtml | no | no |
 | PHP | `php` | php | no | no |
-| Perl :unreleased | `perl` | pm, pl, t | no | no |
+| Perl | `perl` | pm, pl, t | no | no |
 
 Every language works with `ChunkCode`. The last two columns say which languages `OutlineCodeTreeSitter` and `MetadataRefsDefsCode` handle.
 

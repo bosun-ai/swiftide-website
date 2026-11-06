@@ -85,7 +85,7 @@ The hook only replaces the text of older tool outputs. Each tool call keeps its 
 
 ## Summaries
 
-A `ChatMessage::Summary` shortens what the model sees without rewriting storage. When the history holds one, `DefaultContext` sends the system messages plus everything from the latest summary on. Add one with `ChatMessage::new_summary` through `agent.context().add_message(..)`. OpenAI-compatible providers send a summary as an assistant message. `ContextCompression` in agents-contrib :unreleased writes these summaries for you; see [Contrib](/agents/contrib/).
+A `ChatMessage::Summary` shortens what the model sees without rewriting storage. When the history holds one, `DefaultContext` sends the system messages plus everything from the latest summary on. Add one with `ChatMessage::new_summary` through `agent.context().add_message(..)`. OpenAI-compatible providers send a summary as an assistant message. `ContextCompression` in agents-contrib writes these summaries for you; see [Contrib](/agents/contrib/).
 
 ## Custom contexts
 

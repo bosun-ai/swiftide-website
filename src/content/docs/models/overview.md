@@ -61,7 +61,7 @@ To retry rate limits and server errors, wrap the client in `LanguageModelWithBac
 
 ## OpenAI-compatible endpoints
 
-A server that speaks the OpenAI API works with the `OpenAI` client. Point the client at it with `api_base` and `api_key` on the builder. :unreleased
+A server that speaks the OpenAI API works with the `OpenAI` client. Point the client at it with `api_base` and `api_key` on the builder.
 
 ::snippet{src="@snippets/src/models/overview.rs" anchor="custom_base_url"}
 

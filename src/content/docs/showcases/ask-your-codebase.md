@@ -15,10 +15,10 @@ This showcase is a command-line tool with two commands. `index` turns a codebase
 - `OPENAI_API_KEY` for any OpenAI-compatible endpoint. `OPENAI_BASE_URL` is optional and defaults to `https://api.openai.com/v1`. `OPENAI_MODEL` is optional and defaults to `gpt-5.4-mini`. An empty `OPENAI_API_KEY` or `OPENAI_BASE_URL` counts as unset. An empty `OPENAI_MODEL` does not: it sets the model to an empty name, so unset it instead.
 - About 600MB of disk for the code embedding model. FastEmbed downloads it into `.fastembed_cache/` in the current directory on first use.
 
-The crate turns off swiftide's default features and enables the `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai` feature flags. The excerpts use APIs that are on swiftide master but not in {{swiftide_version}}: `run` returning `PipelineStats`, chained search strategy setters and `api_base` on the `OpenAI` builder. :unreleased To build the same thing in your own crate, depend on swiftide from git until the next release:
+The crate turns off swiftide's default features and enables the `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai` feature flags. To build the same thing in your own crate:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
+cargo add swiftide@{{swiftide_version}} --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
 cargo add fastembed@5 tree-sitter@0.26 --no-default-features
 ```
 
@@ -36,7 +36,7 @@ The index lives next to the code, in `<path>/.ask-your-codebase/`. It holds `cac
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs"}
 
-`FileLoader` respects `.gitignore`. `filter_cached` skips files whose path and content are unchanged since the last successful run. `then_in_batch` sends 32 chunks to the embedder per call. The two `count` closures count files for the summary line. `run` returns the `PipelineStats` of the run, and its `nodes_stored` is the number of chunks in the summary. :unreleased
+`FileLoader` respects `.gitignore`. `filter_cached` skips files whose path and content are unchanged since the last successful run. `then_in_batch` sends 32 chunks to the embedder per call. The two `count` closures count files for the summary line. `run` returns the `PipelineStats` of the run, and its `nodes_stored` is the number of chunks in the summary.
 
 The order of the test steps matters. The node cache keys on the file path and its content. If unit tests were removed after `filter_cached`, the content would differ on every run and the cache would never hit.
 
@@ -78,7 +78,7 @@ A closure that returns `Result<TextNode>` is a transformer too. This one writes 
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs"}
 
-`SimilaritySingleEmbedding` returns 10 chunks by default, and `with_top_k` sets the `--top-k` value instead. `with_top_k` takes the strategy by value and returns it, so it chains onto `default()`. `default()` is only implemented for the unfiltered strategy, so the filter type is inferred as `()`, meaning no filter. :unreleased `GenerateSubquestions` rewrites the question into several related ones. The `Embed` query transformer embeds the rewritten text, the question and its subquestions together, as one vector with the local model. `query` consumes the pipeline and returns the answered query.
+`SimilaritySingleEmbedding` returns 10 chunks by default, and `with_top_k` sets the `--top-k` value instead. `with_top_k` takes the strategy by value and returns it, so it chains onto `default()`. `default()` is only implemented for the unfiltered strategy, so the filter type is inferred as `()`, meaning no filter. `GenerateSubquestions` rewrites the question into several related ones. The `Embed` query transformer embeds the rewritten text, the question and its subquestions together, as one vector with the local model. `query` consumes the pipeline and returns the answered query.
 
 ### Prompts and document template
 
@@ -96,11 +96,11 @@ The subquestion template receives `question` and `num_questions`, which defaults
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 
-The client is always swiftide's `OpenAI` integration. `api_base` points it at `OPENAI_BASE_URL` and `api_key` sets the key, without building an `async-openai` client yourself. :unreleased `use_responses_api` switches from Chat Completions to the Responses API when you pass `--responses-api`. `LanguageModelWithBackOff` retries rate limits and transient errors with exponential backoff. `index` keeps retrying a failing prompt for up to 60 seconds, because it sends many prompts at once and expects rate limits. `ask` stops retrying after 30 seconds.
+The client is always swiftide's `OpenAI` integration. `api_base` points it at `OPENAI_BASE_URL` and `api_key` sets the key, without building an `async-openai` client yourself. `use_responses_api` switches from Chat Completions to the Responses API when you pass `--responses-api`. `LanguageModelWithBackOff` retries rate limits and transient errors with exponential backoff. `index` keeps retrying a failing prompt for up to 60 seconds, because it sends many prompts at once and expects rate limits. `ask` stops retrying after 30 seconds.
 
 ## Commands
 
-The crate lives in `examples/ask-your-codebase` of the swiftide repository. It is on master, not in the {{swiftide_version}} tag. Clone the repository and run from its root:
+The crate lives in `examples/ask-your-codebase` of the swiftide repository. Clone the repository and run from its root:
 
 ```sh
 git clone https://github.com/bosun-ai/swiftide && cd swiftide
@@ -126,7 +126,7 @@ cargo run -p ask-your-codebase -- ask --path swiftide-agents --model claude-sonn
 | `--path <dir>` | `ask` | `.` | Root of the codebase, as given to `index`. |
 | `--top-k <n>` | `ask` | `20` | Number of chunks to retrieve. |
 
-By default the tool logs only errors and turns off all logging from `swiftide_integrations`, which hides errors from LanceDB, FastEmbed, Redb, tree-sitter and OpenAI. Each retried attempt is logged at WARN, so it stays hidden too. :unreleased Set `RUST_LOG=info` or `RUST_LOG=debug` to see what the pipelines do.
+By default the tool logs only errors and turns off all logging from `swiftide_integrations`, which hides errors from LanceDB, FastEmbed, Redb, tree-sitter and OpenAI. Each retried attempt is logged at WARN, so it stays hidden too. Set `RUST_LOG=info` or `RUST_LOG=debug` to see what the pipelines do.
 
 ## Output
 
@@ -180,7 +180,7 @@ Sources:
   - src/default_context.rs
 ```
 
-The answers in [`OUTPUT.md`](https://github.com/bosun-ai/swiftide/blob/master/examples/ask-your-codebase/OUTPUT.md) were checked against the source of `swiftide-agents`. Where a needed chunk was not among the 20 retrieved, the answer marked its claim as an inference.
+The answers in [`OUTPUT.md`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/ask-your-codebase/OUTPUT.md) were checked against the source of `swiftide-agents`. Where a needed chunk was not among the 20 retrieved, the answer marked its claim as an inference.
 
 ## Limitations
 

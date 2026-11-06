@@ -18,10 +18,10 @@ You end up with a command-line agent that drafts release notes for the commits s
 
 The CLI also reads variables from a `.env` file, found in the current directory or the nearest parent, or from the file you pass with `--env-file`. TLS needs no setup, because swiftide's HTTP clients bring their own rustls crypto provider ([TLS](/integrations/overview/#tls)).
 
-The crate turns off default features and enables the feature flags `macros`, `swiftide-agents`, `openai`, `mcp` and `langfuse`. The excerpts below also need `async-trait`, because `#[derive(Tool)]` expands to `#[async_trait]`, plus `schemars` and `rmcp`. The model client sets the endpoint with `api_base` and `api_key` on the `OpenAI` builder, which is on swiftide master but not in {{swiftide_version}} :unreleased, so depend on swiftide from git until the next release:
+The crate turns off default features and enables the feature flags `macros`, `swiftide-agents`, `openai`, `mcp` and `langfuse`. The excerpts below also need `async-trait`, because `#[derive(Tool)]` expands to `#[async_trait]`, plus `schemars` and `rmcp`. The model client sets the endpoint with `api_base` and `api_key` on the `OpenAI` builder, which arrived in 0.34. To build the same thing in your own crate:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features macros,swiftide-agents,openai,mcp,langfuse
+cargo add swiftide@{{swiftide_version}} --no-default-features --features macros,swiftide-agents,openai,mcp,langfuse
 cargo add async-trait schemars --features schemars/derive
 cargo add rmcp --features client,transport-child-process
 ```
@@ -56,7 +56,7 @@ The `Tool` derive macro builds a tool from a struct. Here the struct holds the o
 
 ::snippet{src="@swiftide/examples/release-notes-agent/src/agent.rs" anchor="prompt" title="examples/release-notes-agent/src/agent.rs"}
 
-The system prompt is a `Prompt`, a Tera template read from `src/system_prompt.md`. In 0.33 `Prompt` replaces `SystemPrompt`; see [Upgrading](/reference/upgrading/). `with_context_value` fills a template variable.
+The system prompt is a `Prompt`, a Tera template read from `src/system_prompt.md`. Since 0.33, `Prompt` replaces `SystemPrompt`; see [Upgrading](/reference/upgrading/). `with_context_value` fills a template variable.
 
 ## Agent
 
@@ -68,13 +68,11 @@ The system prompt is a `Prompt`, a Tera template read from `src/system_prompt.md
 
 ::snippet{src="@swiftide/examples/release-notes-agent/src/progress.rs" anchor="hooks" title="examples/release-notes-agent/src/progress.rs"}
 
-In 0.33 `before_tool` and `after_tool` receive `&mut Agent`. `after_tool` also gets the tool result as `&mut`, so a hook could rewrite it.
+Since 0.33, `before_tool` and `after_tool` receive `&mut Agent`. `after_tool` also gets the tool result as `&mut`, so a hook could rewrite it.
 
 ::snippet{src="@swiftide/examples/release-notes-agent/src/progress.rs" anchor="stream" title="examples/release-notes-agent/src/progress.rs"}
 
 Registering `on_stream` turns on streaming completions for the agent. The notes arrive as the JSON argument of `write_changelog`, so the hook reads `tool_calls_chunk` and decodes the argument as it grows. The client in `src/llm.rs` sets `stream_full(false)` on the OpenAI builder. Each chunk then leaves out the accumulated message, tool calls and usage. `message_chunk` holds only the new text, but `tool_calls_chunk` still holds the argument accumulated so far.
-
-On {{swiftide_version}} the OpenAI chat completions client repeats the previous `message_chunk` on tool-call and final chunks, so this hook prints some text twice. The fix (#1216) is on master, which the showcase builds against. :unreleased
 
 ## Structured stop
 
@@ -108,7 +106,7 @@ The step counter resets on every `query()` and `run()`. When the agent reaches t
 
 ## Commands
 
-The crate is on master, not in the {{swiftide_version}} tag. Clone the repository:
+Clone the repository:
 
 ```sh
 git clone https://github.com/bosun-ai/swiftide
@@ -185,7 +183,7 @@ Write these release notes? [y/N] y
     • Repeated text in OpenAI streaming [#1216]
 ```
 
-Everything these notes describe, `swiftide-agents-contrib`, Perl tree-sitter support, the Bedrock change (#1215) and the streaming fix (#1216), is on swiftide master and not in {{swiftide_version}}. :unreleased
+Everything these notes describe, `swiftide-agents-contrib`, Perl tree-sitter support, the Bedrock change (#1215) and the streaming fix (#1216), shipped in {{swiftide_version}}.
 
 ## Gotchas
 

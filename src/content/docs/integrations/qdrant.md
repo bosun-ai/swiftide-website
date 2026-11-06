@@ -105,11 +105,11 @@ The collection needs a sparse vector for the same field. Without a sparse embedd
 
 Both search strategies take a Qdrant `Filter`, as in the similarity snippet. Swiftide re-exports the client crate at `swiftide::integrations::qdrant::qdrant_client`. Conditions match payload keys, including any metadata field. An array of strings matches any of its values as keywords. An owned `String` that contains whitespace becomes a full-text match instead of a keyword match. A full-text match needs a full-text payload index on that field, which Swiftide does not create. Without one, Qdrant matches the text as an exact substring.
 
-Qdrant implements hybrid search only for `HybridSearch<Filter>`. Write that type even when you set no filter. For `SimilaritySingleEmbedding`, Qdrant accepts both `Filter` and no filter. `SimilaritySingleEmbedding::default()` is the search without a filter and needs no type annotation. :unreleased
+Qdrant implements hybrid search only for `HybridSearch<Filter>`. Write that type even when you set no filter. For `SimilaritySingleEmbedding`, Qdrant accepts both `Filter` and no filter. `SimilaritySingleEmbedding::default()` is the search without a filter and needs no type annotation. Before 0.34, it needed one.
 
 ## Gotchas
 
-- In 0.33, retrieved content is `Debug`-quoted, with escaped newlines. docs-qa wraps the retriever in [`CleanQdrant`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/retrieval.rs) (the `self.qdrant` in the query pipeline snippet above), which restores the text before reranking and answering.
+- Retrieved content is `Debug`-quoted, with escaped newlines. docs-qa wraps the retriever in [`CleanQdrant`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/retrieval.rs) (the `self.qdrant` in the query pipeline snippet above), which restores the text before reranking and answering.
 - A changed vector size, distance or set of vectors needs a new collection.
 - A changed chunk gets a new point ID, and the old point stays. docs-qa's `--recreate` flag drops the collection first.
 - Retrieved documents keep every payload key except `content` as metadata.

@@ -62,7 +62,7 @@ The Ollama example above uses `llama3.1`. Pull that one to run it.
 cargo add async-openai@0.41 --no-default-features
 ```
 
-`OllamaConfig` sends no `Authorization` header and reads no environment variable. For an Ollama server behind a proxy that checks a bearer token, use `OpenAI` with `api_base` and `api_key` instead. :unreleased See [Other gateways](#other-gateways).
+`OllamaConfig` sends no `Authorization` header and reads no environment variable. For an Ollama server behind a proxy that checks a bearer token, use `OpenAI` with `api_base` and `api_key` instead. See [Other gateways](#other-gateways).
 
 ## Groq
 
@@ -96,7 +96,7 @@ The first client reads `OPENROUTER_API_KEY`. The second takes the key from an `O
 
 ## Other gateways
 
-The configuration types of `Groq`, `Gemini` and `Dashscope` are private. To use another key variable or another base URL with them, use `OpenAI` with `api_base` and `api_key`. :unreleased
+The configuration types of `Groq`, `Gemini` and `Dashscope` are private. To use another key variable or another base URL with them, use `OpenAI` with `api_base` and `api_key`.
 
 ::snippet{src="@snippets/src/integrations/openai_compatible.rs" anchor="gateway"}
 

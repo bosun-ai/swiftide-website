@@ -9,7 +9,7 @@ This page indexes one directory of Rust code into an embedded LanceDB table and 
 
 ## Showcase run
 
-The showcase lives in `examples/ask-your-codebase/` on swiftide master; it is not in the v{{swiftide_version}} release tag. Clone the swiftide repository. To run exactly the code this site shows, check out the commit it is pinned to:
+The showcase lives in `examples/ask-your-codebase/` in the swiftide repository. Clone it. To run exactly the code this site shows, check out the commit it is pinned to:
 
 ```sh
 git clone https://github.com/bosun-ai/swiftide.git
@@ -37,7 +37,7 @@ Each integration has its own [feature flag](/reference/feature-flags/). The dire
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 
-The client is swiftide's `OpenAI` integration pointed at a base URL with `api_base` and `api_key` :unreleased. Indexing sends many prompts at once, so `LanguageModelWithBackOff` wraps it and retries transient errors, such as rate limits, with exponential backoff. A wrong key is a permanent error and fails at once. `max_elapsed_time_sec` in `BackoffConfiguration` caps how long one prompt is [retried](/models/errors-backoff-and-usage/); the showcase allows 60 seconds while indexing and 30 while asking.
+The client is swiftide's `OpenAI` integration pointed at a base URL with `api_base` and `api_key`. Indexing sends many prompts at once, so `LanguageModelWithBackOff` wraps it and retries transient errors, such as rate limits, with exponential backoff. A wrong key is a permanent error and fails at once. `max_elapsed_time_sec` in `BackoffConfiguration` caps how long one prompt is [retried](/models/errors-backoff-and-usage/); the showcase allows 60 seconds while indexing and 30 while asking.
 
 ## Embedder and storage
 
@@ -53,7 +53,7 @@ The embedder runs `jina-embeddings-v2-base-code`, a model trained on code, with 
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs" mark="1-3,10,14,16-22,24-27"}
 
-The indexing pipeline is a stream of nodes. Nothing runs until `run()` is awaited. `run` returns the pipeline statistics :unreleased; the showcase reports `nodes_stored` as the chunk count. The marked lines are the core:
+The indexing pipeline is a stream of nodes. Nothing runs until `run()` is awaited. `run` returns the pipeline statistics; the showcase reports `nodes_stored` as the chunk count. The marked lines are the core:
 
 - The loader, `FileLoader`, reads the files under the root with the given extensions. It skips hidden files and what `.gitignore` and `.ignore` files exclude. `.gitignore` only applies inside a git repository. Each file becomes one node.
 - `filter_cached` drops nodes the node cache has seen before. The cache key is a hash of the path and the content, so an edited file counts as new.

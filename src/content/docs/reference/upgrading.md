@@ -1,6 +1,6 @@
 ---
 title: "Upgrading"
-description: "Code changes needed to move between Swiftide releases from 0.23 to 0.33, and to swiftide master, newest first."
+description: "Code changes needed to move between Swiftide releases from 0.23 to 0.34, newest first."
 sidebar:
   order: 4
 identLint:
@@ -13,9 +13,7 @@ By the end of this page your code compiles against swiftide {{swiftide_version}}
 cargo add swiftide@{{swiftide_version}}
 ```
 
-## Unreleased
-
-These changes are on swiftide `master` and not in {{swiftide_version}}. :unreleased
+## 0.34
 
 ### Pipeline statistics
 
@@ -49,7 +47,7 @@ Swiftide now needs Rust 1.97 or newer. `ReasoningItem.id` is now an `Option<Stri
 
 ### TLS crypto provider
 
-In 0.33.0, Swiftide does not pick a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). On `master` the clients no longer need it; see [TLS](#tls).
+In 0.33.0, Swiftide does not pick a rustls crypto provider. Install one at the start of `main`, before you build the first model client, or the client build panics. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic). Since 0.34 the clients no longer need it; see [TLS](#tls).
 
 ### System prompts
 

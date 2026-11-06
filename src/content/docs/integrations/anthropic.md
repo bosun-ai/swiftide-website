@@ -27,7 +27,7 @@ The client implements `SimplePrompt` and `ChatCompletion`. You can pass it to in
 
 `on_usage` receives the token counts of each call. On `prompt` and `complete` the client awaits it, and an `Err` from the callback fails the call. Use `on_usage_async` for a callback that awaits. [Usage callbacks](/models/errors-backoff-and-usage/#usage-callbacks) compares this with the other clients.
 
-Swiftide builds the HTTP (Hypertext Transfer Protocol) client with rustls, even when another crate turns on native TLS (Transport Layer Security) for reqwest. :unreleased It uses the rustls crypto provider your application installed, or else ring, so it needs no setup; see [TLS](/integrations/overview/#tls).
+Swiftide builds the HTTP (Hypertext Transfer Protocol) client with rustls, even when another crate turns on native TLS (Transport Layer Security) for reqwest. It uses the rustls crypto provider your application installed, or else ring, so it needs no setup; see [TLS](/integrations/overview/#tls).
 
 ## Models
 

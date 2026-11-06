@@ -52,7 +52,7 @@ Only string values are stored. A number, a list or an object in that field is wr
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/query.rs" anchor="query_pipeline" title="examples/ask-your-codebase/src/query.rs"}
 
-`LanceDB` implements the `Retrieve` trait for `SimilaritySingleEmbedding`. The search runs a nearest-neighbour query on the single vector column and returns `top_k` rows, 10 by default. `SimilaritySingleEmbedding::default()` is the search without a filter, and `with_top_k` chains onto it. :unreleased
+`LanceDB` implements the `Retrieve` trait for `SimilaritySingleEmbedding`. The search runs a nearest-neighbour query on the single vector column and returns `top_k` rows, 10 by default. `SimilaritySingleEmbedding::default()` is the search without a filter, and `with_top_k` chains onto it.
 
 The query needs an embedding, so an `Embed` query transformer runs before `then_retrieve`. Use the same model that embedded the chunks. A query without an embedding fails with `No embedding for query`.
 

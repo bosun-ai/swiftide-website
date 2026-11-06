@@ -13,7 +13,7 @@ Each heading on this page names a symptom. Find yours, apply the fix, and your c
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="pipeline_errors"}
 
-An indexing pipeline stops at the first node that fails, and `run` returns that error. When it finishes, `run` returns the pipeline statistics, such as `nodes_stored`. :unreleased
+An indexing pipeline stops at the first node that fails, and `run` returns that error. When it finishes, `run` returns the pipeline statistics, such as `nodes_stored`.
 
 `log_errors` logs each error at `ERROR` level and passes it on. `filter_errors` then drops the errors, so the other nodes still reach storage. Keep `log_errors` first: `filter_errors` on its own drops errors without a trace. Both only see errors from the steps before them, so place them after the steps you want to cover. A storage error still stops the pipeline: Qdrant rejects a node without vectors, so embed first.
 
@@ -21,7 +21,7 @@ An indexing pipeline stops at the first node that fails, and `run` returns that 
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="language_model_error"}
 
-The error a step fails with reaches `run` unchanged. :unreleased A failed model call stays a `LanguageModelError`, so `downcast_ref` tells it apart from a storage or loader error, and `chain()` finds it when other code wrapped it in context. `ContextLengthExceeded` means a chunk is too large for the model; lower the chunker's maximum size.
+The error a step fails with reaches `run` unchanged. A failed model call stays a `LanguageModelError`, so `downcast_ref` tells it apart from a storage or loader error, and `chain()` finds it when other code wrapped it in context. `ContextLengthExceeded` means a chunk is too large for the model; lower the chunker's maximum size.
 
 ## Crypto provider panic
 
@@ -31,7 +31,7 @@ No rustls crypto provider is configured. When using the `rustls-no-provider` fea
 
 Swiftide's HTTP clients need no TLS (Transport Layer Security) setup. Each one uses the process-wide rustls crypto provider if your application installed one, and otherwise its own. Redis over `rediss://` needs a process-wide provider, and Swiftide installs aws-lc-rs before it connects if none is installed. [TLS](/reference/feature-flags/#tls) has the details.
 
-The 0.33.0 release still builds its clients without a provider. There, building a client panics with this message, or with `No provider set` for the Anthropic client. Install a provider with rustls's `CryptoProvider::install_default` at the start of `main`, or move to a release with this fix.
+On 0.33.0, Swiftide builds its clients without a provider, so building a client panics with this message, or with `No provider set` for the Anthropic client. Install a provider with rustls's `CryptoProvider::install_default` at the start of `main`, or upgrade to {{swiftide_version}}.
 
 Another crate in your application that builds its own rustls configuration also relies on the process-wide provider. When the build compiles in both ring and aws-lc-rs, for example with `openai` and `qdrant`, that crate panics until your application installs one.
 
@@ -86,15 +86,15 @@ With the default context, an agent stops when the model answers without calling 
 
 An agent prints nothing until the answer is complete. Register `on_stream`, as in the agent snippet on this page. The hook switches the agent to streaming and runs for every chunk. `streaming(true)` on the builder streams without a hook.
 
-In the hook, `delta.message_chunk` holds the new text. The OpenAI client also puts the full message so far in `response.message` on each chunk, because `stream_full` defaults to `true`. In 0.33.0 the final OpenAI chunk repeats the last text fragment, so the snippet prints it twice. On master the final chunk carries no new text. :unreleased See [Streaming](/agents/streaming/).
+In the hook, `delta.message_chunk` holds the new text. The OpenAI client also puts the full message so far in `response.message` on each chunk, because `stream_full` defaults to `true`. The final chunk carries no new text. Before 0.34 it repeated the last text fragment, so the snippet printed it twice. See [Streaming](/agents/streaming/).
 
 ## SimilaritySingleEmbedding type annotations
 
 ::snippet{src="@snippets/src/reference/troubleshooting.rs" anchor="similarity_annotation"}
 
-In 0.33.0, `SimilaritySingleEmbedding::default()` fails with error E0283, "type annotations needed". The search strategy is generic over its filter type, and Qdrant, PgVector and LanceDB implement the retriever for more than one. Rust does not use the default type parameter to pick an implementation. Name the filter type, as in the snippet, or start from `query::Pipeline::default()`.
+`SimilaritySingleEmbedding::default()` exists only for the strategy without a filter, so its filter type is inferred. Build a filtered strategy with `from_filter` or `with_filter`. On 0.33.0, `default()` fails with error E0283, "type annotations needed"; name the filter type, as in the snippet.
 
-On `master`, `default()` exists only for the strategy without a filter, so it infers. :unreleased Build a filtered strategy with `from_filter` or `with_filter`. `HybridSearch::default()` still needs the annotation on stores with both implementations.
+`HybridSearch::default()` still needs the annotation on stores that implement the retriever for more than one filter type. The search strategy is generic over its filter type, and Rust does not use the default type parameter to pick an implementation.
 
 ## FAQ
 

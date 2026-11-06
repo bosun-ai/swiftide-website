@@ -13,7 +13,7 @@ Swiftide is pre-1.0, and minor releases break APIs. Release 0.33 changed system 
 
 | Source | What the agent gets |
 | --- | --- |
-| Skill | Rules, gotchas and compiled snippets for 0.33 |
+| Skill | Rules, gotchas and compiled snippets for the current API |
 | Context7 | Search over the examples, the skill and the crate sources |
 | llms.txt files | This site as plain text |
 | Page Markdown | One page as Markdown |
@@ -22,7 +22,7 @@ Swiftide is pre-1.0, and minor releases break APIs. Release 0.33 changed system 
 
 ## Release status
 
-The skill, `context7.json` and the four showcase crates are on the swiftide `master` branch, which these docs pin. They are not in the {{swiftide_version}} release. :unreleased The skill describes `master`, so a few of its rules, such as the one on TLS, do not hold for {{swiftide_version}}.
+The skill, `context7.json` and the four showcase crates ship with the {{swiftide_version}} release. These docs pin the release commit, and the skill describes the APIs at that commit.
 
 ## Skill
 
@@ -32,9 +32,9 @@ The Swiftide skill is a set of instructions that the agent loads when the task n
 npx skills add bosun-ai/swiftide
 ```
 
-Without Node.js, copy the [`skills/swiftide`](https://github.com/bosun-ai/swiftide/tree/cea196aa07c31a3b8fa64916cbbd40c36833f62b/skills/swiftide) folder from the pinned commit into the skills directory of your agent.
+Without Node.js, copy the [`skills/swiftide`](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/skills/swiftide) folder from the pinned commit into the skills directory of your agent.
 
-`SKILL.md` targets 0.33. It covers feature flags, OpenAI-compatible endpoints, tools, hooks, structured stops, human approval, MCP (Model Context Protocol) toolboxes, tasks and pipelines, and ends with a checklist. Four reference files go deeper: `agents.md`, `tasks.md`, `pipelines.md` and `integrations.md`. Every snippet in them is copied from compiled code in the swiftide repository, and names its source file.
+`SKILL.md` covers feature flags, OpenAI-compatible endpoints, tools, hooks, structured stops, human approval, MCP (Model Context Protocol) toolboxes, tasks and pipelines, and ends with a checklist. Four reference files go deeper: `agents.md`, `tasks.md`, `pipelines.md` and `integrations.md`. Every snippet in them is copied from compiled code in the swiftide repository, and names its source file.
 
 The agent picks the skill up when a Rust project depends on swiftide or one of its crates, when you ask for an agent, task graph or RAG (retrieval-augmented generation) pipeline in Rust, or when it fixes a missing feature flag.
 
@@ -44,7 +44,7 @@ The agent picks the skill up when a Rust project depends on swiftide or one of i
 
 Context7 indexes the default branch, which can hold APIs that are not released yet. Check what it returns against the version in your `Cargo.lock`.
 
-The repository's [`context7.json`](https://github.com/bosun-ai/swiftide/blob/cea196aa07c31a3b8fa64916cbbd40c36833f62b/context7.json) limits the index to `examples`, `skills` and the source folders of the crates, and adds nine rules that the AGENTS.md block below also covers.
+The repository's [`context7.json`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/context7.json) limits the index to `examples`, `skills` and the source folders of the crates, and adds nine rules that the AGENTS.md block below also covers.
 
 ## llms.txt files
 
@@ -83,7 +83,7 @@ Pin the version in the URL so the agent does not read a newer release. `latest` 
 
 ## Examples
 
-The [examples directory](https://github.com/bosun-ai/swiftide/tree/master/examples) holds the single-file examples. The four [showcases](/showcases/release-notes-agent/) are on [`master`](https://github.com/bosun-ai/swiftide/tree/cea196aa07c31a3b8fa64916cbbd40c36833f62b/examples) only. :unreleased Each showcase has a README, an `OUTPUT.md` with output from a real run, and source that this site excerpts.
+The [examples directory](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples) holds the single-file examples and the four [showcases](/showcases/release-notes-agent/). Each showcase has a README, an `OUTPUT.md` with output from a real run, and source that this site excerpts.
 
 From the root of a checkout of the pinned commit, an agent can run them. `hello-agents` uses Gemini and needs `GEMINI_API_KEY`. `ask-your-codebase` needs `OPENAI_API_KEY`, and its first run downloads an embedding model of about 600 MB.
 
@@ -154,8 +154,6 @@ trusting examples written for older releases.
 - Before finishing: run `cargo check` with the exact features.
 ```
 
-The block describes swiftide `master`. :unreleased On {{swiftide_version}}, replace the TLS rule with the provider setup from [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic), and pass an OpenAI-compatible endpoint as `.client(async_openai::Client::with_config(config))`, where `config` is an `OpenAIConfig` with the base URL and key.
-
 ## Verification
 
 Ask the agent to finish with the checks from the skill. `cargo check` with the exact feature flags in `Cargo.toml` catches a missing flag as an unresolved import (error E0432).
@@ -171,7 +169,7 @@ Ask the agent to finish with the checks from the skill. `cargo check` with the e
 - [`OpenAI`](docsrs:swiftide/integrations/openai/type.OpenAI.html) and [`OpenAIBuilder`](docsrs:swiftide/integrations/openai/type.OpenAIBuilder.html)
 - [`aws_bedrock_v2`](docsrs:swiftide/integrations/aws_bedrock_v2/index.html)
 - [`LanguageModelWithBackOff`](docsrs:swiftide/indexing/struct.LanguageModelWithBackOff.html)
-- [`skills/swiftide/SKILL.md`](https://github.com/bosun-ai/swiftide/blob/cea196aa07c31a3b8fa64916cbbd40c36833f62b/skills/swiftide/SKILL.md) at the pinned commit
+- [`skills/swiftide/SKILL.md`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/skills/swiftide/SKILL.md) at the pinned commit
 - [Feature flags](/reference/feature-flags/)
 - [Upgrading](/reference/upgrading/)
 - [TLS](/reference/feature-flags/#tls)

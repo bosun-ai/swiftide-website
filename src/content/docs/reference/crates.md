@@ -25,10 +25,10 @@ The `swiftide` crate has almost no code of its own. It maps the other crates ont
 - `swiftide::prompt` and `swiftide::chat_completion` come straight from swiftide-core.
 - `swiftide::integrations` is swiftide-integrations. Each provider or storage module inside it exists only with its feature flag.
 - `swiftide::agents` needs the `swiftide-agents` flag, `swiftide::tasks` the `swiftide-tasks` flag, and `swiftide::langfuse` the `langfuse` flag.
-- `swiftide::agents_contrib` needs the `agents-contrib` flag, and each of its `tools`, `hooks` and `executors` submodules needs a capability flag on top. :unreleased
+- `swiftide::agents_contrib` needs the `agents-contrib` flag, and each of its `tools`, `hooks` and `executors` submodules needs a capability flag on top.
 - The `#[tool]` attribute, the `Tool` derive and `#[indexing_transformer]` sit at the crate root, behind the `macros` flag.
 
-The facade always depends on swiftide-core, swiftide-indexing, swiftide-query and swiftide-integrations. Agents, tasks, Langfuse and the macros are optional dependencies. The contrib crate is optional too. :unreleased [Feature flags](/reference/feature-flags/) lists every flag and what it turns on.
+The facade always depends on swiftide-core, swiftide-indexing, swiftide-query and swiftide-integrations. Agents, tasks, Langfuse and the macros are optional dependencies. The contrib crate is optional too. [Feature flags](/reference/feature-flags/) lists every flag and what it turns on.
 
 ## Workspace crates
 
@@ -42,11 +42,11 @@ The facade always depends on swiftide-core, swiftide-indexing, swiftide-query an
 | swiftide-tasks | `Task`, `TaskNode`, `Transition`, fan-out and join | `swiftide::tasks` | [swiftide::tasks](docsrs:swiftide/tasks/index.html) |
 | swiftide-langfuse | `LangfuseLayer`, a tracing layer that reports agent and completion calls to Langfuse | `swiftide::langfuse` | [swiftide_langfuse](docsrs:swiftide_langfuse) |
 | swiftide-macros | `#[tool]`, the `Tool` derive, `#[indexing_transformer]` | crate root | [swiftide_macros](docsrs:swiftide_macros) |
-| swiftide-agents-contrib :unreleased | `ReadFile`, `ExactReplace`, `ApplyPatch`, `UpdatePlan`, `ContextCompression`, `ToolSummarizer`, `LazyExecutor` | `swiftide::agents_contrib` | [source on GitHub](https://github.com/bosun-ai/swiftide/tree/7e2181e93edae3cd20ef132eae53087b169e4293/swiftide-agents-contrib) |
+| swiftide-agents-contrib | `ReadFile`, `ExactReplace`, `ApplyPatch`, `UpdatePlan`, `ContextCompression`, `ToolSummarizer`, `LazyExecutor` | `swiftide::agents_contrib` | [source on GitHub](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/swiftide-agents-contrib) |
 
 swiftide-tasks is new in 0.33. It depends on swiftide-core only. swiftide-agents depends on swiftide-tasks and swiftide-indexing, so the `swiftide-agents` flag also turns on `swiftide-tasks`. The old `swiftide::agents::tasks` module still compiles, but it is deprecated since 0.32.1 and only re-exports the new crate plus `TaskAgent`.
 
-swiftide-agents-contrib enables nothing by default, and each capability has its own facade flag. :unreleased [Feature flags](/reference/feature-flags/#agents-tasks-and-tool-protocols) lists them.
+swiftide-agents-contrib enables nothing by default, and each capability has its own facade flag. [Feature flags](/reference/feature-flags/#agents-tasks-and-tool-protocols) lists them.
 
 swiftide-test-utils also lives in the workspace. It is internal (`publish = false`) and not on crates.io.
 
@@ -100,6 +100,6 @@ Only the `swiftide` crate gets a git tag (`v{{swiftide_version}}`) and a GitHub 
 - [`swiftide::tasks`](docsrs:swiftide/tasks/index.html)
 - [`swiftide_langfuse`](docsrs:swiftide_langfuse)
 - [`swiftide_macros`](docsrs:swiftide_macros)
-- [swiftide-agents-contrib source](https://github.com/bosun-ai/swiftide/tree/7e2181e93edae3cd20ef132eae53087b169e4293/swiftide-agents-contrib) :unreleased
+- [swiftide-agents-contrib source](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/swiftide-agents-contrib)
 
 Next: [Changelog](/reference/changelog/)

@@ -4248,7 +4248,7 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "swiftide"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4269,7 +4269,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-agents"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4298,7 +4298,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-agents-contrib"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4321,7 +4321,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-core"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-openai",
@@ -4379,7 +4379,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-indexing"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4405,7 +4405,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-integrations"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "arrow-array",
@@ -4464,7 +4464,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-langfuse"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4483,7 +4483,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-macros"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4499,7 +4499,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-query"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4517,7 +4517,7 @@ dependencies = [
 
 [[package]]
 name = "swiftide-tasks"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "async-trait",
  "dyn-clone",

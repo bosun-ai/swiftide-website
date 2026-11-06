@@ -88,7 +88,7 @@ Start with an agent when the model should choose the steps. Move to a task when 
 
 Swiftide is pre-1.0. APIs change while the agent and task APIs settle, and breaking changes land in minor releases. Upgrade one minor version at a time with [Upgrading](/reference/upgrading/), and check the [Changelog](/reference/changelog/) for each release.
 
-These docs describe swiftide {{swiftide_version}}. Some APIs are only on master, such as the `agents-contrib` feature flag :unreleased and the Perl tree-sitter grammar :unreleased. Pages mark them with that badge.
+These docs describe swiftide {{swiftide_version}}.
 
 Swiftide is MIT licensed and part of the [bosun.ai](https://bosun.ai) project.
 

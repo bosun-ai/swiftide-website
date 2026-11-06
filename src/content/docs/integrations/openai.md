@@ -25,11 +25,11 @@ Unless you call `api_base`, `api_key` or `client(..)`, the builder creates an `a
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 
-The ask-your-codebase showcase sends its prompts to any OpenAI-compatible endpoint. `LlmEndpoint` holds the base URL, key and model from the command line. `api_base` and `api_key` on the builder override the base URL and key from the environment. :unreleased Everything else still comes from `OpenAIConfig::default()`, so `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID` are sent as headers when they are set, also to a third-party gateway. The showcase picks the Responses API or Chat Completions from a command-line flag.
+The ask-your-codebase showcase sends its prompts to any OpenAI-compatible endpoint. `LlmEndpoint` holds the base URL, key and model from the command line. `api_base` and `api_key` on the builder override the base URL and key from the environment. Everything else still comes from `OpenAIConfig::default()`, so `OPENAI_ORG_ID` and `OPENAI_PROJECT_ID` are sent as headers when they are set, also to a third-party gateway. The showcase picks the Responses API or Chat Completions from a command-line flag.
 
 The showcase wraps the client in `LanguageModelWithBackOff`. Transient errors, such as rate limits and outages, are retried with exponential backoff until `max_elapsed_time_sec` runs out. Permanent errors, including quota and billing errors that arrive as HTTP 429, return at once. `LlmEndpoint::client` returns `Arc<dyn SimplePrompt>`, so the rest of the showcase is provider-independent. [Errors, backoff, usage and tokens](/models/errors-backoff-and-usage/) covers the settings.
 
-For anything the two setters do not cover, such as a custom HTTP client or another configuration type, pass a whole `async_openai::Client` to `client(..)`. It replaces what `api_base` and `api_key` set, and whichever you call last wins. :unreleased Swiftide re-exports `OpenAIConfig`, `AzureConfig` and `ReasoningEffort` from `async-openai` at `swiftide::integrations::openai`. It does not re-export `async_openai::Client`, so add the crate at the version Swiftide uses:
+For anything the two setters do not cover, such as a custom HTTP client or another configuration type, pass a whole `async_openai::Client` to `client(..)`. It replaces what `api_base` and `api_key` set, and whichever you call last wins. Swiftide re-exports `OpenAIConfig`, `AzureConfig` and `ReasoningEffort` from `async-openai` at `swiftide::integrations::openai`. It does not re-export `async_openai::Client`, so add the crate at the version Swiftide uses:
 
 ```sh
 cargo add async-openai@0.41 --no-default-features

@@ -77,7 +77,7 @@ Embeddings have no completion, so `completion_tokens` grows by 0.
 
 ## Pipeline statistics
 
-New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::run` returns a `PipelineStats` snapshot of it at the end of the run. :unreleased
+Every indexing pipeline carries a `StatsCollector`. `Pipeline::run` returns a `PipelineStats` snapshot of it at the end of the run.
 
 ::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="run_stats"}
 
@@ -85,13 +85,13 @@ New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::run`
 
 ### Watch a run in progress
 
-`run` takes the pipeline by value. To read the numbers while it runs, clone the collector handle first. `Pipeline::stats_collector` returns the `Arc<StatsCollector>` the pipeline shares with every step. :unreleased
+`run` takes the pipeline by value. To read the numbers while it runs, clone the collector handle first. `Pipeline::stats_collector` returns the `Arc<StatsCollector>` the pipeline shares with every step.
 
 ::snippet{src="@snippets/src/observability/metrics_and_statistics.rs" anchor="watch_run"}
 
 `nodes_stored` goes up as nodes reach the end of the pipeline. `nodes_processed` is set once, when the stream is done. `Pipeline::stats` returns the same snapshot as `collector.get_stats()`; before the run every count is 0.
 
-`split_by` gives each branch its own collector, seeded with the counts so far, so a handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on. :unreleased
+`split_by` gives each branch its own collector, seeded with the counts so far, so a handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on.
 
 ### Statistics gotchas
 
@@ -102,7 +102,7 @@ New in 0.33, every indexing pipeline carries a `StatsCollector`. `Pipeline::run`
 
 ## Node counters
 
-The ask-your-codebase showcase takes the chunk count from the stats that `run` returns, and counts files with transformers of its own. :unreleased
+The ask-your-codebase showcase takes the chunk count from the stats that `run` returns, and counts files with transformers of its own.
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs"}
 

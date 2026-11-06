@@ -9,7 +9,7 @@ identLint:
 
 This tour builds `docs-qa`, a retrieval-augmented generation (RAG) app with three commands: `index`, `ask` and `eval`. It reads markdown files or an `llms-full.txt`, and every answer lists the pages and sections it came from. The `eval` command prints a score table that you can rerun after each retrieval change.
 
-The crate lives in the swiftide repository under `examples/docs-qa`. It is on master, not in the {{swiftide_version}} tag. Run it with `cargo run -p docs-qa` at the repository root.
+The crate lives in the swiftide repository under `examples/docs-qa`. Run it with `cargo run -p docs-qa` at the repository root.
 
 ## Prerequisites
 
@@ -19,10 +19,10 @@ The crate lives in the swiftide repository under `examples/docs-qa`. It is on ma
 - About 2.3GB of disk for the FastEmbed models, downloaded from Hugging Face into `.fastembed_cache` on first use. Set `FASTEMBED_CACHE_DIR` to share one cache.
 - Optional: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` and `LANGFUSE_URL` for `--langfuse`.
 
-The crate turns off default features and enables the feature flags `openai`, `fastembed`, `qdrant` and `langfuse`. The excerpts derive `schemars::JsonSchema`, and the loader fetches an `llms-full.txt` URL with `reqwest`. They also use APIs that are on swiftide master but not in {{swiftide_version}}: `run` returning `PipelineStats`, chained `HybridSearch` setters and `api_base` on the `OpenAI` builder. :unreleased Until the next release, depend on swiftide from git:
+The crate turns off default features and enables the feature flags `openai`, `fastembed`, `qdrant` and `langfuse`. The excerpts derive `schemars::JsonSchema`, and the loader fetches an `llms-full.txt` URL with `reqwest`. To build the same thing in your own crate:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features openai,fastembed,qdrant,langfuse
+cargo add swiftide@{{swiftide_version}} --no-default-features --features openai,fastembed,qdrant,langfuse
 cargo add schemars@1 --features derive
 cargo add reqwest@0.13 --no-default-features --features rustls
 ```
@@ -49,7 +49,7 @@ A loader is the start of an indexing pipeline. `Loader` has one associated type,
 
 ::snippet{src="@swiftide/examples/docs-qa/src/index.rs" anchor="pipeline" title="examples/docs-qa/src/index.rs"}
 
-`ChunkMarkdown::from_chunk_range(120..1500)` splits each page into chunks of at most 1,499 characters, because the range end is exclusive. It drops chunks whose trimmed text is under 120 bytes, which are mostly badges and stray headings. `MetadataTitle` stores a title under `Title` and `MetadataKeywords` stores keywords under `Keywords`, so indexing makes two large language model (LLM) calls per chunk. Two batch transformers follow: `Embed` writes the dense vector and `SparseEmbed` the sparse one, both from local FastEmbed models. `index` returns the `PipelineStats` that `run` produces. :unreleased The CLI prints the chunk count of the whole collection instead, which also covers earlier runs.
+`ChunkMarkdown::from_chunk_range(120..1500)` splits each page into chunks of at most 1,499 characters, because the range end is exclusive. It drops chunks whose trimmed text is under 120 bytes, which are mostly badges and stray headings. `MetadataTitle` stores a title under `Title` and `MetadataKeywords` stores keywords under `Keywords`, so indexing makes two large language model (LLM) calls per chunk. Two batch transformers follow: `Embed` writes the dense vector and `SparseEmbed` the sparse one, both from local FastEmbed models. `index` returns the `PipelineStats` that `run` produces. The CLI prints the chunk count of the whole collection instead, which also covers earlier runs.
 
 The metadata transformers use their own Tera templates:
 
@@ -67,7 +67,7 @@ The collection holds one dense and one sparse vector per chunk. Both use `Embedd
 
 ::snippet{src="@swiftide/examples/docs-qa/src/query.rs" anchor="hybrid" title="examples/docs-qa/src/query.rs"}
 
-`HybridSearch` defaults to 10 for both `top_n` and `top_k`. `with_top_n` and `with_top_k` take the strategy by value and return it, so they chain onto `default()` and the result goes straight into the pipeline. :unreleased
+`HybridSearch` defaults to 10 for both `top_n` and `top_k`. `with_top_n` and `with_top_k` take the strategy by value and return it, so they chain onto `default()` and the result goes straight into the pipeline.
 
 ::snippet{src="@swiftide/examples/docs-qa/src/query.rs" anchor="query_pipeline" title="examples/docs-qa/src/query.rs"}
 
@@ -83,7 +83,7 @@ The reranker is a response transformer. It runs between retrieval and the answer
 
 ### Qdrant content workaround
 
-In 0.33, Qdrant retrieval turns the stored `content` payload into a string with `to_string` on Qdrant's own `Value` type, which formats strings with `Debug`. Every chunk then comes back wrapped in quotes, with escaped newlines. The example wraps the store in `CleanQdrant` (`src/retrieval.rs`), which implements `Retrieve` for `HybridSearch`, calls Qdrant, and restores the original text. The reranker, the LLM and the evaluator then see clean markdown.
+Qdrant retrieval turns the stored `content` payload into a string with `to_string` on Qdrant's own `Value` type, which formats strings with `Debug`. Every chunk then comes back wrapped in quotes, with escaped newlines. The example wraps the store in `CleanQdrant` (`src/retrieval.rs`), which implements `Retrieve` for `HybridSearch`, calls Qdrant, and restores the original text. The reranker, the LLM and the evaluator then see clean markdown.
 
 ## Evaluation
 
@@ -150,7 +150,7 @@ The captured run used an OpenAI-compatible gateway in front of AWS Bedrock. `cla
 Indexed 43 chunks into `docs-qa` in 71.7s
 ```
 
-The answer below describes the agents-contrib file tools :unreleased, which are on swiftide master but not in {{swiftide_version}}. The CLI prints the answer followed by its sources.
+The answer below describes the agents-contrib file tools, which shipped in {{swiftide_version}}. The CLI prints the answer followed by its sources.
 
 ```text
 Enable the `agents-contrib-file-tools` feature on `swiftide`, then register `ReadFile`, `ExactReplace`, and `ApplyPatch` on your agent with `add_tool`.

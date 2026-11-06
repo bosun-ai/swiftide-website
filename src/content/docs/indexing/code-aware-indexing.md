@@ -56,7 +56,7 @@ It stores the symbols the chunk defines in `Definitions (code)` and the symbols 
 
 ## Languages
 
-`ChunkCode`, `OutlineCodeTreeSitter` and `MetadataRefsDefsCode` take a language. `MetadataQACode` and `CompressCodeOutline` take only an LLM client. The constructor for references and definitions is `try_from_language`; the others use `try_for_language`. [Tree-sitter](/integrations/tree-sitter/#supported-languages) lists which languages each transformer supports. Perl needs the `tree-sitter-perl` feature flag. :unreleased
+`ChunkCode`, `OutlineCodeTreeSitter` and `MetadataRefsDefsCode` take a language. `MetadataQACode` and `CompressCodeOutline` take only an LLM client. The constructor for references and definitions is `try_from_language`; the others use `try_for_language`. [Tree-sitter](/integrations/tree-sitter/#supported-languages) lists which languages each transformer supports. Perl needs the `tree-sitter-perl` feature flag.
 
 ## Code splitter outside a pipeline
 

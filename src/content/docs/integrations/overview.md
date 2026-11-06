@@ -41,7 +41,7 @@ The `all` flag turns on ten common integrations, but not `anthropic`, `lancedb`,
 
 ## TLS
 
-The HTTP (Hypertext Transfer Protocol) clients use rustls for TLS (Transport Layer Security) and need no setup: each uses the rustls crypto provider your application installed, or else its own. :unreleased The exception is Redis over `rediss://`, where Swiftide installs aws-lc-rs as the process-wide provider before connecting if none is installed, so install yours before the first Redis call to use another. :unreleased
+The HTTP (Hypertext Transfer Protocol) clients use rustls for TLS (Transport Layer Security) and need no setup: each uses the rustls crypto provider your application installed, or else its own. The exception is Redis over `rediss://`, where Swiftide installs aws-lc-rs as the process-wide provider before connecting if none is installed, so install yours before the first Redis call to use another.
 
 The `fastembed` model download goes through native TLS, which means OpenSSL on Linux.
 

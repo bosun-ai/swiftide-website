@@ -103,7 +103,7 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg17
 
 ## Common errors
 
-- **The program panics with "No rustls crypto provider is configured"**: you are on the 0.33.0 release. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
+- **The program panics with "No rustls crypto provider is configured"**: you are on 0.33.0 or earlier. See [Crypto provider panic](/reference/troubleshooting-and-faq/#crypto-provider-panic).
 - **Error E0432, "unresolved import"**: the feature flag behind that module is off. Add it with `cargo add swiftide@{{swiftide_version}} --features <flag>`.
 - **An authentication error (HTTP 401)**: `OPENAI_API_KEY` is missing or empty. The client builds without a key, so the error shows up at the first request.
 

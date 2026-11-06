@@ -33,7 +33,7 @@ cargo add swiftide@{{swiftide_version}} --features swiftide-agents,openai,anthro
 
 Every chat client implements `ChatCompletion`. [Providers](/models/overview/#providers) lists each client with its feature flag, and [OpenAI-compatible endpoints](/models/overview/#openai-compatible-endpoints) covers gateways and base URLs.
 
-The ask-your-codebase showcase builds its client from a base URL, a key and a flag for the Responses API, so the same binary runs against OpenAI or a gateway. `api_base` and `api_key` replace the `OpenAIConfig` client of 0.33.0: :unreleased
+The ask-your-codebase showcase builds its client from a base URL, a key and a flag for the Responses API, so the same binary runs against OpenAI or a gateway. It sets them with `api_base` and `api_key`:
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/llm.rs" anchor="llm" title="examples/ask-your-codebase/src/llm.rs"}
 

@@ -4,12 +4,12 @@ description: "Give an agent file tools (read_file, edit, apply_patch), an update
 sidebar:
   order: 12
 swiftide:
-  unreleased: true
+  since: "0.34"
 identLint:
   ignore: [in_progress, run_tests, run_coverage]
 ---
 
-With the components on this page, your agent reads and edits files, keeps a plan, and keeps its context small on long runs. They come from swiftide-agents-contrib, which is on swiftide master and not in a release yet.
+With the components on this page, your agent reads and edits files, keeps a plan, and keeps its context small on long runs. They come from swiftide-agents-contrib.
 
 ::snippet{src="@snippets/src/agents/contrib.rs" anchor="file_tools_and_plan"}
 
@@ -26,10 +26,10 @@ Nothing in the crate is enabled by default. Pick one feature flag per capability
 | `agents-contrib-context` | `ToolSummarizer`, `ContextCompression` |
 | `agents-contrib-lazy-executor` | `LazyExecutor`, `ToolExecutorExt` |
 
-Each one turns on `agents-contrib`, which turns on `swiftide-agents`. The plain `agents-contrib` flag only exposes the crate as `swiftide::agents_contrib`. Because the crate is unreleased, depend on swiftide from Git, pinned to the commit this page describes:
+Each one turns on `agents-contrib`, which turns on `swiftide-agents`. The plain `agents-contrib` flag only exposes the crate as `swiftide::agents_contrib`:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --rev {{swiftide_sha}} --features openai,agents-contrib-file-tools,agents-contrib-planning
+cargo add swiftide@{{swiftide_version}} --features openai,agents-contrib-file-tools,agents-contrib-planning
 cargo add tokio --features full
 cargo add anyhow
 ```
@@ -112,7 +112,7 @@ The model you pass to `llm` writes the summary from the history, a Git diff and 
 
 ## Reference
 
-The contrib types are unreleased, so these links point at the pinned source on GitHub.
+The links point at the source on GitHub.
 
 - [swiftide-agents-contrib README](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/README.md)
 - [`ReadFile`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/read_file.rs), [`ExactReplace`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/exact_replace.rs), [`ApplyPatch`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/swiftide-agents-contrib/src/tools/apply_patch/mod.rs)

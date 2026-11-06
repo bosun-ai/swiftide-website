@@ -96,9 +96,9 @@ Every Swiftide span the query opens becomes a child of `answer_question`. The sa
 
 ## Retry errors
 
-Retries are opt-in: you wrap the client in `LanguageModelWithBackOff` yourself. Each failed attempt it retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When it gives up, it logs the final error once at ERROR, as `Language model request failed, giving up`. :unreleased Both events have the target `swiftide_core::indexing_decorators`.
+Retries are opt-in: you wrap the client in `LanguageModelWithBackOff` yourself. Each failed attempt it retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When it gives up, it logs the final error once at ERROR, as `Language model request failed, giving up`. Both events have the target `swiftide_core::indexing_decorators`.
 
-The OpenAI-compatible, `Anthropic` and `AwsBedrock` clients instrument `prompt`, `complete` and, where they have it, `structured_prompt` with `err(level = "warn")`. So every failed call also logs its error at WARN under `swiftide_integrations`, with or without retries. :unreleased `async_openai`, the HTTP client underneath, logs server errors at WARN.
+The OpenAI-compatible, `Anthropic` and `AwsBedrock` clients instrument `prompt`, `complete` and, where they have it, `structured_prompt` with `err(level = "warn")`. So every failed call also logs its error at WARN under `swiftide_integrations`, with or without retries. `async_openai`, the HTTP client underneath, logs server errors at WARN.
 
 Hide the duplicates with the directives the showcases use:
 

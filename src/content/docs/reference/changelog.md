@@ -11,7 +11,6 @@ This page lists the features, fixes and breaking changes of every Swiftide relea
 One changelog covers every crate in the workspace; see [Versioning](/reference/crates/#versioning).
 The list below is the repository's `CHANGELOG.md` at the commit these docs pin.
 That commit can be ahead of the release.
-Features marked unreleased in these docs are on swiftide master and do not appear in the list yet.
 Entries marked **breaking** change the public API.
 For the code changes each breaking release needs, see [Upgrading](/reference/upgrading/).
 

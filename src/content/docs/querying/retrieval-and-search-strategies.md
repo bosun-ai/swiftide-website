@@ -13,13 +13,13 @@ A search strategy decides how many documents come back and how a retriever finds
 
 `SimilaritySingleEmbedding` searches with the dense embedding that the `Embed` query transformer put on the query. It returns `top_k` documents. The default is 10. ask-your-codebase searches a LanceDB table and sets `top_k` from its `--top-k` flag, which defaults to 20.
 
-`with_top_k` takes the strategy by value and returns it, so it chains onto `default()` or `from_filter`. :unreleased `SimilaritySingleEmbedding::default()` exists only for the unfiltered strategy, so its filter type is inferred as `()`, even on stores that also retrieve with a typed filter. For a filtered search, start from `from_filter` or call `with_filter`, as in [Filters](#filters).
+`with_top_k` takes the strategy by value and returns it, so it chains onto `default()` or `from_filter`. `SimilaritySingleEmbedding::default()` exists only for the unfiltered strategy, so its filter type is inferred as `()`, even on stores that also retrieve with a typed filter. For a filtered search, start from `from_filter` or call `with_filter`, as in [Filters](#filters).
 
 ## Hybrid search
 
 ::snippet{src="@swiftide/examples/docs-qa/src/query.rs" anchor="hybrid" title="examples/docs-qa/src/query.rs"}
 
-`HybridSearch` combines a keyword or sparse search with a dense search. `top_n` caps the candidates of each search. `top_k` caps the documents that come back. Both default to 10. docs-qa fetches 20 candidates and later reranks them down to 10. `with_top_n`, `with_top_k`, `with_dense_vector_field` and `with_sparse_vector_field` take the strategy by value and return it, so they chain without `.to_owned()`. :unreleased
+`HybridSearch` combines a keyword or sparse search with a dense search. `top_n` caps the candidates of each search. `top_k` caps the documents that come back. Both default to 10. docs-qa fetches 20 candidates and later reranks them down to 10. `with_top_n`, `with_top_k`, `with_dense_vector_field` and `with_sparse_vector_field` take the strategy by value and return it, so they chain without `.to_owned()`.
 
 `HybridSearch` implements `Default` for every filter type. When nothing else fixes the filter type, name it, as docs-qa does with `HybridSearch<Filter>` in its return type, or the compiler stops with E0283.
 
@@ -93,7 +93,7 @@ A closure works too: `then_retrieve` accepts any `Fn(&S, Query<states::Pending>)
 - Retrieval fails when the query has no embedding. Qdrant and LanceDB report "No embedding for query", PgVector and DuckDB "Missing embedding in query state". Qdrant hybrid search also needs a sparse embedding ("No sparse embedding for query").
 - `HybridSearchBuilder::default()` sets `top_k` and `top_n` to 0. Start from `HybridSearch::default()`, which sets both to 10.
 - Qdrant only implements hybrid search for `HybridSearch<Filter>`. Write that type in signatures, as docs-qa does, even without a filter.
-- In 0.33, Qdrant returns each document's content `Debug`-quoted: wrapped in `"` with escaped newlines. docs-qa wraps the retriever in `CleanQdrant` ([Qdrant content workaround](/showcases/docs-qa/#qdrant-content-workaround)), which restores the text before reranking and answering.
+- Qdrant returns each document's content `Debug`-quoted: wrapped in `"` with escaped newlines. docs-qa wraps the retriever in `CleanQdrant` ([Qdrant content workaround](/showcases/docs-qa/#qdrant-content-workaround)), which restores the text before reranking and answering.
 - DuckDB hybrid search does not rank before it cuts. Each search takes the first `top_n` rows of the table, unranked, and only rows in both lists get scored. On a table larger than `top_n`, most chunks are never considered. Set `top_n` to at least the row count, or use `SimilaritySingleEmbedding`.
 - A small `top_k` hides relevant chunks. In ask-your-codebase, one answer had to infer a detail because the chunk that held it was not among the 20 retrieved. Raise `top_k` for broad questions, or retrieve more and [rerank](/querying/reranking-and-response-transformers/).
 

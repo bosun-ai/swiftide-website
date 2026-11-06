@@ -35,7 +35,7 @@ To return a variant with `?` or `.into()`, bind the whole `LanguageModelError` (
 
 ### Errors from a pipeline
 
-When a step of an indexing pipeline fails on a model call, `run` returns an `anyhow::Error` with the `LanguageModelError` still inside. So you can tell a rate limit from a broken request. :unreleased
+When a step of an indexing pipeline fails on a model call, `run` returns an `anyhow::Error` with the `LanguageModelError` still inside. So you can tell a rate limit from a broken request.
 
 ::snippet{src="@snippets/src/models/errors_backoff_and_usage.rs" anchor="pipeline_errors"}
 
@@ -58,7 +58,7 @@ It never retries an `Anthropic` rate limit, because `Anthropic` marks it permane
 
 `Default::default()` gives you these defaults.
 
-Every failed attempt that the decorator retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When the decorator gives up, it logs the final error once at ERROR, also for a permanent error that it never retried. :unreleased Only `prompt` and `complete` log these events.
+Every failed attempt that the decorator retries logs a WARN event, `Language model request failed, retrying`, with the attempt number, the wait and the error with its causes. When the decorator gives up, it logs the final error once at ERROR, also for a permanent error that it never retried. Only `prompt` and `complete` log these events.
 
 For `complete_stream` the decorator does not send the request again. Your stream still receives every error. After each one, transient or permanent, the decorator waits for the next interval before it reads on. Once `max_elapsed_time_sec` is used up, the stream ends after the last error. The budget restarts after every successful item. OpenAI-compatible streams end after their first error, so the wait only delays that end.
 

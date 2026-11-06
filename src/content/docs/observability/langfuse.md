@@ -62,7 +62,7 @@ The docs-qa showcase adds the layer when you pass `--langfuse`:
 
 `LangfuseLayer::default()` panics on a missing or empty key, so docs-qa checks the keys first. The layer also starts a Tokio task that sends a batch every 5 seconds.
 
-Swiftide records all Langfuse data at the `debug` level, so the Langfuse layer gets its own `LevelFilter::DEBUG` while the terminal layer stays quieter. Running docs-qa also needs Qdrant and an index; its [README](https://github.com/bosun-ai/swiftide/tree/master/examples/docs-qa) lists the steps.
+Swiftide records all Langfuse data at the `debug` level, so the Langfuse layer gets its own `LevelFilter::DEBUG` while the terminal layer stays quieter. Running docs-qa also needs Qdrant and an index; its [README](https://github.com/bosun-ai/swiftide/tree/{{swiftide_sha}}/examples/docs-qa) lists the steps.
 
 ## Target filter
 

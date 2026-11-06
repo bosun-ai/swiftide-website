@@ -76,13 +76,13 @@ The pipeline methods only describe the stream, but their arguments run while you
 3. It marks the source nodes in the node cache, but only after the stream ended without an error.
 4. It logs `Pipeline completed` at info level and returns the same numbers as `PipelineStats`, see [Statistics](/indexing/streams-and-concurrency/#statistics).
 
-`run` returns `Result<PipelineStats>`, not the nodes. :unreleased The showcase reads the number of stored chunks from `stats.nodes_stored`. It counts files with pass-through closures such as `.then(files_found.count())`, because the statistics count nodes at the end of the stream, after chunking.
+`run` returns `Result<PipelineStats>`, not the nodes. The showcase reads the number of stored chunks from `stats.nodes_stored`. It counts files with pass-through closures such as `.then(files_found.count())`, because the statistics count nodes at the end of the stream, after chunking.
 
 `then`, `then_chunk`, `then_in_batch` and storage work on several nodes at once and pass them on as they finish, see [Streams and concurrency](/indexing/streams-and-concurrency/). The showcase passes `.concurrency(concurrent_requests)` to `MetadataQACode` to bound requests to the LLM.
 
 ### Errors and the node cache
 
-The first error stops the run, and `run` returns it, see [Errors](/indexing/streams-and-concurrency/#errors). It is the error the step failed with, so a `LanguageModelError` can be recovered with `downcast_ref`. :unreleased A source node is cached only when at least one of its chunks reached the end and none of them failed, and [When nodes are cached](/indexing/caching/#when-nodes-are-cached) covers the consequences.
+The first error stops the run, and `run` returns it, see [Errors](/indexing/streams-and-concurrency/#errors). It is the error the step failed with, so a `LanguageModelError` can be recovered with `downcast_ref`. A source node is cached only when at least one of its chunks reached the end and none of them failed, and [When nodes are cached](/indexing/caching/#when-nodes-are-cached) covers the consequences.
 
 ## Output
 
@@ -106,10 +106,10 @@ The node cache drops all 14 files at step 4, so no prompt is sent.
 
 ## Feature flags
 
-`Pipeline`, `FileLoader` and `Embed` need no feature flag. The showcase turns off the defaults and turns on `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai`. It uses APIs from swiftide master, such as the statistics that `run` returns, so it depends on swiftide from git until the next release:
+`Pipeline`, `FileLoader` and `Embed` need no feature flag. The showcase turns off the defaults and turns on `tree-sitter`, `fastembed`, `lancedb`, `redb` and `openai`. To add the same features to your crate:
 
 ```sh
-cargo add swiftide --git https://github.com/bosun-ai/swiftide --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
+cargo add swiftide@{{swiftide_version}} --no-default-features --features tree-sitter,fastembed,lancedb,redb,openai
 ```
 
 TLS needs no setup, because swiftide's HTTP clients bring their own rustls crypto provider ([TLS](/integrations/overview/#tls)). [Feature flags](/reference/feature-flags/) lists every flag.

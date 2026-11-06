@@ -31,10 +31,10 @@ The `all` flag turns on exactly these ten flags: `qdrant`, `redis`, `tree-sitter
 
 It leaves out everything else:
 
-- agents and tasks: `swiftide-agents`, `swiftide-tasks`, `mcp`, and `agents-contrib` :unreleased with its four sub-flags
+- agents and tasks: `swiftide-agents`, `swiftide-tasks`, `mcp`, and `agents-contrib` with its four sub-flags
 - the `anthropic` (Anthropic client), `gemini`, `dashscope` and `open-router` providers
 - the `lancedb` and `duckdb` storage backends, the `redb` node cache, and the `parquet`, `kafka` and `fluvio` loaders
-- `langfuse`, `metrics`, `json-schema`, `tiktoken`, `test-utils` and `tree-sitter-perl` :unreleased
+- `langfuse`, `metrics`, `json-schema`, `tiktoken`, `test-utils` and `tree-sitter-perl`
 
 To build an agent, add `swiftide-agents` next to `all`.
 
@@ -49,8 +49,8 @@ To build an agent, add `swiftide-agents` next to `all`.
 - `mcp` adds Model Context Protocol (MCP) tool support and turns on `swiftide-agents`.
 - `langfuse` adds `swiftide::langfuse` for tracing and also turns on `swiftide-agents`.
 - `json-schema` adds `JsonSchema` derives to core and agent types, and also turns on `swiftide-agents`.
-- `agents-contrib` :unreleased adds `swiftide::agents_contrib` and turns on `swiftide-agents`. On its own it enables no capability.
-- `agents-contrib-context`, `agents-contrib-planning`, `agents-contrib-file-tools` and `agents-contrib-lazy-executor` :unreleased each turn on `agents-contrib` plus one capability: hooks that summarize tool output and compress the conversation, a plan tool, file tools, or a lazy tool executor.
+- `agents-contrib` adds `swiftide::agents_contrib` and turns on `swiftide-agents`. On its own it enables no capability.
+- `agents-contrib-context`, `agents-contrib-planning`, `agents-contrib-file-tools` and `agents-contrib-lazy-executor` each turn on `agents-contrib` plus one capability: hooks that summarize tool output and compress the conversation, a plan tool, file tools, or a lazy tool executor.
 
 A contrib flag never registers a tool or changes an agent by itself. You still add the tool or hook to your agent.
 
@@ -79,6 +79,6 @@ The "Also enables" column lists only flags of the `swiftide` crate. A flag that 
 - [`swiftide::tasks`](docsrs:swiftide/tasks/index.html)
 - [`swiftide::integrations`](docsrs:swiftide/integrations/index.html)
 - [`swiftide::langfuse`](docsrs:swiftide/langfuse/index.html)
-- [`swiftide::agents_contrib`](docsrs:swiftide/agents_contrib/index.html) :unreleased
+- [`swiftide::agents_contrib`](docsrs:swiftide/agents_contrib/index.html)
 
 Next: [Crates](/reference/crates/)

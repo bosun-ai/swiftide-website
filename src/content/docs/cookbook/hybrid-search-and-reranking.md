@@ -86,7 +86,7 @@ The indexing pipeline chunks `README.md` as markdown, embeds the chunks with Fas
 
 - Retrieve more documents than you keep. Here retrieval returns up to 10 and `Rerank` keeps 5. If retrieval returns `top_k` documents or fewer, `Rerank` only reorders them.
 - FastEmbed loads its models when you construct them, in `FastEmbed::try_default()`, `try_default_sparse()` and `Rerank::builder().build()`, and downloads them on the first run. A `Rerank` built without `model` loads the default model with `expect`, so a failed download panics at `build()` instead of returning an error.
-- In 0.33 the plain `Qdrant` retriever returns each document's content `Debug`-quoted: wrapped in `"` with escaped newlines. In both examples, `Rerank` scores and `answers::Simple` renders that quoted text. docs-qa works around it with a `CleanQdrant` wrapper; see [Qdrant content workaround](/showcases/docs-qa/#qdrant-content-workaround).
+- The plain `Qdrant` retriever returns each document's content `Debug`-quoted: wrapped in `"` with escaped newlines. In both examples, `Rerank` scores and `answers::Simple` renders that quoted text. docs-qa works around it with a `CleanQdrant` wrapper; see [Qdrant content workaround](/showcases/docs-qa/#qdrant-content-workaround).
 
 ## Combined pipeline
 

@@ -35,7 +35,7 @@ A transformer, batch transformer or chunker can bring its own limit through `con
 
 `merge` joins two pipelines with the same node type into one stream. Node cache registrations and recorded failures of both sides are combined, so a `filter_cached` inside either branch still marks its sources and failures in the other branch keep them out of the cache.
 
-Each branch of `split_by` gets its own statistics collector, seeded with a copy of what was collected before the split, so a branch you run on its own reports only its own nodes. A collector handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on, so `run` after the merge returns one `PipelineStats` for both branches. :unreleased
+Each branch of `split_by` gets its own statistics collector, seeded with a copy of what was collected before the split, so a branch you run on its own reports only its own nodes. A collector handle taken before the split sees neither branch. `merge` keeps the collector of the pipeline you call it on, so `run` after the merge returns one `PipelineStats` for both branches.
 
 ### Split gotchas
 
@@ -50,7 +50,7 @@ Each branch of `split_by` gets its own statistics collector, seeded with a copy 
 
 `run` stops at the first error a step returns and returns that error, and a node cache marks nothing from a failed run. The steps above drop failed nodes so the run continues.
 
-The returned error is the one the step failed with, even when a batch step follows it. A `LanguageModelError` from an LLM transformer can be recovered with `downcast_ref` or found in `chain()`, see [Errors, backoff and usage](/models/errors-backoff-and-usage/). :unreleased
+The returned error is the one the step failed with, even when a batch step follows it. A `LanguageModelError` from an LLM transformer can be recovered with `downcast_ref` or found in `chain()`, see [Errors, backoff and usage](/models/errors-backoff-and-usage/).
 
 - `filter` keeps an item when the closure returns true. It sees nodes and errors, so it can drop specific errors as well as nodes. This one drops empty files and keeps every error.
 - `log_errors` logs each error at ERROR level and passes it on.
@@ -69,7 +69,7 @@ The source of a node that fails in a transformer stays out of the node cache, so
 
 ## Statistics
 
-`run` returns the `PipelineStats` of the run, with node counts, token usage and timing, as `let stats = pipeline.run().await?;`. :unreleased It also logs them as the INFO event `Pipeline completed`. `run` takes the pipeline by value, and `stats()` before `run` returns the empty initial statistics. To watch a run while it is going, clone the handle from `stats_collector()` before you call `run`. [Pipeline statistics](/observability/metrics-and-statistics/#pipeline-statistics) shows both.
+`run` returns the `PipelineStats` of the run, with node counts, token usage and timing, as `let stats = pipeline.run().await?;`. It also logs them as the INFO event `Pipeline completed`. `run` takes the pipeline by value, and `stats()` before `run` returns the empty initial statistics. To watch a run while it is going, clone the handle from `stats_collector()` before you call `run`. [Pipeline statistics](/observability/metrics-and-statistics/#pipeline-statistics) shows both.
 
 ## Streams
 
