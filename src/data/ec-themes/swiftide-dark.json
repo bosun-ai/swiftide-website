@@ -1,0 +1,225 @@
+{
+	"$comment": "Expressive Code theme for swiftide.rs. Palette mirrors the --sw-* tokens in src/styles/tokens.css; keep them in sync.",
+	"name": "swiftide-dark",
+	"type": "dark",
+	"colors": {
+		"editor.background": "#15181c",
+		"editor.foreground": "#d7dbe0",
+		"editor.selectionBackground": "#29a8e833",
+		"editorLineNumber.foreground": "#5f6670",
+		"editorGroupHeader.tabsBackground": "#0e1013",
+		"tab.activeBackground": "#15181c",
+		"tab.activeForeground": "#d7dbe0",
+		"tab.inactiveBackground": "#0e1013",
+		"tab.border": "#23272d",
+		"focusBorder": "#29a8e8",
+		"terminal.background": "#15181c",
+		"terminal.foreground": "#d7dbe0"
+	},
+	"tokenColors": [
+		{
+			"settings": {
+				"foreground": "#d7dbe0"
+			}
+		},
+		{
+			"scope": [
+				"comment",
+				"punctuation.definition.comment",
+				"comment.line.documentation",
+				"comment.block.documentation"
+			],
+			"settings": {
+				"foreground": "#6b727c",
+				"fontStyle": ""
+			}
+		},
+		{
+			"scope": [
+				"keyword",
+				"keyword.control",
+				"keyword.other",
+				"storage",
+				"storage.type",
+				"storage.modifier",
+				"keyword.operator.borrow",
+				"keyword.operator.question",
+				"variable.language.self",
+				"support.function.builtin.shell",
+				"keyword.control.shell"
+			],
+			"settings": {
+				"foreground": "#86c3ea"
+			}
+		},
+		{
+			"scope": [
+				"string",
+				"string.quoted",
+				"punctuation.definition.string",
+				"constant.character.escape",
+				"string.unquoted"
+			],
+			"settings": {
+				"foreground": "#cdbb8e"
+			}
+		},
+		{
+			"scope": [
+				"constant.numeric",
+				"constant.language",
+				"constant.other",
+				"constant.character"
+			],
+			"settings": {
+				"foreground": "#cdbb8e"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.function",
+				"support.function",
+				"meta.function-call entity.name.function"
+			],
+			"settings": {
+				"foreground": "#f1f3f5"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.type",
+				"support.type",
+				"entity.name.type.struct",
+				"entity.name.type.enum",
+				"entity.name.type.trait",
+				"entity.name.type.rust",
+				"storage.type.core.rust"
+			],
+			"settings": {
+				"foreground": "#b3c2d1"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.namespace",
+				"entity.name.module",
+				"meta.use.rust",
+				"storage.modifier.path"
+			],
+			"settings": {
+				"foreground": "#9aa1ab"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.function.macro",
+				"support.macro",
+				"meta.attribute",
+				"meta.attribute.rust",
+				"punctuation.definition.attribute"
+			],
+			"settings": {
+				"foreground": "#9aa1ab"
+			}
+		},
+		{
+			"scope": [
+				"punctuation",
+				"keyword.operator",
+				"meta.brace",
+				"punctuation.separator",
+				"punctuation.terminator",
+				"punctuation.brackets"
+			],
+			"settings": {
+				"foreground": "#8a919b"
+			}
+		},
+		{
+			"scope": [
+				"variable",
+				"variable.other",
+				"variable.parameter",
+				"meta.definition.variable"
+			],
+			"settings": {
+				"foreground": "#d7dbe0"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.tag",
+				"support.type.property-name",
+				"support.type.property-name.json",
+				"entity.other.attribute-name"
+			],
+			"settings": {
+				"foreground": "#86c3ea"
+			}
+		},
+		{
+			"scope": [
+				"variable.other.normal.shell",
+				"variable.other.special.shell",
+				"punctuation.definition.variable.shell"
+			],
+			"settings": {
+				"foreground": "#cdbb8e"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.command.shell",
+				"entity.name.function.call.shell"
+			],
+			"settings": {
+				"foreground": "#f1f3f5"
+			}
+		},
+		{
+			"scope": [
+				"constant.other.option",
+				"constant.other.option.dash.shell"
+			],
+			"settings": {
+				"foreground": "#b3c2d1"
+			}
+		},
+		{
+			"scope": [
+				"markup.heading",
+				"entity.name.section"
+			],
+			"settings": {
+				"foreground": "#f1f3f5",
+				"fontStyle": "bold"
+			}
+		},
+		{
+			"scope": [
+				"markup.inserted",
+				"punctuation.definition.inserted"
+			],
+			"settings": {
+				"foreground": "#8fbf8a"
+			}
+		},
+		{
+			"scope": [
+				"markup.deleted",
+				"punctuation.definition.deleted"
+			],
+			"settings": {
+				"foreground": "#e5675f"
+			}
+		},
+		{
+			"scope": [
+				"invalid"
+			],
+			"settings": {
+				"foreground": "#e5675f"
+			}
+		}
+	]
+}

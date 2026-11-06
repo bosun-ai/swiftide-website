@@ -1,0 +1,371 @@
+/*
+ * Content typography and site-specific elements inside pages: headings, links, lists, tables,
+ * asides, inline code, the version badges and the "Source:" line under snippets.
+ */
+
+.sl-markdown-content {
+	font-size: var(--sw-text-body);
+	line-height: var(--sl-line-height);
+	color: var(--sw-ink);
+}
+
+/* Reading measure: prose stays narrow, code and tables may use the full column. */
+.sl-markdown-content :is(p, ul, ol, dl, blockquote, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+	max-width: var(--sw-measure);
+}
+
+/* Headings: mono, tight, no colour. */
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-weight: 500;
+	letter-spacing: -0.025em;
+	color: var(--sw-ink-strong);
+	text-wrap: balance;
+}
+
+/* Starlight wraps h2-h4 in .sl-heading-wrapper (with the anchor link), so space the wrapper. */
+.sl-markdown-content
+	:not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper)
+	+ :is(h2, .sl-heading-wrapper.level-h2):not(:where(.not-content *)) {
+	margin-top: 2.75rem;
+}
+
+.sl-markdown-content
+	:not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper)
+	+ :is(h3, h4, .sl-heading-wrapper:is(.level-h3, .level-h4)):not(:where(.not-content *)) {
+	margin-top: 2rem;
+}
+
+.sl-markdown-content :is(h5, h6):not(:where(.not-content *)) {
+	font-size: var(--sw-text-label);
+	letter-spacing: var(--sw-tracking-label);
+	text-transform: uppercase;
+	color: var(--sw-muted);
+}
+
+/* Anchor link icon next to headings. */
+.sl-markdown-content .sl-anchor-link {
+	color: var(--sw-faint);
+}
+
+.sl-markdown-content .sl-anchor-link:hover {
+	color: var(--sw-accent);
+}
+
+/* Links */
+.sl-markdown-content a:not(:where(.not-content *)) {
+	color: var(--sw-accent);
+	text-decoration-line: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.22em;
+	text-decoration-color: color-mix(in srgb, var(--sw-accent) 45%, transparent);
+}
+
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+	color: var(--sw-ink-strong);
+	text-decoration-color: currentColor;
+}
+
+.sl-markdown-content strong {
+	font-weight: 600;
+	color: var(--sw-ink-strong);
+}
+
+/* Lists: plain dashes, aligned to the text edge. */
+.sl-markdown-content ul:not(:where(.not-content *)) {
+	padding-inline-start: 1.25rem;
+	list-style: none;
+}
+
+.sl-markdown-content ul:not(:where(.not-content *)) > li {
+	position: relative;
+}
+
+.sl-markdown-content ul:not(:where(.not-content *)) > li::before {
+	content: '–';
+	position: absolute;
+	inset-inline-start: -1.25rem;
+	color: var(--sw-faint);
+}
+
+.sl-markdown-content ol:not(:where(.not-content *)) {
+	padding-inline-start: 1.75rem;
+}
+
+.sl-markdown-content ol:not(:where(.not-content *)) > li::marker {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.8em;
+	color: var(--sw-muted);
+}
+
+.sl-markdown-content hr {
+	border: 0;
+	border-top: 1px solid var(--sw-line);
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+	border-inline-start: 1px solid var(--sw-line-strong);
+	color: var(--sw-muted);
+}
+
+/* The "Reference" list closing each page: API names in compact columns rather than one long list. */
+.sl-markdown-content .sl-heading-wrapper:has(> h2#reference) + ul {
+	max-width: none;
+	columns: 14rem auto;
+	column-gap: 2rem;
+}
+
+.sl-markdown-content .sl-heading-wrapper:has(> h2#reference) + ul > li {
+	break-inside: avoid;
+	margin-block: 0 0.25rem;
+}
+
+/* Inline code: narrow mono, a tone step, no border. */
+.sl-markdown-content code:not(:where(.not-content *)) {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.8em;
+	background-color: var(--sw-panel);
+	color: var(--sw-ink-strong);
+	padding: 0.15em 0.4em;
+	border-radius: 0;
+	overflow-wrap: anywhere;
+}
+
+.sl-markdown-content :is(h1, h2, h3, h4) code:not(:where(.not-content *)) {
+	font-size: 0.9em;
+	background-color: transparent;
+	padding: 0;
+}
+
+.sl-markdown-content a code:not(:where(.not-content *)) {
+	color: inherit;
+}
+
+/* Tables: mono header row, 1px rules, no zebra. */
+.sl-markdown-content table:not(:where(.not-content *)) {
+	font-size: 0.90625rem;
+	line-height: 1.55;
+	width: 100%;
+	border-top: 1px solid var(--sw-line-strong);
+}
+
+.sl-markdown-content th:not(:where(.not-content *)) {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-text-label);
+	font-weight: 500;
+	letter-spacing: var(--sw-tracking-label);
+	text-transform: uppercase;
+	text-align: start;
+	color: var(--sw-muted);
+	border-bottom: 1px solid var(--sw-line-strong);
+	padding-block: 0.625rem;
+	white-space: nowrap;
+}
+
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+	border-bottom-color: var(--sw-line);
+	padding-inline: 0.5rem;
+}
+
+.sl-markdown-content td:not(:where(.not-content *)) {
+	padding-block: 0.5rem;
+}
+
+.sl-markdown-content tr:hover td:not(:where(.not-content *)) {
+	background-color: var(--sw-panel);
+}
+
+.sl-markdown-content td code:not(:where(.not-content *)) {
+	white-space: nowrap;
+	overflow-wrap: normal;
+}
+
+/* Linked identifiers and file names in tables may break, so wide tables fit the column. */
+.sl-markdown-content td a code:not(:where(.not-content *)) {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+/* Asides: a tone step and a 2px rule; the title becomes a label. */
+.starlight-aside {
+	border-inline-start-width: 2px;
+	background-color: var(--sw-panel);
+	color: var(--sw-ink);
+	padding: 0.875rem 1.125rem;
+}
+
+.starlight-aside__title {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-text-label);
+	font-weight: 500;
+	letter-spacing: var(--sw-tracking-label);
+	text-transform: uppercase;
+	gap: 0.5rem;
+}
+
+.starlight-aside__icon {
+	font-size: 1.1em;
+}
+
+.starlight-aside--note,
+.starlight-aside--tip {
+	--sl-color-asides-border: var(--sw-line-strong);
+	--sl-color-asides-text-accent: var(--sw-muted);
+}
+
+.starlight-aside--caution {
+	--sl-color-asides-border: var(--sw-caution);
+	--sl-color-asides-text-accent: var(--sw-caution);
+}
+
+.starlight-aside--danger {
+	--sl-color-asides-border: var(--sw-danger);
+	--sl-color-asides-text-accent: var(--sw-danger);
+}
+
+.starlight-aside__content a {
+	color: var(--sw-accent);
+}
+
+/* Starlight cards and link cards, should content use them: flat, ruled, no icons. */
+.sl-markdown-content .card,
+.sl-markdown-content .sl-link-card {
+	border: 0;
+	border-top: 1px solid var(--sw-line-strong);
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	padding: 1rem 0 0;
+}
+
+.sl-markdown-content .card .icon {
+	display: none;
+}
+
+.sl-markdown-content .card .title,
+.sl-markdown-content .sl-link-card .title {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-weight: 500;
+	font-size: 1rem;
+	letter-spacing: -0.01em;
+	color: var(--sw-ink-strong);
+}
+
+/* Steps */
+.sl-markdown-content .sl-steps > li::before {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	border-radius: 0;
+	background-color: var(--sw-bg);
+	box-shadow: inset 0 0 0 1px var(--sw-line-strong);
+	color: var(--sw-ink-strong);
+}
+
+.sl-markdown-content .sl-steps > li::after {
+	background-color: var(--sw-line);
+}
+
+/* Tabs */
+.sl-markdown-content starlight-tabs .tab > [role='tab'] {
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-text-meta);
+	color: var(--sw-muted);
+}
+
+.sl-markdown-content starlight-tabs .tab [aria-selected='true'] {
+	color: var(--sw-ink-strong);
+	border-color: var(--sw-accent);
+}
+
+/* Diagrams: inline components (src/components/diagrams) and the same drawings as images. */
+.sl-markdown-content .sw-diagram {
+	margin-block: 2rem;
+	color: var(--sw-ink);
+}
+
+.sl-markdown-content .sw-diagram svg,
+.sl-markdown-content img[src*='diagram-'] {
+	display: block;
+	width: 100%;
+	max-width: 36rem;
+	height: auto;
+}
+
+.sl-markdown-content .sw-diagram figcaption {
+	margin-top: 0.75rem;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.75rem;
+	color: var(--sw-muted);
+}
+
+/* Diagrams referenced as images from .md pages are drawn in the light ink; flip them for dark. */
+:root:not([data-theme='light']) .sl-markdown-content img[src*='diagram-'] {
+	filter: invert(1) hue-rotate(180deg);
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Site elements emitted by the remark plugin and the PageTitle override.                     */
+/* ------------------------------------------------------------------------------------------ */
+
+/* "Source: path#Lx-Ly" line after every ::snippet. */
+.sl-markdown-content .sw-source {
+	margin-top: 0.5rem;
+	max-width: none;
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.71875rem;
+	line-height: 1.5;
+	color: var(--sw-muted);
+	overflow-wrap: anywhere;
+}
+
+.sl-markdown-content .sw-source a {
+	color: var(--sw-muted);
+	text-decoration-color: var(--sw-line-strong);
+}
+
+.sl-markdown-content .sw-source a:hover {
+	color: var(--sw-ink-strong);
+}
+
+.sl-markdown-content .sw-source code {
+	font-size: inherit;
+	background: transparent;
+	padding: 0;
+	color: inherit;
+}
+
+/* :unreleased and the frontmatter version badges. */
+.sw-badge {
+	display: inline-block;
+	padding: 0.1em 0.5em;
+	border: 1px solid var(--sw-line-strong);
+	font-family: var(--sw-font-mono);
+	font-stretch: var(--sw-mono-wide);
+	font-size: 0.6875rem;
+	font-style: normal;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1.5;
+	vertical-align: 0.15em;
+	white-space: nowrap;
+}
+
+.sw-badge--unreleased {
+	border-style: dashed;
+	border-color: var(--sw-caution);
+	color: var(--sw-caution);
+}
+
+.sw-badge--since {
+	color: var(--sw-muted);
+}

@@ -19,3 +19,10 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# rust
+snippets/target/
+
+# vitest / tooling
+coverage/
+.vitest/

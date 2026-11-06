@@ -1,0 +1,53 @@
+---
+/**
+ * The three showcases as one split section. Without JavaScript every `<ShowcasePanel>` shows,
+ * one under the other under its own title. The script builds a tab control from their labels
+ * (`role="tab"`, arrow keys, Home and End) above the text column and shows one panel at a time.
+ * The selected tab is marked with the motif arc.
+ */
+import { arcMaskUrl } from './arc.ts';
+---
+
+<section class="sw-showcase sw-home-section not-content" aria-label="Showcases" data-reveal style={`--sw-arc-mask:${arcMaskUrl()}`}>
+	<div class="sw-showcase__tabs" role="tablist" aria-label="Showcases" hidden></div>
+	<slot />
+</section>
+<script is:inline>
+	(() => {
+		const root = document.currentScript.previousElementSibling;
+		const list = root.querySelector('[role="tablist"]');
+		const panels = [...root.querySelectorAll('.sw-panel')];
+		const tabs = panels.map((panel, i) => {
+			const tab = document.createElement('button');
+			tab.type = 'button';
+			tab.setAttribute('role', 'tab');
+			tab.id = `${panel.id}-tab`;
+			tab.className = 'sw-tab';
+			tab.textContent = panel.dataset.tabLabel;
+			tab.setAttribute('aria-controls', panel.id);
+			panel.setAttribute('role', 'tabpanel');
+			panel.setAttribute('aria-labelledby', tab.id);
+			tab.addEventListener('click', () => select(i));
+			tab.addEventListener('keydown', (event) => {
+				const to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: panels.length - 1 }[event.key];
+				if (to === undefined) return;
+				event.preventDefault();
+				select((to + panels.length) % panels.length, true);
+			});
+			list.append(tab);
+			return tab;
+		});
+		function select(index, focus = false) {
+			tabs.forEach((tab, i) => {
+				const on = i === index;
+				tab.setAttribute('aria-selected', String(on));
+				tab.tabIndex = on ? 0 : -1;
+				panels[i].hidden = !on;
+			});
+			if (focus) tabs[index].focus();
+		}
+		select(0);
+		list.hidden = false;
+		root.dataset.tabs = '';
+	})();
+</script>

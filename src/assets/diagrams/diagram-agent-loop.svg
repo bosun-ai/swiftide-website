@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 236" width="360" height="236" role="img" aria-labelledby="sw-agent-loop-t sw-agent-loop-d" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" font-family="Martian Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" style="font-family:var(--sw-font-mono,ui-monospace,SFMono-Regular,Menlo,monospace);font-stretch:75%">
+	<title id="sw-agent-loop-t">The agent loop</title>
+	<desc id="sw-agent-loop-d">A query goes to the model. When the model calls tools, the agent runs them and sends the results back to the model. It repeats until the model calls stop or a limit is reached; hooks run around every step.</desc>
+	<defs>
+		<marker id="sw-agent-loop-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" stroke="currentColor" stroke-width="1.25"/></marker>
+		<marker id="sw-agent-loop-aa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" style="stroke:var(--sw-accent,#0a6fa6)" stroke-width="1.25"/></marker>
+	</defs>
+	<rect x="8" y="24" width="72" height="30"/>
+	<text x="44" y="42.6" text-anchor="middle" stroke="none" fill="currentColor">query</text>
+	<path d="M80 39 H128" marker-end="url(#sw-agent-loop-a)"/>
+	<rect x="130" y="24" width="112" height="30"/>
+	<text x="186" y="42.6" text-anchor="middle" stroke="none" fill="currentColor">completion</text>
+	<path d="M186 54 V112" marker-end="url(#sw-agent-loop-a)"/>
+	<text x="180" y="88" text-anchor="end" stroke="none" fill="currentColor" opacity="0.6" font-size="9">tool calls</text>
+	<rect x="130" y="114" width="112" height="30"/>
+	<text x="186" y="132.6" text-anchor="middle" stroke="none" fill="currentColor">run tools</text>
+	<path d="M242 129 H286 Q300 129 300 115 V53 Q300 39 286 39 H244" marker-end="url(#sw-agent-loop-a)"/>
+	<text x="255" y="92" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">results</text>
+	<path d="M186 24 V8 H340 V186 H246" marker-end="url(#sw-agent-loop-aa)" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<text x="268" y="20" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">stop / limit</text>
+	<rect x="130" y="172" width="112" height="30" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<text x="186" y="190.6" text-anchor="middle" stroke="none" style="fill:var(--sw-accent,#0a6fa6)">done</text>
+	<rect x="118" y="14" width="130" height="142" stroke-dasharray="3 3" opacity="0.5"/>
+	<text x="122" y="220" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">hooks run around every step</text>
+	<path d="M120 214 V158" stroke-dasharray="3 3" marker-end="url(#sw-agent-loop-a)"/>
+</svg>

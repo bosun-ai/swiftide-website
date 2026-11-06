@@ -1,0 +1,36 @@
+---
+/**
+ * Integrations as large feature names on tiles. Each tile links to the guide page
+ * `src/data/integrations.yaml` gives for that feature; the last tile links to the overview with
+ * the total from the same file.
+ */
+import { integrationsByFeature, loadIntegrations } from '../../lib/integrations.ts';
+
+interface Props {
+	heading: string;
+	/** Feature flags to show, space separated, in order. The first seven also show on phones. */
+	features: string;
+	/** The page listing every integration. */
+	href: string;
+}
+
+const { heading, features, href } = Astro.props;
+const integrations = loadIntegrations(process.cwd());
+const tiles = integrationsByFeature(integrations, features.split(/\s+/).filter(Boolean));
+---
+
+<section class="sw-tiles sw-home-section not-content" data-reveal aria-labelledby="sw-tiles-heading">
+	<h2 class="sw-tiles__heading" id="sw-tiles-heading">{heading}</h2>
+	<ul class="sw-tiles__list">
+		{
+			tiles.map(({ feature, page }, i) => (
+				<li class="sw-tile" style={`--i:${i + 1}`}>
+					<a href={`/${page}/`}>{feature}</a>
+				</li>
+			))
+		}
+		<li class="sw-tile sw-tile--all" style={`--i:${tiles.length + 1}`}>
+			<a href={href}>All {integrations.length} →</a>
+		</li>
+	</ul>
+</section>

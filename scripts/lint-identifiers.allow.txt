@@ -1,0 +1,2 @@
+# Identifiers the content lint accepts although the pinned swiftide does not define them.
+# Format: `identifier  # reason`. The reason is mandatory; entries no page needs fail as stale.

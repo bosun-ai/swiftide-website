@@ -1,0 +1,256 @@
+# Every integration swiftide ships, one entry per feature flag.
+#
+# Rendered by `::integrations` (see src/lib/remark/directives/integrations.ts) and validated on
+# every build: `feature` must be a flag in vendor/swiftide/swiftide/Cargo.toml, every flag in its
+# "Integrations" section must be covered, `examples` must exist in vendor/swiftide, `page` must
+# be a docs page, and `types` are checked by `pnpm lint:idents`.
+#
+# kinds: llm | embeddings | sparse-embeddings | structured | storage | retrieval | cache | loader
+#        | transform | rerank | tooling | observability
+integrations:
+  # Language models
+  - name: OpenAI
+    feature: openai
+    kinds: [llm, embeddings, structured]
+    types:
+      - { path: swiftide::integrations::openai::OpenAI, kind: type }
+      - { path: swiftide::integrations::openai::GenericOpenAI, kind: struct }
+    examples:
+      - examples/responses_api.rs
+      - examples/responses_api_reasoning.rs
+      - examples/structured_prompt.rs
+      - examples/describe_image.rs
+    page: integrations/openai
+    notes: Chat Completions and the Responses API; Azure OpenAI through `GenericOpenAI` with `AzureConfig`.
+
+  - name: Anthropic
+    feature: anthropic
+    kinds: [llm]
+    types:
+      - { path: swiftide::integrations::anthropic::Anthropic, kind: struct }
+    examples:
+      - examples/streaming_agents.rs
+    page: integrations/anthropic
+
+  - name: AWS Bedrock
+    feature: aws-bedrock
+    kinds: [llm, structured]
+    types:
+      - { path: swiftide::integrations::aws_bedrock_v2::AwsBedrock, kind: struct }
+    examples:
+      - examples/aws_bedrock.rs
+      - examples/aws_bedrock_agent.rs
+    page: integrations/aws-bedrock
+    notes: Uses the Bedrock Converse API.
+
+  - name: Groq
+    feature: groq
+    kinds: [llm, structured]
+    types:
+      - { path: swiftide::integrations::groq::Groq, kind: type }
+    examples:
+      - examples/index_groq.rs
+    page: integrations/openai-compatible
+    notes: OpenAI-compatible client preconfigured for Groq.
+
+  - name: Google Gemini
+    feature: gemini
+    kinds: [llm, embeddings, structured]
+    types:
+      - { path: swiftide::integrations::gemini::Gemini, kind: type }
+    examples:
+      - examples/hello_agents.rs
+    page: integrations/openai-compatible
+    notes: OpenAI-compatible client preconfigured for the Gemini API.
+
+  - name: Ollama
+    feature: ollama
+    kinds: [llm, embeddings, structured]
+    types:
+      - { path: swiftide::integrations::ollama::Ollama, kind: type }
+    examples:
+      - examples/index_ollama.rs
+      - examples/index_md_into_pgvector.rs
+    page: integrations/openai-compatible
+    notes: OpenAI-compatible client preconfigured for a local Ollama server.
+
+  - name: OpenRouter
+    feature: open-router
+    kinds: [llm, structured]
+    types:
+      - { path: swiftide::integrations::open_router::OpenRouter, kind: type }
+    page: integrations/openai-compatible
+    notes: OpenAI-compatible client preconfigured for OpenRouter.
+
+  - name: Dashscope
+    feature: dashscope
+    kinds: [llm, embeddings, structured]
+    types:
+      - { path: swiftide::integrations::dashscope::Dashscope, kind: type }
+    examples:
+      - examples/dashscope.rs
+    page: integrations/openai-compatible
+    notes: OpenAI-compatible client preconfigured for Alibaba Dashscope.
+
+  # Local models
+  - name: FastEmbed
+    feature: fastembed
+    kinds: [embeddings, sparse-embeddings, rerank]
+    types:
+      - { path: swiftide::integrations::fastembed::FastEmbed, kind: struct }
+      - { path: swiftide::integrations::fastembed::Rerank, kind: struct }
+    examples:
+      - examples/fastembed.rs
+      - examples/hybrid_search.rs
+      - examples/reranking.rs
+    page: integrations/fastembed
+    notes: Runs dense, sparse and reranking models locally with ONNX Runtime.
+
+  # Vector stores and caches
+  - name: Qdrant
+    feature: qdrant
+    kinds: [storage, retrieval]
+    types:
+      - { path: swiftide::integrations::qdrant::Qdrant, kind: struct }
+    examples:
+      - examples/index_codebase.rs
+      - examples/hybrid_search.rs
+      - examples/store_multiple_vectors.rs
+    page: integrations/qdrant
+    notes: Similarity and hybrid (dense + sparse) search, named vectors, filters.
+
+  - name: PgVector
+    feature: pgvector
+    kinds: [storage, retrieval]
+    types:
+      - { path: swiftide::integrations::pgvector::PgVector, kind: struct }
+    examples:
+      - examples/index_md_into_pgvector.rs
+    page: integrations/pgvector
+
+  - name: LanceDB
+    feature: lancedb
+    kinds: [storage, retrieval]
+    types:
+      - { path: swiftide::integrations::lancedb::LanceDB, kind: struct }
+    examples:
+      - examples/lancedb.rs
+      - examples/dashscope.rs
+    page: integrations/lancedb
+    notes: Embedded, no server required; also supports custom queries.
+
+  - name: DuckDB
+    feature: duckdb
+    kinds: [storage, retrieval, cache]
+    types:
+      - { path: swiftide::integrations::duckdb::Duckdb, kind: struct }
+    page: indexing/storage
+    notes: Embedded; similarity and hybrid search.
+
+  - name: Redis
+    feature: redis
+    kinds: [storage, cache]
+    types:
+      - { path: swiftide::integrations::redis::Redis, kind: struct }
+    examples:
+      - examples/index_into_redis.rs
+      - examples/index_codebase.rs
+    page: indexing/caching
+    notes: Also stores agent message history.
+
+  - name: Redb
+    feature: redb
+    kinds: [cache]
+    types:
+      - { path: swiftide::integrations::redb::Redb, kind: struct }
+    page: indexing/caching
+    notes: Embedded node cache, no server required.
+
+  # Loaders and transformers
+  - name: Kafka
+    feature: kafka
+    kinds: [loader, storage]
+    types:
+      - { path: swiftide::integrations::kafka::Kafka, kind: struct }
+    examples:
+      - examples/kafka.rs
+    page: indexing/loading
+
+  - name: Fluvio
+    feature: fluvio
+    kinds: [loader]
+    types:
+      - { path: swiftide::integrations::fluvio::Fluvio, kind: struct }
+    examples:
+      - examples/fluvio.rs
+    page: indexing/loading
+
+  - name: Parquet
+    feature: parquet
+    kinds: [loader]
+    types:
+      - { path: swiftide::integrations::parquet::Parquet, kind: struct }
+    page: indexing/loading
+
+  - name: Scraping (spider)
+    feature: scraping
+    kinds: [loader, transform]
+    types:
+      - { path: swiftide::integrations::scraping::ScrapingLoader, kind: struct }
+      - { path: swiftide::integrations::scraping::HtmlToMarkdownTransformer, kind: struct }
+    examples:
+      - examples/scraping_index_to_markdown.rs
+    page: indexing/loading
+
+  - name: Tree-sitter
+    feature: tree-sitter
+    alsoFeatures: [tree-sitter-perl]
+    kinds: [transform]
+    types:
+      - { path: swiftide::indexing::transformers::ChunkCode, kind: struct }
+      - { path: swiftide::indexing::transformers::MetadataQACode, kind: struct }
+      - { path: swiftide::indexing::transformers::OutlineCodeTreeSitter, kind: struct }
+      - { path: swiftide::indexing::transformers::MetadataRefsDefsCode, kind: struct }
+    examples:
+      - examples/index_codebase.rs
+      - examples/index_codebase_reduced_context.rs
+    page: integrations/tree-sitter
+    notes: Code-aware chunking, outlines and metadata; Perl behind `tree-sitter-perl`.
+
+  # Agents, tokens and observability
+  - name: MCP
+    feature: mcp
+    kinds: [tooling]
+    types:
+      - { path: swiftide::agents::tools::mcp::McpToolbox, kind: struct }
+    examples:
+      - examples/agents_mcp_tools.rs
+    page: agents/mcp
+    notes: Exposes the tools of any MCP server (via rmcp) to an agent.
+
+  - name: tiktoken
+    feature: tiktoken
+    kinds: [tooling]
+    types:
+      - { path: swiftide::integrations::tiktoken::TikToken, kind: struct }
+    page: models/errors-backoff-and-usage
+    notes: Token estimation with OpenAI tokenizers.
+
+  - name: Langfuse
+    feature: langfuse
+    kinds: [observability]
+    types:
+      - { path: swiftide::langfuse::LangfuseLayer, kind: struct }
+    examples:
+      - examples/langfuse.rs
+    page: observability/langfuse
+    notes: A tracing layer that sends agent and pipeline spans to Langfuse.
+
+  - name: Metrics
+    feature: metrics
+    kinds: [observability]
+    types: []
+    examples:
+      - examples/usage_metrics.rs
+    page: observability/metrics-and-statistics
+    notes: Emits usage and pipeline metrics through the `metrics` crate facade.

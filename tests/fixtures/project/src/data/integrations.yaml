@@ -1,0 +1,19 @@
+integrations:
+  - name: OpenAI
+    feature: openai
+    kinds: [llm, embeddings]
+    types:
+      - { path: swiftide::integrations::openai::OpenAI, kind: type }
+    examples: [examples/hello.rs]
+    page: integrations/openai
+    notes: Uses the `Responses` API.
+  - name: Qdrant
+    feature: qdrant
+    kinds: [storage, retrieval]
+    types:
+      - { path: swiftide::integrations::qdrant::Qdrant, kind: struct }
+    page: integrations/openai
+  - name: Anthropic
+    feature: anthropic
+    kinds: [llm]
+    page: integrations/openai

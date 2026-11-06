@@ -1,0 +1,35 @@
+---
+/**
+ * Page title row: Starlight's default title, the swiftide version badges from frontmatter
+ * (`swiftide: { since, unreleased }`), and the page actions from starlight-llm-actions
+ * (Copy / View as Markdown, Open in ChatGPT / Claude). Styled in src/styles/starlight.css.
+ */
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import PageActions from 'starlight-llm-actions/components/PageActions.astro';
+
+const { entry } = Astro.locals.starlightRoute;
+const swiftide = entry.data.swiftide;
+const badges = [
+	swiftide?.unreleased && { text: 'unreleased', variant: 'unreleased', title: 'On swiftide master, not yet released' },
+	swiftide?.since && { text: `since ${swiftide.since}`, variant: 'since', title: `Available since swiftide ${swiftide.since}` },
+].filter((badge): badge is { text: string; variant: string; title: string } => Boolean(badge));
+---
+
+<div class="sw-title-row">
+	<div class="sw-title">
+		<Default {...Astro.props}><slot /></Default>
+		{
+			badges.length > 0 && (
+				<p class="sw-title-badges">
+					{badges.map((badge) => (
+						<span class:list={['sw-badge', `sw-badge--${badge.variant}`]} title={badge.title}>
+							{badge.text}
+						</span>
+					))}
+				</p>
+			)
+		}
+	</div>
+	<PageActions />
+</div>
+

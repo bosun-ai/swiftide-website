@@ -1,4 +1,20 @@
 User-agent: *
 Allow: /
 
+# AI crawlers and assistants are explicitly welcome; see /llms.txt.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
 Sitemap: https://swiftide.rs/sitemap-index.xml

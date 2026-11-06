@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-labelledby="sw-pipeline-t sw-pipeline-d" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" font-family="Martian Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" style="font-family:var(--sw-font-mono,ui-monospace,SFMono-Regular,Menlo,monospace);font-stretch:75%">
+	<title id="sw-pipeline-t">Indexing and query pipelines</title>
+	<desc id="sw-pipeline-d">An indexing pipeline streams nodes from a loader through a cache filter, a chunker, transformers and an embedder into a store. A query pipeline transforms a question, retrieves from the same store and generates an answer.</desc>
+	<defs>
+		<marker id="sw-pipeline-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" stroke="currentColor" stroke-width="1.25"/></marker>
+		<marker id="sw-pipeline-aa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 7 4 1 7" style="stroke:var(--sw-accent,#0a6fa6)" stroke-width="1.25"/></marker>
+	</defs>
+	<text x="8" y="16" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">indexing: a stream of Node&lt;T&gt;</text>
+	<rect x="8" y="26" width="76" height="30"/>
+	<text x="46" y="44.6" text-anchor="middle" stroke="none" fill="currentColor">loader</text>
+	<path d="M84 41 H100" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="102" y="26" width="76" height="30"/>
+	<text x="140" y="44.6" text-anchor="middle" stroke="none" fill="currentColor">cached?</text>
+	<path d="M178 41 H194" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="196" y="26" width="76" height="30"/>
+	<text x="234" y="44.6" text-anchor="middle" stroke="none" fill="currentColor">chunk</text>
+	<path d="M234 56 V72 H46 V86" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="8" y="88" width="76" height="30"/>
+	<text x="46" y="106.6" text-anchor="middle" stroke="none" fill="currentColor">transform</text>
+	<path d="M84 103 H100" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="102" y="88" width="76" height="30"/>
+	<text x="140" y="106.6" text-anchor="middle" stroke="none" fill="currentColor">embed</text>
+	<path d="M178 103 H262" marker-end="url(#sw-pipeline-aa)" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<rect x="264" y="88" width="88" height="30" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<text x="308" y="106.6" text-anchor="middle" stroke="none" style="fill:var(--sw-accent,#0a6fa6)">store</text>
+	<text x="8" y="150" text-anchor="start" stroke="none" fill="currentColor" opacity="0.6" font-size="9">query: typed states</text>
+	<rect x="8" y="160" width="76" height="30"/>
+	<text x="46" y="178.6" text-anchor="middle" stroke="none" fill="currentColor">question</text>
+	<path d="M84 175 H100" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="102" y="160" width="76" height="30"/>
+	<text x="140" y="178.6" text-anchor="middle" stroke="none" fill="currentColor">transform</text>
+	<path d="M178 175 H194" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="196" y="160" width="76" height="30"/>
+	<text x="234" y="178.6" text-anchor="middle" stroke="none" fill="currentColor">retrieve</text>
+	<path d="M308 118 V140 H234 V158" marker-end="url(#sw-pipeline-aa)" style="stroke:var(--sw-accent,#0a6fa6)"/>
+	<path d="M272 175 H286 V196 H46 V214" marker-end="url(#sw-pipeline-a)"/>
+	<rect x="8" y="206" width="76" height="30"/>
+	<text x="46" y="224.6" text-anchor="middle" stroke="none" fill="currentColor">answer</text>
+</svg>

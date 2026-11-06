@@ -1,0 +1,150 @@
+/*
+ * Design tokens. Everything else in src/styles and the Expressive Code config reads these.
+ *
+ * --sw-* are the site's own roles; the second half maps them onto Starlight's --sl-* variables so
+ * Starlight's components pick them up without per-component overrides. Dark is the default, light
+ * is a real theme rather than an inversion. One accent (the logo blue), used for links, focus and
+ * the current page; nothing else is coloured.
+ */
+
+:root {
+	/* Type */
+	--sw-font-mono: 'Martian Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+	--sw-font-body: 'IBM Plex Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--sw-mono-wide: 87.5%; /* font-stretch for headings and labels */
+	--sw-mono-narrow: 75%; /* font-stretch for code, inline code and dense navigation */
+	--sw-measure: 70ch;
+
+	--sw-text-label: 0.71875rem; /* 11.5px: uppercase section labels */
+	--sw-text-meta: 0.8125rem; /* 13px: sidebar, TOC, metadata */
+	--sw-text-code: 0.84375rem; /* 13.5px */
+	--sw-text-body: 1.0625rem; /* 17px */
+	--sw-tracking-label: 0.09em;
+
+	/* Dark (default) */
+	--sw-bg: #0e1013;
+	--sw-panel: #15181c;
+	--sw-panel-strong: #1b1f24;
+	--sw-line: #23272d;
+	--sw-line-strong: #343a42;
+	--sw-ink: #d7dbe0;
+	--sw-ink-strong: #f1f3f5;
+	--sw-muted: #8a919b;
+	--sw-faint: #5f6670;
+	--sw-accent: #29a8e8;
+	--sw-accent-ink: #0e1013; /* text on an accent fill */
+	--sw-accent-wash: #29a8e81f; /* selection only */
+	--sw-caution: #d9a441;
+	--sw-danger: #e5675f;
+
+	/* Code (mirrors src/data/ec-themes/swiftide-dark.json) */
+	--sw-code-bg: var(--sw-panel);
+	--sw-code-ink: #d7dbe0;
+	--sw-code-titlebar: var(--sw-bg);
+
+	color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+	--sw-bg: #f7f6f2;
+	--sw-panel: #efede7;
+	--sw-panel-strong: #e7e4dc;
+	--sw-line: #dedad0;
+	--sw-line-strong: #c8c3b7;
+	--sw-ink: #1c1e22;
+	--sw-ink-strong: #0b0c0e;
+	--sw-muted: #5c6068;
+	--sw-faint: #8b8f96;
+	--sw-accent: #0a6fa6;
+	--sw-accent-ink: #f7f6f2;
+	--sw-accent-wash: #0a6fa626;
+	--sw-caution: #8a5a00;
+	--sw-danger: #b3261e;
+
+	--sw-code-bg: var(--sw-panel);
+	--sw-code-ink: #1c1e22;
+	--sw-code-titlebar: var(--sw-bg);
+
+	color-scheme: light;
+}
+
+/* Starlight mapping. Applies to both themes because every value is a --sw-* reference. */
+:root,
+:root[data-theme='light'] {
+	--sl-font: var(--sw-font-body);
+	--sl-font-mono: var(--sw-font-mono);
+
+	--sl-color-white: var(--sw-ink-strong);
+	--sl-color-gray-1: var(--sw-ink-strong);
+	--sl-color-gray-2: var(--sw-ink);
+	--sl-color-gray-3: var(--sw-muted);
+	--sl-color-gray-4: var(--sw-faint);
+	--sl-color-gray-5: var(--sw-line-strong);
+	--sl-color-gray-6: var(--sw-panel);
+	--sl-color-gray-7: var(--sw-panel);
+	--sl-color-black: var(--sw-bg);
+
+	--sl-color-accent-low: var(--sw-accent-wash);
+	--sl-color-accent: var(--sw-accent);
+	--sl-color-accent-high: var(--sw-accent);
+
+	--sl-color-text: var(--sw-ink);
+	--sl-color-text-accent: var(--sw-accent);
+	--sl-color-text-invert: var(--sw-accent-ink);
+	--sl-color-bg: var(--sw-bg);
+	--sl-color-bg-nav: var(--sw-bg);
+	--sl-color-bg-sidebar: var(--sw-bg);
+	--sl-color-bg-inline-code: var(--sw-panel);
+	--sl-color-bg-accent: var(--sw-accent);
+	--sl-color-hairline-light: var(--sw-line);
+	--sl-color-hairline: var(--sw-line);
+	--sl-color-hairline-shade: var(--sw-line);
+	--sl-color-backdrop-overlay: color-mix(in srgb, var(--sw-bg) 80%, transparent);
+
+	/* Semantic hues Starlight uses for asides and badges, reduced to two. */
+	--sl-color-orange-high: var(--sw-caution);
+	--sl-color-orange: var(--sw-caution);
+	--sl-color-orange-low: var(--sw-panel);
+	--sl-color-red-high: var(--sw-danger);
+	--sl-color-red: var(--sw-danger);
+	--sl-color-red-low: var(--sw-panel);
+	--sl-color-blue-high: var(--sw-ink-strong);
+	--sl-color-blue: var(--sw-line-strong);
+	--sl-color-blue-low: var(--sw-panel);
+	--sl-color-purple-high: var(--sw-ink-strong);
+	--sl-color-purple: var(--sw-line-strong);
+	--sl-color-purple-low: var(--sw-panel);
+	--sl-color-green-high: var(--sw-ink-strong);
+	--sl-color-green: var(--sw-line-strong);
+	--sl-color-green-low: var(--sw-panel);
+
+	--sl-shadow-sm: none;
+	--sl-shadow-md: none;
+	--sl-shadow-lg: none;
+
+	--sl-text-body: var(--sw-text-body);
+	--sl-text-code: var(--sw-text-code);
+	--sl-text-code-sm: 0.84em;
+	--sl-line-height: 1.65;
+	--sl-line-height-headings: 1.25;
+	--sl-text-h1: 1.875rem;
+	--sl-text-h2: 1.375rem;
+	--sl-text-h3: 1.125rem;
+	--sl-text-h4: 1rem;
+	--sl-text-h5: 0.9375rem;
+
+	--sl-nav-height: 3.5rem;
+	--sl-sidebar-width: 17.5rem;
+	--sl-content-width: 46rem;
+}
+
+@media (min-width: 50em) {
+	:root,
+	:root[data-theme='light'] {
+		--sl-nav-height: 3.5rem;
+		--sl-text-h1: 2.25rem;
+		--sl-text-h2: 1.5rem;
+		--sl-text-h3: 1.1875rem;
+		--sl-text-h4: 1.0625rem;
+	}
+}

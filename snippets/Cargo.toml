@@ -1,0 +1,77 @@
+[package]
+name = "swiftide-docs-snippets"
+description = "Rust excerpts shown on swiftide.rs. Every snippet compiles against the pinned swiftide."
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.97"
+publish = false
+license = "MIT"
+
+# Standalone: not part of the vendored swiftide workspace.
+[workspace]
+
+[dependencies]
+# Heavy native integrations (lancedb, duckdb, fastembed, kafka, fluvio, aws-bedrock) are only
+# shown from `vendor/swiftide/examples`, which swiftide's own CI compiles.
+swiftide = { path = "../vendor/swiftide/swiftide", features = [
+  "openai",
+  "anthropic",
+  "ollama",
+  "open-router",
+  "qdrant",
+  "redis",
+  "pgvector",
+  "tree-sitter",
+  # Arrow/parquet readers only; used on indexing/loading.
+  "parquet",
+  "mcp",
+  "swiftide-agents",
+  "json-schema",
+  "metrics",
+  "tiktoken",
+  "langfuse",
+  # Light dependencies (regex, tera, shell-escape, base64, sha2); used on agents/contrib.
+  "agents-contrib-file-tools",
+  "agents-contrib-planning",
+  "agents-contrib-context",
+  "agents-contrib-lazy-executor",
+] }
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars = "1"
+# `StreamExt::next` on `ChatCompletionStream` (models/overview); swiftide does not re-export it.
+futures-util = "0.3"
+# `#[async_trait]` for the trait implementations on reference/upgrading and indexing/caching.
+async-trait = "0.1"
+# `Uuid` in the custom `NodeCache` on indexing/caching; swiftide does not re-export uuid.
+uuid = "1"
+# `#[indexing_transformer]` expands to paths in `swiftide_core` and `derive_builder` (indexing/transformers-and-metadata).
+swiftide-core = { path = "../vendor/swiftide/swiftide-core" }
+derive_builder = "0.20"
+# `Client::with_config` for the Azure, remote Ollama and OpenRouter configs on integrations/openai, integrations/openai-compatible and agents/providers-and-reasoning; `OpenAI::builder().api_base(..)` covers only `OpenAIConfig`, and swiftide does not re-export async-openai.
+async-openai = { version = "0.41", default-features = false }
+# `Prompt::extend` takes a `tera::Tera`; swiftide does not re-export tera.
+tera = { version = "1.20", default-features = false }
+
+# `QueryBuilder` for a PgVector `CustomStrategy` on querying/retrieval-and-search-strategies; swiftide does not re-export sqlx.
+sqlx = { version = "0.9", default-features = false, features = ["postgres"] }
+
+# Layers and filters for observability/*; swiftide does not re-export tracing-subscriber.
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+# `tracing::Instrument` and `info_span!` on observability/tracing; swiftide does not re-export tracing.
+tracing = "0.1"
+# OpenTelemetry export on observability/tracing; swiftide has no OpenTelemetry dependency.
+opentelemetry = { version = "0.32", default-features = false, features = ["trace"] }
+opentelemetry_sdk = { version = "0.32", default-features = false, features = ["trace"] }
+opentelemetry-otlp = { version = "0.32", default-features = false, features = ["trace", "http-proto", "reqwest-blocking-client"] }
+tracing-opentelemetry = { version = "0.33", default-features = false }
+
+[dev-dependencies]
+# `MockChatCompletion` on agents/testing; the swiftide facade does not re-export `test_utils`.
+swiftide-core = { path = "../vendor/swiftide/swiftide-core", features = ["test-utils"] }
+
+# Snippets are read by people; a warning in one is a bug on the site.
+[lints.rust]
+warnings = "deny"

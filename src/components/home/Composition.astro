@@ -1,0 +1,41 @@
+---
+/**
+ * How it works: the same values serve all three runtimes. The slot holds the heading, one
+ * paragraph, a list of three items (values, traits, runtimes) and one line of evidence links;
+ * this component adds the drawing, three zones of motif arcs that the three list items sit under.
+ */
+import { ARC_PATH, ARC_STROKE } from './arc.ts';
+import { arcField } from './arc-field.ts';
+
+const zones = arcField();
+const r = (n: number) => Math.round(n * 10) / 10;
+---
+
+<section class="sw-composition sw-home-section not-content" data-reveal>
+	<svg class="sw-composition__defs" aria-hidden="true" focusable="false" width="0" height="0">
+		<defs>
+			<path id="sw-arc" d={ARC_PATH} fill="none" stroke="currentColor" stroke-width={ARC_STROKE} stroke-linecap="round" />
+		</defs>
+	</svg>
+	{
+		zones.map((zone, i) => (
+			<svg
+				class={`sw-composition__zone sw-composition__zone--${zone.name}`}
+				viewBox={`0 0 ${zone.width} ${zone.height}`}
+				preserveAspectRatio="xMidYMid slice"
+				aria-hidden="true"
+				focusable="false"
+				style={`--i:${i}`}
+			>
+				{zone.arcs.map((arc) => (
+					<use
+						href="#sw-arc"
+						class={`sw-arc sw-arc--${arc.tone}`}
+						transform={`translate(${r(arc.x)} ${r(arc.y)}) rotate(${arc.rotate}) scale(${r(arc.size / 20 * 100) / 100})`}
+					/>
+				))}
+			</svg>
+		))
+	}
+	<slot />
+</section>

@@ -1,0 +1,4 @@
+[submodule "vendor/swiftide"]
+	path = vendor/swiftide
+	url = https://github.com/bosun-ai/swiftide.git
+	branch = docs/showcases
