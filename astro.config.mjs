@@ -13,7 +13,6 @@ import { sidebar } from './src/sidebar.ts';
 
 const projectRoot = process.cwd();
 const swiftide = loadSwiftideContext(projectRoot);
-const pinned = swiftide.commitsAhead > 0 ? `${swiftide.tag} + ${swiftide.commitsAhead} commits, ${swiftide.shortSha}` : swiftide.tag;
 
 export default defineConfig({
 	site: 'https://swiftide.rs',
@@ -82,7 +81,7 @@ export default defineConfig({
 					description:
 						'Swiftide is a Rust library for building LLM applications: composable agents with tools and hooks, typed task graphs, and streaming indexing and query pipelines.',
 					details: [
-						`These docs describe swiftide ${swiftide.version} (pinned at ${pinned}).`,
+						`These docs describe swiftide ${swiftide.version} (pinned at ${swiftide.shortSha}).`,
 						`Pin the crate with \`cargo add swiftide@${swiftide.version}\`; features are opt-in through Cargo feature flags.`,
 						`API reference: ${swiftide.docsRsBase}. Append \`.md\` to any page URL for its markdown, e.g. https://swiftide.rs/start/installation.md.`,
 					].join(' '),

@@ -62,7 +62,7 @@ To show new Rust code, add it to `snippets/src/<section>/<topic>.rs` inside a fu
 
 ## The swiftide pin
 
-`vendor/swiftide` is a git submodule. Its recorded commit (the gitlink) is the single source of the version the site documents: `src/lib/swiftide.ts` derives the release (`git describe --tags`), the docs.rs URLs and the GitHub permalinks from it, and the build fails if the checkout does not match the pin or the tags are missing.
+`vendor/swiftide` is a git submodule. Its recorded commit (the gitlink) is the single source of the version the site documents: `src/lib/swiftide.ts` derives the docs.rs URLs and the GitHub permalinks from it, and reads the release from the `swiftide` crate's `Cargo.toml` at that commit (release-plz bumps the manifest in the release commit, so this is right even before the tag is pushed). The build fails if the checkout does not match the pin.
 
 To move the pin:
 

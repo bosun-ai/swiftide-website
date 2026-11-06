@@ -11,7 +11,6 @@ export const fixtureSwiftide: SwiftideContext = {
 	shortSha: '012345678',
 	tag: 'v0.33.0',
 	version: '0.33.0',
-	commitsAhead: 2,
 	crates: ['swiftide', 'swiftide_agents', 'swiftide_core'],
 	docsRsBase: 'https://docs.rs/swiftide/0.33.0/swiftide/',
 	ghBlob: 'https://github.com/bosun-ai/swiftide/blob/0123456789abcdef0123456789abcdef01234567/',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { docsRsUrl, swiftidePermalink } from '../src/lib/swiftide.ts';
+import { docsRsUrl, parsePackageVersion, swiftidePermalink } from '../src/lib/swiftide.ts';
 import { fixtureSwiftide } from './helpers.ts';
 
 describe('docsRsUrl', () => {
@@ -22,5 +22,22 @@ describe('swiftidePermalink', () => {
 		expect(swiftidePermalink(fixtureSwiftide, 'examples/a.rs', { start: 1, end: 2 })).toBe(
 			`${fixtureSwiftide.ghBlob}examples/a.rs#L1-L2`,
 		);
+	});
+});
+
+describe('parsePackageVersion', () => {
+	const workspace = '[workspace]\nmembers = ["swiftide"]\n\n[workspace.package]\nversion = "0.34.0"\nedition = "2024"\n';
+
+	it('reads the version of the package table', () => {
+		const crate = '[package]\nname = "swiftide"\nversion = "0.34.1"\n\n[dependencies]\nversion = "9.9.9"\n';
+		expect(parsePackageVersion(crate, workspace)).toBe('0.34.1');
+	});
+	it('follows an inherited workspace version', () => {
+		expect(parsePackageVersion('[package]\nname = "swiftide"\nversion.workspace = true\n', workspace)).toBe('0.34.0');
+		expect(parsePackageVersion('[package]\nversion = { workspace = true }\n', workspace)).toBe('0.34.0');
+	});
+	it('returns nothing when no version is declared', () => {
+		expect(parsePackageVersion('[package]\nname = "swiftide"\n', workspace)).toBeUndefined();
+		expect(parsePackageVersion('[package]\nversion.workspace = true\n', '[workspace]\n')).toBeUndefined();
 	});
 });

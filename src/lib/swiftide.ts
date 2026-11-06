@@ -3,11 +3,16 @@
  *
  * The superproject's gitlink for `vendor/swiftide` is the single source of truth for which
  * swiftide the site documents. Everything that mentions a version, a docs.rs URL or a GitHub
- * permalink derives it from here. Missing tags or a checkout that does not match the gitlink are
- * errors: the site must never be built against an unknown swiftide.
+ * permalink derives it from here. A checkout that does not match the gitlink is an error: the site
+ * must never be built against an unknown swiftide.
+ *
+ * The release version comes from the `swiftide` crate's manifest at the pinned commit. Swiftide
+ * releases with release-plz: the release PR bumps the manifests and the `v<version>` tag lands on
+ * that same commit later, and between releases the manifest still names the last release. So the
+ * manifest is right at any pin, including a release commit whose tag is not pushed yet.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 export const SWIFTIDE_REPO = 'https://github.com/bosun-ai/swiftide';
@@ -19,12 +24,10 @@ export interface SwiftideContext {
 	/** Full commit SHA recorded by the gitlink. */
 	readonly sha: string;
 	readonly shortSha: string;
-	/** Latest release tag reachable from `sha`, e.g. `v0.33.0`. */
+	/** Release tag of `version`, e.g. `v0.34.0`. It may not be pushed yet for a fresh release. */
 	readonly tag: string;
-	/** `tag` without the `v`, e.g. `0.33.0`. */
+	/** Version of the `swiftide` crate at `sha`, e.g. `0.34.0`: the release the pin belongs to. */
 	readonly version: string;
-	/** Commits on top of `tag`. Non-zero means the site documents unreleased code. */
-	readonly commitsAhead: number;
 	/** Crate names (underscored) that live in the swiftide workspace, e.g. `swiftide_core`. */
 	readonly crates: readonly string[];
 	/** `https://docs.rs/swiftide/<version>/swiftide/` */
@@ -39,8 +42,6 @@ export class SwiftideContextError extends Error {
 		this.name = 'SwiftideContextError';
 	}
 }
-
-const DESCRIBE = /^v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)-(\d+)-g([0-9a-f]+)$/;
 
 function git(cwd: string, args: string[]): string {
 	return execFileSync('git', ['-C', cwd, ...args], {
@@ -60,24 +61,55 @@ function gitlinkSha(projectRoot: string): string {
 	return sha;
 }
 
-function describe(dir: string, sha: string): { tag: string; version: string; commitsAhead: number } {
-	let described: string;
-	try {
-		described = git(dir, ['describe', '--tags', '--long', '--match', 'v[0-9]*', sha]);
-	} catch (error) {
+const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?$/;
+const TABLE_HEADER = /^\s*\[([^[\]]+)\]\s*(?:#.*)?$/;
+
+/** Raw right-hand side of `key = …` in `[table]`, or `undefined`. Only single-line values. */
+function tableValue(toml: string, table: string, key: string): string | undefined {
+	let current: string | undefined;
+	for (const line of toml.split(/\r?\n/)) {
+		const header = TABLE_HEADER.exec(line);
+		if (header) {
+			current = header[1]!.trim();
+			continue;
+		}
+		if (current !== table) continue;
+		const entry = /^\s*([A-Za-z0-9_.-]+)\s*=\s*(.*?)\s*$/.exec(line);
+		if (entry?.[1] === key) return entry[2];
+	}
+	return undefined;
+}
+
+function quotedVersion(value: string | undefined): string | undefined {
+	const version = value === undefined ? undefined : /^"([^"]*)"\s*(?:#.*)?$/.exec(value)?.[1];
+	return version !== undefined && SEMVER.test(version) ? version : undefined;
+}
+
+/**
+ * The `[package]` version of a crate manifest, following `version.workspace = true` into the
+ * workspace manifest's `[workspace.package]`. `undefined` when no valid version is declared.
+ */
+export function parsePackageVersion(crateToml: string, workspaceToml: string): string | undefined {
+	const inherits =
+		/^true\s*(?:#.*)?$/.test(tableValue(crateToml, 'package', 'version.workspace') ?? '') ||
+		/^\{\s*workspace\s*=\s*true\s*\}/.test(tableValue(crateToml, 'package', 'version') ?? '');
+	return inherits
+		? quotedVersion(tableValue(workspaceToml, 'workspace.package', 'version'))
+		: quotedVersion(tableValue(crateToml, 'package', 'version'));
+}
+
+function swiftideVersion(dir: string): string {
+	const crateManifest = path.join(dir, 'swiftide', 'Cargo.toml');
+	const version = existsSync(crateManifest)
+		? parsePackageVersion(readFileSync(crateManifest, 'utf8'), readFileSync(path.join(dir, 'Cargo.toml'), 'utf8'))
+		: undefined;
+	if (!version) {
 		throw new SwiftideContextError(
-			`Cannot derive the swiftide version: \`git describe --tags\` failed in ${VENDOR_DIR}. ` +
-				'Fetch the tags (`git -C vendor/swiftide fetch --tags`; in CI check out with ' +
-				'`fetch-depth: 0`).\n' +
-				String(error),
+			`Cannot read the swiftide version from ${VENDOR_DIR}/swiftide/Cargo.toml ` +
+				'(`[package] version`, or `[workspace.package] version` of the workspace Cargo.toml).',
 		);
 	}
-	const match = DESCRIBE.exec(described);
-	if (!match) {
-		throw new SwiftideContextError(`Unexpected \`git describe\` output in ${VENDOR_DIR}: ${described}`);
-	}
-	const [, version, ahead] = match;
-	return { tag: `v${version}`, version: version!, commitsAhead: Number(ahead) };
+	return version;
 }
 
 function workspaceCrates(dir: string): string[] {
@@ -104,14 +136,13 @@ export function loadSwiftideContext(projectRoot: string): SwiftideContext {
 				'Run `git submodule update` to go back to the pin, or `git add vendor/swiftide` to move it.',
 		);
 	}
-	const { tag, version, commitsAhead } = describe(dir, sha);
+	const version = swiftideVersion(dir);
 	return {
 		dir,
 		sha,
 		shortSha: sha.slice(0, 9),
-		tag,
+		tag: `v${version}`,
 		version,
-		commitsAhead,
 		crates: workspaceCrates(dir),
 		docsRsBase: `https://docs.rs/swiftide/${version}/swiftide/`,
 		ghBlob: `${SWIFTIDE_REPO}/blob/${sha}/`,
