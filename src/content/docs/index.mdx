@@ -1,11 +1,11 @@
 ---
 title: Swiftide
-description: 'Swiftide is a Rust library for building LLM applications: composable agents and harness, typed task graphs, and streaming RAG pipelines.'
+description: 'Swiftide is a Rust library of small, composable LLM parts that run as agents, typed task graphs and streaming RAG pipelines.'
 template: splash
 pagefind: false
 hero:
-  title: Composable LLM agents and harness, typed task graphs, and streaming RAG pipelines in Rust.
-  tagline: Swiftide is a Rust library for building LLM applications. Every line of Rust on this site is an excerpt of code that compiles against the swiftide commit this site is pinned to.
+  title: Agents, typed task graphs and streaming RAG pipelines in Rust.
+  tagline: 'Swiftide is a library of small traits with three ways to run them. The client that answers your agent also renders a task node and labels your chunks; the executor that runs the agent''s commands also streams a repository into a pipeline. You compose, you do not glue.'
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
@@ -19,7 +19,7 @@ cargo add swiftide --features swiftide-agents,openai
 <CardGrid>
 <Card title="Agents">
 
-A model, your tools and hooks in a loop. The agent stops when the model calls `stop`, or at a limit you set.
+A tool loop you can see into: hooks before and after every model and tool call, a typed stop payload, approval before side effects, streaming while it drafts. This one reads git and writes release notes only after you say yes.
 
 ::snippet{src="@swiftide/examples/release-notes-agent/src/agent.rs" anchor="agent" title="examples/release-notes-agent/src/agent.rs" collapse="1-7,25-33" wrap="true"}
 
@@ -37,7 +37,7 @@ write_changelog ✓ wrote RELEASE_NOTES.md
 </Card>
 <Card title="Tasks">
 
-Typed nodes and transitions. Fan out to parallel branches, join the results, pause for a human and resume.
+Typed hand-offs between steps, so the compiler checks what flows where. Fan out one agent per crate, run them in parallel, join the results, pause for approval, resume. This one wrote swiftide's own ARCHITECTURE.md: ten crate analyses, 230 s of agent work, done in 41 s.
 
 ::snippet{src="@swiftide/examples/workspace-architect/src/graph.rs" anchor="graph" title="examples/workspace-architect/src/graph.rs" collapse="1-54,72-83" wrap="true"}
 
@@ -55,7 +55,7 @@ Typed nodes and transitions. Fan out to parallel branches, join the results, pau
 </Card>
 <Card title="Pipelines">
 
-Stream files through filters, chunkers, transformers and embedders into a store. A node cache skips files that did not change.
+Files in, vectors out, as a stream. Filters, chunkers, transformers and embedders are plain functions or structs; a cache skips files that did not change. A second run over the same repository indexes nothing and takes 0.6 s.
 
 ::snippet{src="@swiftide/examples/ask-your-codebase/src/index.rs" anchor="pipeline" title="examples/ask-your-codebase/src/index.rs" wrap="true"}
 
@@ -72,17 +72,31 @@ Indexed 0 chunks from 0 new or changed files (14 files found, 14 unchanged) in 0
 </Card>
 </CardGrid>
 
+## The same parts, three places
+
+Swiftide's traits are small enough that one value does several jobs. Each row is from a showcase you can run.
+
+| One value | Does | And | In |
+| --- | --- | --- | --- |
+| an `OpenAI` client | drives the agent in each branch (`ChatCompletion`) | renders the architecture document (`SimplePrompt`) | workspace-architect [`graph.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/workspace-architect/src/graph.rs) |
+| a `LocalExecutor` | runs the agent's git commands | answers the program's own git queries through the same `ToolExecutor` | release-notes-agent [`main.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/main.rs) |
+| a `Qdrant` store | receives chunks with `then_store_with` | serves hybrid search with `then_retrieve` | docs-qa [`index.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/index.rs), [`query.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/query.rs) |
+| a FastEmbed model | embeds chunks at index time | embeds the question at query time | ask-your-codebase [`embedding.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/ask-your-codebase/src/embedding.rs) |
+| a plain `fn` | is a pipeline step (`then`) | is a task node (`register_node_fn`) or a tool (`#[tool]`) | ask-your-codebase [`index.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/ask-your-codebase/src/index.rs), workspace-architect [`graph.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/workspace-architect/src/graph.rs), release-notes-agent [`tools.rs`](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/tools.rs) |
+
+Wrap a client or an embedder in `LanguageModelWithBackOff` for retries, or swap in `MockChatCompletion` in tests; the code that uses it does not change.
+
 ## What are you building?
 
-| You are building | Start with |
+| You want | Start with |
 | --- | --- |
-| A coding agent that reads, edits and runs code in a repository | [Agents](/agents/overview/) |
-| Batch automation with typed steps, parallel branches and human approval | [Tasks](/tasks/overview/) |
-| Answers over a codebase, from an index of its source | [Ask your codebase](/showcases/ask-your-codebase/) |
-| Answers over documentation, with hybrid search and reranking | [Docs Q&A](/showcases/docs-qa/) |
+| An agent that reads, edits and runs code in a repository, with approval gates | [Agents](/agents/overview/) |
+| Batch work with typed steps, parallel branches and a human in the loop | [Tasks](/tasks/overview/) |
+| Answers about a codebase, with the files they came from | [Ask your codebase](/showcases/ask-your-codebase/) |
+| Answers about documentation, with hybrid search, reranking and an evaluation score | [Docs Q&A](/showcases/docs-qa/) |
 
 ## Integrations
 
-Each one is a Cargo feature; enable only what you use. [All integrations →](/integrations/overview/)
+Every integration is a Cargo feature. Cargo compiles only the ones you enable. [All integrations →](/integrations/overview/)
 
 `openai` `anthropic` `gemini` `open-router` `aws-bedrock` `groq` `ollama` `dashscope` `fastembed` `qdrant` `lancedb` `pgvector` `redis` `duckdb` `redb` `tree-sitter` `mcp` `scraping` `kafka` `fluvio` `parquet` `langfuse`

@@ -118,7 +118,8 @@ main:has(.sw-hero[data-page='home']) .card-grid .expressive-code {
 	}
 	main:has(.sw-hero[data-page='home']) .sw-hero h1 {
 		max-width: 100%;
-		font-size: clamp(2rem, 0.6rem + 2.2vw, 2.75rem);
+		/* Sized to the hero column so the headline holds two lines from 72rem up. */
+		font-size: clamp(1.625rem, 2.7vw - 0.25rem, 2.25rem);
 	}
 	main:has(.sw-hero[data-page='home']) .sl-container > .sl-markdown-content {
 		display: contents;
@@ -208,10 +209,16 @@ main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
 	min-height: 3.1em;
 }
 
-/* Side by side, reserve three lines so the three excerpts start on one line. */
+/* Side by side, reserve the longest intro's lines so the three excerpts start on one line. */
 @media (min-width: 72rem) {
 	main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
-		min-height: calc(3 * 1.55em);
+		min-height: calc(6 * 1.55em);
+	}
+}
+
+@media (min-width: 80rem) {
+	main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
+		min-height: calc(5 * 1.55em);
 	}
 }
 
@@ -229,14 +236,17 @@ main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:last-child {
 	color: var(--sw-faint);
 }
 
-/* Section headings on the home page are labels over full-width rules. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > h2 {
+/* Section headings on the home page: no larger than prose h2, with room above to close the section before. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 {
 	margin-top: clamp(3.5rem, 8vw, 6rem);
-	max-width: none;
-	font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > h2 + * {
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 > h2 {
+	max-width: none;
+	font-size: clamp(1.25rem, 1rem + 0.5vw, 1.5rem);
+}
+
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 + * {
 	margin-top: 1.25rem;
 }
 
@@ -261,6 +271,52 @@ main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):la
 	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):last-child {
 		width: 14rem;
 	}
+}
+
+/* "The same parts, three places": four columns do not fit a phone, so each row becomes a short
+   stack, with the column headings repeated as labels. */
+@media (max-width: 49.99rem) {
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) :is(tbody, tr, td) {
+		display: block;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) thead {
+		display: none;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) tr {
+		padding-block: 1rem;
+		border-bottom: 1px solid var(--sw-line-strong);
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td {
+		margin-top: 0;
+		padding: 0.25rem 0;
+		border: 0;
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:first-child {
+		color: var(--sw-ink-strong);
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:not(:first-child)::before {
+		display: inline-block;
+		min-width: 6ch;
+		font-family: var(--sw-font-mono);
+		font-size: var(--sw-text-label);
+		letter-spacing: var(--sw-tracking-label);
+		text-transform: uppercase;
+		color: var(--sw-faint);
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(2)::before {
+		content: 'Does';
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(3)::before {
+		content: 'And';
+	}
+	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(4)::before {
+		content: 'In';
+	}
+}
+
+/* Keep "All integrations ->" on one line so the arrow never wraps alone. */
+main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 + p > a {
+	white-space: nowrap;
 }
 
 /* Integrations: plain mono feature names. */
