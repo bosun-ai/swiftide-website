@@ -119,7 +119,7 @@ main:has(.sw-hero[data-page='home']) .card-grid .expressive-code {
 	main:has(.sw-hero[data-page='home']) .sw-hero h1 {
 		max-width: 100%;
 		/* Sized to the hero column so the headline holds two lines from 72rem up. */
-		font-size: clamp(1.625rem, 2.7vw - 0.25rem, 2.25rem);
+		font-size: clamp(1.5rem, 2.4vw - 0.25rem, 1.875rem);
 	}
 	main:has(.sw-hero[data-page='home']) .sl-container > .sl-markdown-content {
 		display: contents;

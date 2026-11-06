@@ -1,11 +1,11 @@
 ---
 title: Swiftide
-description: 'Swiftide is a Rust library of small, composable LLM parts that run as agents, typed task graphs and streaming RAG pipelines.'
+description: 'Swiftide is a Rust library for building LLM applications: agents, typed task graphs and streaming RAG pipelines that ship with retries, streaming, human approval, caching and tracing built in.'
 template: splash
 pagefind: false
 hero:
-  title: Agents, typed task graphs and streaming RAG pipelines in Rust.
-  tagline: 'Swiftide is a library of small traits with three ways to run them. The client that answers your agent also renders a task node and labels your chunks; the executor that runs the agent''s commands also streams a repository into a pipeline. You compose, you do not glue.'
+  title: 'Build LLM agents, task graphs and RAG pipelines in Rust, and ship them.'
+  tagline: 'Swiftide gives you an agent harness, typed task graphs and streaming pipelines that work together, with the production parts already there: retries, streaming, human approval, caching, tracing and metrics. One client, one executor and one store serve all three, so you build the application, not the plumbing.'
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
@@ -74,7 +74,7 @@ Indexed 0 chunks from 0 new or changed files (14 files found, 14 unchanged) in 0
 
 ## The same parts, three places
 
-Swiftide's traits are small enough that one value does several jobs. Each row is from a showcase you can run.
+The same client, executor or store works in an agent, a task graph and a pipeline, so you wire a value once. Each row is from a showcase you can run.
 
 | One value | Does | And | In |
 | --- | --- | --- | --- |
