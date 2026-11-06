@@ -1,0 +1,12 @@
+---
+/**
+ * The closing list: the slot holds a heading and one markdown list whose items are a link and
+ * an inline-code value (`- [Agents](/agents/overview/) \`release-notes-agent\``). Each row is
+ * marked with the motif arc at text size.
+ */
+import { arcMaskUrl } from './arc.ts';
+---
+
+<section class="sw-start sw-home-section not-content" data-reveal style={`--sw-arc-mask:${arcMaskUrl()}`}>
+	<slot />
+</section>

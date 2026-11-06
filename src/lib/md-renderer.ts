@@ -32,11 +32,9 @@ function dropFrontmatter() {
 export function createMarkdownProcessor(options: MarkdownOptions, mdx: boolean): Processor<Root, Root, Root, Root, string> {
 	const base = unified().use(remarkParse).use(remarkFrontmatter).use(remarkGfm).use(remarkDirective);
 	const parsed = mdx ? base.use(remarkMdx) : base;
-	return parsed
-		.use(dropFrontmatter)
-		.use(remarkSwiftide, { ...options, target: 'markdown' })
-		.use(mdx ? remarkMdxToMarkdown : () => undefined)
-		.use(remarkStringify, { fences: true, bullet: '-', emphasis: '_', rule: '-' }) as unknown as Processor<
+	const expanded = parsed.use(dropFrontmatter).use(remarkSwiftide, { ...options, target: 'markdown' });
+	const flattened = mdx ? expanded.use(remarkMdxToMarkdown, { projectRoot: options.projectRoot }) : expanded;
+	return flattened.use(remarkStringify, { fences: true, bullet: '-', emphasis: '_', rule: '-' }) as unknown as Processor<
 		Root,
 		Root,
 		Root,

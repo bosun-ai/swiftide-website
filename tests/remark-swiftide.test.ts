@@ -189,6 +189,25 @@ describe('mdx flattening', () => {
 		expect(out).toBe('**Cargo**\n\nRun it.');
 	});
 
+	it('flattens the home page showcase and integration tiles to headings, code and links', async () => {
+		const out = await markdown(
+			'<ShowcasePanel label="Agents" title="Release notes agent" example="release-notes-agent" guide="/agents/overview/" description="Writes notes." result="→ stop">\n\nCode here.\n\n</ShowcasePanel>\n\n<IntegrationTiles heading="Every integration is a Cargo feature" href="/integrations/overview/" features="openai qdrant" />\n',
+			true,
+		);
+		expect(out).toBe(
+			[
+				'## Agents: Release notes agent',
+				'Writes notes.',
+				'Code here.',
+				'```text\n→ stop\n```',
+				'[Read the guide](/agents/overview/) · [Run it](/showcases/release-notes-agent/)',
+				'## Every integration is a Cargo feature',
+				'`openai` `qdrant`',
+				'[All integrations](/integrations/overview/)',
+			].join('\n\n'),
+		);
+	});
+
 	it('throws on unknown components', async () => {
 		await expect(markdown('<Fancy />', true)).rejects.toThrow(/<Fancy> has no markdown equivalent/);
 	});

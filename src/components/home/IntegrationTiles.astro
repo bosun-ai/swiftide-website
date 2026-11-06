@@ -1,0 +1,49 @@
+---
+/**
+ * Proof: integrations as large names on tiles, after one heading tile in the accent. Each tile
+ * links to the guide page `src/data/integrations.yaml` gives for that feature; the last tile
+ * links to the overview with the total from the same file.
+ */
+import { INTEGRATION_KINDS, loadIntegrations } from '../../lib/integrations.ts';
+
+interface Props {
+	heading: string;
+	/** Feature flags to show, space separated, in order. The first eight also show on phones. */
+	features: string;
+	/** The page listing every integration. */
+	href: string;
+}
+
+const { heading, features, href } = Astro.props;
+const integrations = loadIntegrations(process.cwd());
+const tiles = features
+	.split(/\s+/)
+	.filter(Boolean)
+	.map((feature) => {
+		const found = integrations.find((integration) => integration.feature === feature);
+		if (!found) throw new Error(`<IntegrationTiles>: "${feature}" is not a feature in src/data/integrations.yaml`);
+		return { feature, href: `/${found.page}/`, kind: INTEGRATION_KINDS[found.kinds[0]!] };
+	});
+---
+
+<section class="sw-tiles sw-home-section not-content" data-reveal aria-labelledby="sw-tiles-heading">
+	<h2 class="sw-tiles__heading" id="sw-tiles-heading">{heading}</h2>
+	<ul class="sw-tiles__list">
+		{
+			tiles.map(({ feature, href: page, kind }, i) => (
+				<li class="sw-tile" style={`--i:${i + 1}`}>
+					<a href={page}>
+						<span class="sw-tile__name">{feature}</span>
+						<span class="sw-tile__kind">{kind}</span>
+					</a>
+				</li>
+			))
+		}
+		<li class="sw-tile sw-tile--all" style={`--i:${tiles.length + 1}`}>
+			<a href={href}>
+				<span class="sw-tile__name">All {integrations.length} →</span>
+				<span class="sw-tile__kind">integrations</span>
+			</a>
+		</li>
+	</ul>
+</section>

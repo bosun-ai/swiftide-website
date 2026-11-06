@@ -3,10 +3,11 @@
  * components we allow in content and throws on anything else, so an unknown component never
  * leaks into what LLMs read.
  */
-import type { BlockContent, Paragraph, PhrasingContent, Root, RootContent } from 'mdast';
+import type { BlockContent, Heading, Paragraph, PhrasingContent, Root, RootContent } from 'mdast';
 import type { MdxJsxAttribute, MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx-jsx';
 import { SKIP, visit } from 'unist-util-visit';
 import type { VFile } from 'vfile';
+import { loadReleaseRun } from '../release-run.ts';
 
 type JsxElement = MdxJsxFlowElement | MdxJsxTextElement;
 
@@ -17,9 +18,50 @@ function attr(node: JsxElement, name: string): string | undefined {
 
 const strong = (value: string): PhrasingContent => ({ type: 'strong', children: [{ type: 'text', value }] });
 const paragraph = (children: PhrasingContent[]): Paragraph => ({ type: 'paragraph', children });
+const heading = (depth: Heading['depth'], value: string): Heading => ({ type: 'heading', depth, children: [{ type: 'text', value }] });
+const link = (url: string, value: string): PhrasingContent => ({ type: 'link', url, children: [{ type: 'text', value }] });
+const text = (value: string): PhrasingContent => ({ type: 'text', value });
+
+export interface MdxToMarkdownOptions {
+	/** Site root, for components whose content is read from files (the home page's recorded run). */
+	readonly projectRoot: string;
+}
+
+type Rule = (node: JsxElement, options: MdxToMarkdownOptions) => RootContent[];
+
+/** The home page's components (src/components/home), as the headings, paragraphs and lists they show. */
+const HOME_COMPONENTS: Record<string, Rule> = {
+	HeroStage: (node, { projectRoot }) => [
+		paragraph([link(attr(node, 'href') ?? '', attr(node, 'action') ?? '')]),
+		...(node.children as RootContent[]),
+		{ type: 'code', lang: 'text', value: loadReleaseRun(projectRoot).join('\n') },
+	],
+	Showcase: (node) => node.children as RootContent[],
+	ShowcasePanel: (node) => {
+		const example = attr(node, 'example') ?? '';
+		return [
+			heading(2, `${attr(node, 'label') ?? ''}: ${attr(node, 'title') ?? ''}`),
+			paragraph([text(attr(node, 'description') ?? '')]),
+			...(node.children as RootContent[]),
+			{ type: 'code', lang: 'text', value: attr(node, 'result') ?? '' },
+			paragraph([link(attr(node, 'guide') ?? '', 'Read the guide'), text(' · '), link(`/showcases/${example}/`, 'Run it')]),
+		];
+	},
+	Composition: (node) => node.children as RootContent[],
+	IntegrationTiles: (node) => {
+		const features = (attr(node, 'features') ?? '').split(/\s+/).filter(Boolean);
+		return [
+			heading(2, attr(node, 'heading') ?? ''),
+			paragraph(features.flatMap((feature, i) => [...(i ? [text(' ')] : []), { type: 'inlineCode' as const, value: feature }])),
+			paragraph([link(attr(node, 'href') ?? '', 'All integrations')]),
+		];
+	},
+	StartHere: (node) => node.children as RootContent[],
+};
 
 /** What each allowed component becomes. Children are kept unless the rule replaces them. */
-const COMPONENTS: Record<string, (node: JsxElement) => RootContent[]> = {
+const COMPONENTS: Record<string, Rule> = {
+	...HOME_COMPONENTS,
 	Tabs: (node) => node.children as RootContent[],
 	TabItem: (node) => [paragraph([strong(attr(node, 'label') ?? 'Tab')]), ...(node.children as RootContent[])],
 	Steps: (node) => node.children as RootContent[],
@@ -49,7 +91,7 @@ const COMPONENTS: Record<string, (node: JsxElement) => RootContent[]> = {
 
 const isComment = (value: string) => /^\s*\/\*[\s\S]*\*\/\s*$/.test(value);
 
-export default function remarkMdxToMarkdown() {
+export default function remarkMdxToMarkdown(options: MdxToMarkdownOptions) {
 	return function transform(tree: Root, file: VFile): void {
 		visit(tree, (node, index, parent) => {
 			if (!parent || index === undefined) return;
@@ -72,7 +114,7 @@ export default function remarkMdxToMarkdown() {
 							node,
 						);
 					}
-					children.splice(index, 1, ...rule(node));
+					children.splice(index, 1, ...rule(node, options));
 					return index;
 				}
 				default:

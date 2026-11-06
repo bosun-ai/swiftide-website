@@ -1,0 +1,86 @@
+---
+/**
+ * The home hero's second half: the one action, the install line and links (the slot), and the
+ * stage, a flat field of the accent whose top-left corner is cut by the motif arc, holding the
+ * release-notes agent's recorded run as a terminal fragment that replays line by line.
+ *
+ * Its children join the grid of the hero above (see `home.css`), so the stage can sit beside the
+ * tagline. The replay is CSS only: every line is in the HTML and visible without animation.
+ * This component also owns the page's small motion script (the `js` class and the reveals).
+ */
+import { RELEASE_RUN_COMMAND, loadReleaseRun } from '../../lib/release-run.ts';
+
+interface Props {
+	/** Label of the one action. */
+	action: string;
+	href: string;
+}
+
+const { action, href } = Astro.props;
+
+// Delays for the replay: the first line once the stage has opened, then a steady pace, with a
+// pause where the agent waits for a person to approve the write.
+// The run's status glyphs: tick (done), pause (waiting for approval), square (stopped).
+const TICK = '\u2713';
+const STATUS = [TICK, '\u23f8', '\u25a0'];
+const STATUS_GLYPH = new RegExp(`([${STATUS.join('')}])`);
+
+const STAGE_OPEN_MS = 1000;
+const PACE_MS = 150;
+const APPROVAL_PAUSE_MS = 700;
+let at = STAGE_OPEN_MS;
+const lines = loadReleaseRun(process.cwd()).map((text) => {
+	const delay = at;
+	at += PACE_MS + (text.includes('waiting for approval') ? APPROVAL_PAUSE_MS : 0);
+	const kind = text.startsWith('→') ? 'call' : text.includes('?') ? 'prompt' : 'result';
+	// The status glyphs are set apart so the fragment can colour them. The tick is
+	// drawn from `data-glyph`: it is printed output, not decoration, but text scanners that look
+	// for emoji in the page cannot tell the two apart.
+	const parts = text.split(STATUS_GLYPH).map((part) => ({ part, glyph: STATUS.includes(part) }));
+	return { parts, delay, kind };
+});
+---
+
+<div class="sw-home-hero not-content">
+	<script is:inline>
+		// Entrances start hidden only under html.js. Sections in view on load are revealed by the
+		// observer's first callback; if the observer is missing, throws or never reports, a
+		// safety timer reveals everything so no content can stay invisible.
+		document.documentElement.classList.add('js');
+		addEventListener('DOMContentLoaded', () => {
+			const targets = [...document.querySelectorAll('[data-reveal]')];
+			const revealAll = () => targets.forEach((el) => el.classList.add('is-in'));
+			let reported = false;
+			setTimeout(() => reported || revealAll(), 1500);
+			try {
+				const io = new IntersectionObserver(
+					(entries) => {
+						reported = true;
+						for (const entry of entries) {
+							if (!entry.isIntersecting) continue;
+							entry.target.classList.add('is-in');
+							io.unobserve(entry.target);
+						}
+					},
+					{ rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
+				);
+				targets.forEach((el) => io.observe(el));
+			} catch {
+				revealAll();
+			}
+		});
+	</script>
+	<a class="sw-button sw-home-hero__action" href={href}>{action}</a>
+	<div class="sw-home-hero__install">
+		<slot />
+	</div>
+	<div class="sw-stage">
+		<figure class="sw-run" data-ui aria-label="A recorded run of the release-notes agent">
+			<figcaption class="sw-run__title">
+				<span class="sw-run__prompt" aria-hidden="true">$</span>
+				<span>{RELEASE_RUN_COMMAND}</span>
+			</figcaption>
+			<pre class="sw-run__lines"><code>{lines.map(({ parts, delay, kind }) => (<span class="sw-run__line" data-kind={kind} style={`--delay:${delay}ms`}>{parts.map(({ part, glyph }) => (glyph ? part === TICK ? <span class="sw-run__glyph" data-glyph={part} role="img" aria-label={part} /> : <span class="sw-run__glyph">{part}</span> : part))}{'\n'}</span>))}</code></pre>
+		</figure>
+	</div>
+</div>

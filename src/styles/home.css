@@ -1,12 +1,32 @@
 /*
- * Home page (src/content/docs/index.mdx, splash template) and the shared splash hero (also used by
- * the 404 page). The home page is markdown, so its layout keys off the structure the markdown
- * produces: terminal block, link row, CardGrid of three columns, router table, integrations line.
- * `main:has(.sw-hero[data-page='home'])` scopes everything to the home page.
+ * Splash hero (home page and 404) and the home page's components (src/components/home).
+ *
+ * The home page has one motif, the arc of the tide from the mark: cut at hero scale into the
+ * stage's corner, drawn as the only shape in the how-it-works band, and set at text size beside
+ * the selected tab and each "Start here" row. Everything else is ground, ink and one accent.
+ * `.sl-container:has(> .sw-hero[data-page='home'])` scopes the few Starlight layout overrides.
  */
 
+/* The brand mono face sets headings, labels, actions and code; IBM Plex Sans sets
+   every sentence. One declaration, so the split is visible in one place. */
+.sw-hero h1,
+.sw-hero__meta,
+.sw-button,
+.sw-home-hero__install > p,
+[data-ui] .sw-run__title,
+[data-ui] .sw-run__lines,
+.sw-home-section h2,
+.sw-home-section :not(pre) > code,
+.sw-tab,
+.sw-panel__plate .sw-source,
+.sw-cell,
+.sw-composition li strong,
+.sw-tile__name {
+	font-family: var(--sw-font-mono); /* taste-skill-ignore: brand typeface for headings, labels and code */
+}
+
 /* --------------------------------------------------------------------------------------------
- * Splash hero
+ * Splash hero (shared with 404)
  * ------------------------------------------------------------------------------------------ */
 
 .sw-hero {
@@ -15,7 +35,6 @@
 
 .sw-hero h1 {
 	max-width: 25em;
-	font-family: var(--sw-font-mono);
 	font-stretch: var(--sw-mono-wide);
 	font-size: clamp(1.375rem, 0.8rem + 2.6vw, 2.75rem);
 	font-weight: 500;
@@ -38,11 +57,10 @@
 	flex-wrap: wrap;
 	gap: 0.25rem 0;
 	margin-top: 1.25rem;
-	font-family: var(--sw-font-mono);
 	font-stretch: var(--sw-mono-wide);
-	font-size: var(--sw-text-label);
+	font-size: var(--sw-text-meta);
 	font-weight: 500;
-	letter-spacing: var(--sw-tracking-label);
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	color: var(--sw-muted);
 }
@@ -50,290 +68,1122 @@
 .sw-hero__meta > span + span::before {
 	content: '/';
 	margin-inline: 0.75em;
-	color: var(--sw-faint);
+	color: var(--sw-muted);
 }
 
 /* --------------------------------------------------------------------------------------------
- * Home page
+ * Home: scale, motion tokens, page frame
  * ------------------------------------------------------------------------------------------ */
 
-html:has(.sw-hero[data-page='home']) {
-	--sl-content-width: 84rem;
+:root:has(.sw-hero[data-page='home']) {
+	/* One pair of margins and one gutter for the whole page. */
+	--sw-margin: clamp(1rem, 2.8vw, 2.5rem);
+	--sw-gutter: clamp(0.75rem, 1.6vw, 1.5rem);
+	--sw-section-gap: clamp(5rem, 11vw, 10rem);
+	/* Five type steps. */
+	--sw-step-display: clamp(1.75rem, 4.6vw, 4.5rem);
+	--sw-step-heading: clamp(1.75rem, 3vw, 2.75rem);
+	--sw-step-title: clamp(1.25rem, 2.1vw, 2rem);
+	--sw-step-body: 1.0625rem; /* 17px: every sentence and list on the page */
+	--sw-step-small: 0.875rem;
+	/* Motion. */
+	--sw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--sw-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+	--sw-ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+	--sw-t-press: 140ms;
+	--sw-t-hover: 180ms;
+
+	--sl-content-width: 100%;
+	--sl-content-pad-x: var(--sw-margin);
 }
 
-@media (min-width: 72rem) {
-	html:has(.sw-hero[data-page='home']) {
-		--sl-content-pad-x: 2rem;
-	}
+/* Starlight's frame: no edit link or date on a landing page; nothing may scroll sideways. */
+main:has(.sw-hero[data-page='home']) {
+	overflow-x: clip;
 }
 
-/* The edit link and last-updated date say nothing about a landing page. */
 main:has(.sw-hero[data-page='home']) footer .meta {
 	display: none;
 }
 
-/* Terminal: the first visual. One command, so it stays short. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child {
-	max-width: 46rem;
-}
-
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child pre {
-	font-size: 0.9375rem;
-}
-
-/* Three excerpts side by side: smaller code, tighter frames. Long lines wrap (`wrap` on the
-   snippet) rather than scroll. */
-main:has(.sw-hero[data-page='home']) .card-grid .expressive-code {
-	--ec-codeFontSize: 0.78125rem;
-	--ec-codePadInl: 0.875rem;
-	--ec-codeLineHt: 1.65;
-}
-
-/* Below three columns there is room to scroll sideways, and wrapped Rust reads worse than a
-   scrolled line: only wrap while the excerpts sit side by side. */
-@media (max-width: 71.99rem) {
-	main:has(.sw-hero[data-page='home']) .card-grid .expressive-code pre.wrap .ec-line .code {
-		white-space: pre;
-		overflow-wrap: normal;
-	}
-}
-
-/* Wide screens: the terminal and link row sit beside the headline. The markdown wrapper is
-   flattened (display: contents) so its first two children can join the hero's grid. */
-@media (min-width: 72rem) {
-	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container {
-		display: grid;
-		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-		column-gap: 4rem;
-		align-items: end;
-	}
-	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container > * {
-		grid-column: 1 / -1;
-		margin-top: 0;
-	}
-	main:has(.sw-hero[data-page='home']) > .content-panel > .sl-container > .sw-hero {
-		grid-column: 1;
-		grid-row: 1 / span 2;
-		min-width: 0;
-	}
-	main:has(.sw-hero[data-page='home']) .sw-hero h1 {
-		max-width: 100%;
-		/* Sized to the hero column so the headline holds two lines from 72rem up. */
-		font-size: clamp(1.75rem, 2.8vw - 0.2rem, 2.375rem);
-	}
-	main:has(.sw-hero[data-page='home']) .sl-container > .sl-markdown-content {
-		display: contents;
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > * {
-		grid-column: 1 / -1;
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child {
-		grid-column: 2;
-		grid-row: 1;
-		align-self: end;
-		max-width: none;
-		margin-bottom: 0;
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .card-grid {
-		margin-top: 2.5rem;
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child + p {
-		grid-column: 2;
-		grid-row: 2;
-		align-self: start;
-		margin-top: 1rem;
-		padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
-	}
-}
-
-/* Link row under the terminal. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .expressive-code:first-child + p {
-	font-family: var(--sw-font-mono);
-	font-stretch: var(--sw-mono-narrow);
-	font-size: var(--sw-text-meta);
-	color: var(--sw-faint);
-	word-spacing: 0.25em;
-}
-
-/* Three columns: Agents, Tasks, Pipelines. */
-main:has(.sw-hero[data-page='home']) .card-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: 3rem 2rem;
-	margin-top: clamp(2.5rem, 6vw, 4.5rem);
-}
-
-@media (min-width: 72rem) {
-	main:has(.sw-hero[data-page='home']) .card-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-}
-
-main:has(.sw-hero[data-page='home']) .card-grid .card {
+/* The hero and the page body share one grid: the stage sits beside the hero's text. */
+.sl-container:has(> .sw-hero[data-page='home']) {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
-	padding: 1.125rem 0 0;
-	border: 0;
-	border-top: 1px solid var(--sw-line-strong);
-	background: transparent;
-	min-width: 0;
+	max-width: none;
 }
 
-main:has(.sw-hero[data-page='home']) .card-grid .card > .title {
-	font-family: var(--sw-font-mono);
+.sl-container:has(> .sw-hero[data-page='home']) > .sw-hero,
+.sl-container:has(> .sw-hero[data-page='home']) > .sl-markdown-content,
+.sw-home-hero {
+	display: contents;
+}
+
+.sl-container:has(> .sw-hero[data-page='home']) .sl-markdown-content > * {
+	margin-top: 0;
+}
+
+/* Phone and tablet order: headline, sentence, action, stage, install, meta, then the sections. */
+.sw-hero[data-page='home'] h1 {
+	order: 0;
+}
+.sw-hero[data-page='home'] .sw-hero__tagline {
+	order: 1;
+}
+.sw-home-hero__action {
+	order: 2;
+}
+.sw-stage {
+	order: 3;
+}
+.sw-home-hero__install {
+	order: 4;
+}
+.sw-hero[data-page='home'] .sw-hero__meta {
+	order: 5;
+}
+.sw-home-section {
+	order: 6;
+}
+.sl-container:has(> .sw-hero[data-page='home']) > footer {
+	order: 7;
+}
+
+/* --------------------------------------------------------------------------------------------
+ * Home hero
+ * ------------------------------------------------------------------------------------------ */
+
+.sw-hero[data-page='home'] h1 {
+	max-width: none;
+	padding-top: clamp(2rem, 7vw, 5.5rem);
+	font-size: var(--sw-step-display);
+	line-height: 1.08;
+	letter-spacing: -0.05em;
+	text-wrap: wrap;
+}
+
+/* The two authored lines (wide screens only: on a phone the title wraps freely). */
+.sw-hero__line {
+	display: inline;
+}
+
+@media (min-width: 48rem) {
+	.sw-hero__line {
+		display: block;
+	}
+}
+
+.sw-hero[data-page='home'] .sw-hero__tagline {
+	max-width: 40ch;
+	margin-top: clamp(1.25rem, 2.4vw, 2rem);
+	font-size: var(--sw-step-body);
+	line-height: 1.6;
+	color: var(--sw-ink);
+}
+
+.sw-hero[data-page='home'] .sw-hero__meta {
+	margin-top: 1.5rem;
+	font-size: var(--sw-step-small);
+}
+
+/* The one button shape on the page: square, 44px, ink fill. */
+.sw-button {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	justify-self: start;
+	min-height: 2.75rem;
+	padding-inline: 1.25rem;
+	background: var(--sw-ink-strong);
+	color: var(--sw-bg);
 	font-stretch: var(--sw-mono-wide);
-	font-size: var(--sw-text-label);
+	font-size: var(--sw-step-small);
 	font-weight: 500;
-	letter-spacing: var(--sw-tracking-label);
-	text-transform: uppercase;
+	text-decoration: none;
+	transition:
+		transform var(--sw-t-press) var(--sw-ease-out),
+		background-color var(--sw-t-hover) ease;
+}
+
+.sw-button:active {
+	transform: scale(0.97);
+}
+
+.sw-home-hero__action {
+	margin-top: 1.75rem;
+}
+
+.sw-home-hero__install {
+	display: block;
+	max-width: 34rem;
+	margin-top: 2rem;
+}
+
+/* Code frame titles and collapsed-line toggles on this page use the small step. */
+.sw-home-hero .expressive-code .frame .header .title,
+.sw-home-section .expressive-code .frame .header .title,
+.sw-home-section .expressive-code summary,
+.sw-home-section .expressive-code summary .text {
+	font-size: var(--sw-step-small);
+}
+
+/* The link row under the install line. */
+.sw-home-hero__install > p {
+	margin-top: 1rem;
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-step-small);
+	line-height: 1.9;
+	color: var(--sw-muted);
+	word-spacing: 0.2em;
+}
+
+.sw-home-hero__install > p a,
+.sw-composition a,
+.sw-panel__plate .sw-source a {
+	color: var(--sw-ink);
+	text-decoration: underline;
+	text-decoration-color: var(--sw-line-strong);
+	text-underline-offset: 0.25em;
+	text-decoration-thickness: 1px;
+	transition:
+		color var(--sw-t-hover) ease,
+		text-decoration-color var(--sw-t-hover) ease;
+}
+
+/* The stage: a flat accent field, its top-left corner cut by the arc at hero scale. It bleeds
+   off both sides on a phone and off the right on wide screens; its bottom edge crops the run. */
+.sw-stage {
+	--sw-crest: clamp(4.5rem, 16vw, 15rem);
+	position: relative;
+	display: block;
+	height: clamp(26rem, 64svh, 40rem);
+	margin-top: 2.5rem;
+	margin-inline: calc(-1 * var(--sw-margin));
+	/* The field bleeds off the page; the fragment stops at the content column's edge. */
+	padding: 1rem var(--sw-margin) 0 1rem;
+	overflow: hidden;
+	background: var(--sw-accent);
+	clip-path: inset(0 round var(--sw-crest) 0 0 0);
+}
+
+/* The terminal fragment: true size, at most 620px wide, cropped by the stage's bottom edge.
+   Lines longer than the fragment end in an ellipsis rather than running off the page. */
+[data-ui].sw-run {
+	max-width: 38.75rem;
+	min-height: calc(100% + 4rem);
+	margin: 0;
+	margin-left: calc(var(--sw-crest) * 0.3);
+	background: var(--sw-bg);
+	color: var(--sw-ink);
+	border: 1px solid color-mix(in srgb, var(--sw-accent-ink) 25%, transparent);
+	overflow: hidden;
+	transform-origin: 0 0;
+}
+
+[data-ui] .sw-run__title {
+	display: flex;
+	gap: 0.6em;
+	padding: 0.7rem 1rem;
+	border-bottom: 1px solid var(--sw-line);
+	background: var(--sw-panel);
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-step-small);
+	color: var(--sw-muted);
+	white-space: nowrap;
+}
+
+[data-ui] .sw-run__title > :last-child {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+[data-ui] .sw-run__prompt {
+	color: var(--sw-muted);
+}
+
+[data-ui] .sw-run__lines {
+	margin: 0;
+	padding: 1rem 1rem 0;
+	background: transparent;
+	border: 0;
+	font-stretch: var(--sw-mono-narrow);
+	font-size: 0.875rem;
+	line-height: 1.75;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+[data-ui] .sw-run__lines code {
+	padding: 0;
+	background: transparent;
+	font: inherit;
+	color: inherit;
+}
+
+[data-ui] .sw-run__line {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--sw-muted);
+}
+
+[data-ui] .sw-run__line[data-kind='call'] {
 	color: var(--sw-ink-strong);
 }
 
-main:has(.sw-hero[data-page='home']) .card-grid .card .body {
+[data-ui] .sw-run__line[data-kind='prompt'] {
+	color: var(--sw-caution);
+}
+
+[data-ui] .sw-run__glyph {
+	color: var(--sw-accent);
+}
+
+[data-ui] .sw-run__glyph[data-glyph]::before {
+	content: attr(data-glyph);
+}
+
+@media (min-width: 40rem) {
+	.sw-stage {
+		padding: 3.5rem var(--sw-margin) 0 3.5rem;
+	}
+	[data-ui].sw-run {
+		margin-left: 0;
+	}
+}
+
+/* Wide screens: twelve columns. Headline across the top; sentence, action and install in the
+   left half; the stage from the midpoint to the right edge. */
+@media (min-width: 64rem) {
+	.sl-container:has(> .sw-hero[data-page='home']) {
+		display: grid;
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		grid-template-rows: auto auto auto auto 1fr;
+		gap: 0 var(--sw-gutter);
+	}
+	:where(.sl-container:has(> .sw-hero[data-page='home'])) > :where(.sl-markdown-content, .sw-hero) > *,
+	:where(.sw-home-hero) > * {
+		grid-column: 1 / 7;
+		min-width: 0;
+	}
+	.sw-hero[data-page='home'] h1 {
+		grid-column: 1 / -1;
+		grid-row: 1;
+	}
+	.sw-hero[data-page='home'] .sw-hero__tagline {
+		grid-row: 2;
+	}
+	.sw-home-hero__action {
+		grid-row: 3;
+	}
+	.sw-home-hero__install {
+		grid-row: 4;
+	}
+	.sw-hero[data-page='home'] .sw-hero__meta {
+		grid-row: 5;
+		align-self: end;
+		padding-bottom: 2.5rem;
+	}
+	.sw-home-hero > .sw-stage {
+		grid-column: 7 / -1;
+		grid-row: 2 / 6;
+		height: max(30rem, calc(100svh - var(--sl-nav-height) - 2 * var(--sw-step-display) - 6rem));
+		margin: clamp(1.25rem, 2.4vw, 2rem) calc(-1 * var(--sw-margin)) 0 0;
+	}
+	.sl-container:has(> .sw-hero[data-page='home']) > .sl-markdown-content > .sw-home-section,
+	.sl-container:has(> .sw-hero[data-page='home']) > footer {
+		grid-column: 1 / -1;
+	}
+}
+
+/* --------------------------------------------------------------------------------------------
+ * Sections
+ * ------------------------------------------------------------------------------------------ */
+
+.sl-container:has(> .sw-hero[data-page='home']) > .sl-markdown-content > .sw-home-section {
+	margin-top: var(--sw-section-gap);
+}
+
+.sw-home-section h2 {
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-step-heading);
+	font-weight: 500;
+	line-height: 1.12;
+	letter-spacing: -0.04em;
+	color: var(--sw-ink-strong);
+	text-wrap: balance;
+}
+
+/* Markdown headings in a slot keep Starlight's anchor link; the landing page does not need it. */
+.sw-home-section .sl-anchor-link {
+	display: none;
+}
+
+.sw-home-section :not(pre) > code {
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-step-small);
+}
+
+/* Code on this page is set at the small step too. */
+.sw-home-hero .expressive-code,
+.sw-home-section .expressive-code {
+	--ec-codeFontSize: var(--sw-step-small);
+}
+
+/* --- Showcase: square plate, spare text -------------------------------------------------- */
+
+.sw-showcase {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	row-gap: 1.5rem;
+}
+
+.sw-showcase__tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 1.75rem;
+}
+
+.sw-showcase__tabs[hidden] {
+	display: none;
+}
+
+.sw-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 2.75rem;
+	padding: 0;
+	border: 0;
+	background: none;
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-step-body);
+	font-weight: 500;
+	color: var(--sw-muted);
+	cursor: pointer;
+	transition:
+		color var(--sw-t-hover) ease,
+		transform var(--sw-t-press) var(--sw-ease-out);
+}
+
+/* The selected tab carries the arc at text size. */
+.sw-tab::before {
+	content: '';
+	width: 1rem;
+	height: 1rem;
+	background: var(--sw-accent);
+	-webkit-mask: var(--sw-arc-mask) center / contain no-repeat;
+	mask: var(--sw-arc-mask) center / contain no-repeat;
+	opacity: 0;
+	transform: scale(0.96) rotate(-90deg);
+	transition:
+		opacity var(--sw-t-hover) ease,
+		transform 320ms var(--sw-ease-out);
+}
+
+.sw-tab[aria-selected='true'] {
+	color: var(--sw-ink-strong);
+}
+
+.sw-tab[aria-selected='true']::before {
+	opacity: 1;
+	transform: none;
+}
+
+.sw-tab:active {
+	transform: translateY(1px);
+}
+
+.sw-panel {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	row-gap: 1.5rem;
+}
+
+.sw-panel + .sw-panel {
+	margin-top: 4rem;
+}
+
+.sw-panel[hidden] {
+	display: none;
+}
+
+.sw-panel__plate {
 	display: flex;
 	flex-direction: column;
-	flex: 1;
-	margin-top: 0.75rem;
+	justify-content: center;
+	padding: clamp(1rem, 3vw, 2.5rem);
+	background: var(--sw-panel);
 	min-width: 0;
 }
 
-main:has(.sw-hero[data-page='home']) .card-grid .card .body > * + * {
-	margin-top: 1rem;
+/* The excerpt sits straight on the plate: no frame of its own. */
+.sw-panel__plate .expressive-code {
+	--sw-code-bg: var(--sw-panel);
+	--sw-code-titlebar: var(--sw-panel);
 }
 
-main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
-	font-size: 0.96875rem;
+.sw-panel__plate .expressive-code .frame {
+	border: 0;
+}
+
+.sw-panel__plate .expressive-code pre {
+	border: 0;
+	background: var(--sw-panel);
+}
+
+.sw-panel__plate .sw-source {
+	margin-top: 1rem;
+	font-stretch: var(--sw-mono-narrow);
+	font-size: var(--sw-step-small);
+	color: var(--sw-muted);
+}
+
+.sw-showcase {
+	--sw-stack: 1.25rem; /* the one gap between the text column's parts */
+}
+
+.sw-panel__side,
+.sw-panel__text {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sw-stack);
+	min-width: 0;
+}
+
+.sw-home-section .sw-panel__title {
+	font-size: var(--sw-step-title);
+	letter-spacing: -0.03em;
+}
+
+.sw-panel__description {
+	max-width: 34ch;
+	font-size: var(--sw-step-body);
 	line-height: 1.55;
 	color: var(--sw-ink);
-	min-height: 3.1em;
 }
 
-/* Side by side, reserve the longest intro's lines so the three excerpts start on one line. */
-@media (min-width: 72rem) {
-	main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
-		min-height: calc(6 * 1.55em);
+.sw-panel__result {
+	max-width: 40rem;
+	padding-left: 1rem;
+	border-left: 1px solid var(--sw-accent); /* taste-skill-ignore: the site marks captured output with a 1px rule (code.css) */
+}
+
+.sw-panel__result code {
+	display: block;
+	font-size: var(--sw-step-small);
+	line-height: 1.6;
+	color: var(--sw-ink);
+	white-space: pre-wrap;
+}
+
+.sw-panel__actions {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 0.5rem;
+	margin-top: calc(2.5rem - var(--sw-stack));
+}
+
+.sw-cell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 3.75rem;
+	padding-inline: 1.25rem;
+	background: var(--sw-panel);
+	color: var(--sw-ink-strong);
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-step-small);
+	font-weight: 500;
+	text-decoration: none;
+	transition:
+		background-color var(--sw-t-hover) ease,
+		transform var(--sw-t-press) var(--sw-ease-out);
+}
+
+.sw-cell::after {
+	content: '→';
+	transition: transform var(--sw-t-hover) var(--sw-ease-out);
+}
+
+.sw-cell--ink {
+	background: var(--sw-ink-strong);
+	color: var(--sw-bg);
+}
+
+.sw-cell:active {
+	transform: scale(0.98);
+}
+
+/* With tabs: the tabs, then each panel's plate and text share one grid. */
+.sw-showcase[data-tabs] {
+	grid-template-rows: auto auto auto;
+}
+.sw-showcase[data-tabs] .sw-showcase__tabs {
+	grid-row: 2;
+	grid-column: 1;
+}
+.sw-showcase[data-tabs] .sw-panel {
+	grid-row: 1 / -1;
+	grid-column: 1;
+	grid-template-rows: subgrid;
+	margin-top: 0;
+}
+.sw-showcase[data-tabs] .sw-panel__plate {
+	grid-row: 1;
+}
+.sw-showcase[data-tabs] .sw-panel__side {
+	grid-row: 3;
+}
+
+@media (min-width: 40rem) {
+	.sw-panel__actions {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.sw-cell {
+		min-height: 4.5rem;
 	}
 }
 
-@media (min-width: 80rem) {
-	main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:first-child {
-		min-height: calc(5 * 1.55em);
+@media (min-width: 64rem) {
+	/* The plate sets the section's height; tabs and text sit as one stack centred beside it. */
+	.sw-showcase {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: var(--sw-gutter);
+		row-gap: 0;
+	}
+	.sw-panel {
+		grid-column: 1 / -1;
+		grid-template-columns: subgrid;
+	}
+	.sw-panel__plate {
+		aspect-ratio: 1;
+		max-height: calc(100svh - var(--sl-nav-height) - 4rem);
+		padding: 2.5rem;
+	}
+	.sw-panel__side {
+		align-self: center;
+		padding-left: clamp(0rem, 3vw, 3rem);
+	}
+	.sw-showcase[data-tabs] {
+		grid-template-rows: 1fr auto auto 1fr;
+	}
+	.sw-showcase[data-tabs] .sw-showcase__tabs {
+		grid-row: 2;
+		grid-column: 2;
+		padding-left: clamp(0rem, 3vw, 3rem);
+	}
+	.sw-showcase[data-tabs] .sw-panel {
+		grid-column: 1 / -1;
+	}
+	.sw-showcase[data-tabs] .sw-panel__plate {
+		grid-row: 1 / -1;
+	}
+	.sw-showcase[data-tabs] .sw-panel__side {
+		grid-row: 3;
+		align-self: start;
+		padding-top: var(--sw-stack);
 	}
 }
 
-main:has(.sw-hero[data-page='home']) .card-grid .card .body > .sw-source {
-	margin-top: 0.5rem;
+/* --- How it works: many into one (band) ------------------------------------------------- */
+
+.sw-composition {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	margin-inline: calc(-1 * var(--sw-margin));
+	padding: clamp(3.5rem, 8vw, 7rem) var(--sw-margin);
+	background: var(--sw-panel);
+	color: var(--sw-ink);
 }
 
-/* The "Agents ->" link closes each column. */
-main:has(.sw-hero[data-page='home']) .card-grid .card .body > p:last-child {
-	margin-top: auto;
-	padding-top: 1.25rem;
-	font-family: var(--sw-font-mono);
-	font-stretch: var(--sw-mono-narrow);
-	font-size: var(--sw-text-meta);
+.sw-composition__defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.sw-composition > .sl-heading-wrapper,
+.sw-composition > h2 {
+	order: 0;
+}
+
+.sw-composition > p:first-of-type {
+	order: 1;
+	max-width: 40ch;
+	margin-top: 1.25rem;
+	font-size: var(--sw-step-body);
+	line-height: 1.6;
+}
+
+.sw-composition > ul {
+	display: contents;
+}
+
+.sw-composition li {
+	list-style: none;
+	font-size: var(--sw-step-body);
+	line-height: 1.6;
+}
+
+.sw-composition li strong {
+	font-stretch: var(--sw-mono-wide);
+	font-size: var(--sw-step-body);
+	font-weight: 600;
+	color: var(--sw-ink-strong);
+}
+
+.sw-composition > p:last-of-type {
+	order: 8;
+	margin-top: 3rem;
+	font-size: var(--sw-step-body);
+	line-height: 1.7;
+	color: var(--sw-muted);
+}
+
+.sw-composition__zone {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin-top: 2.5rem;
+}
+
+/* On a phone each zone is cropped to a band so the three read as one sequence down the page. */
+@media (max-width: 47.99rem) {
+	.sw-composition__zone {
+		aspect-ratio: 9 / 4;
+		margin-top: 2rem;
+	}
+}
+
+.sw-composition > svg:nth-of-type(2) {
+	order: 2;
+}
+.sw-composition li:nth-child(1) {
+	order: 3;
+}
+.sw-composition > svg:nth-of-type(3) {
+	order: 4;
+}
+.sw-composition li:nth-child(2) {
+	order: 5;
+}
+.sw-composition > svg:nth-of-type(4) {
+	order: 6;
+}
+.sw-composition li:nth-child(3) {
+	order: 7;
+}
+
+.sw-arc--quiet {
 	color: var(--sw-faint);
 }
-
-/* Section headings on the home page: no larger than prose h2, with room above to close the section before. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 {
-	margin-top: clamp(3.5rem, 8vw, 6rem);
+.sw-arc--soft {
+	color: var(--sw-muted);
+}
+.sw-arc--ink {
+	color: var(--sw-ink-strong);
+}
+.sw-arc--accent {
+	color: var(--sw-accent);
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 > h2 {
-	max-width: none;
-	font-size: clamp(1.25rem, 1rem + 0.5vw, 1.5rem);
+@media (min-width: 48rem) {
+	.sw-composition {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		column-gap: var(--sw-gutter);
+	}
+	.sw-composition > .sl-heading-wrapper,
+	.sw-composition > h2 {
+		grid-column: 1 / 3;
+		grid-row: 1;
+		align-self: end;
+	}
+	.sw-composition > p:first-of-type {
+		grid-column: 1 / 3;
+		grid-row: 2;
+	}
+	.sw-composition > svg:nth-of-type(n + 2) {
+		grid-row: 3;
+		margin-top: clamp(2.5rem, 5vw, 4.5rem);
+	}
+	.sw-composition li {
+		grid-row: 4;
+		margin-top: 1.5rem;
+		padding-right: 1rem;
+	}
+	.sw-composition > p:last-of-type {
+		grid-column: 1 / -1;
+		grid-row: 5;
+	}
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 + * {
-	margin-top: 1.25rem;
+@media (min-width: 64rem) {
+	.sw-composition > .sl-heading-wrapper,
+	.sw-composition > h2 {
+		grid-column: 1;
+	}
+	.sw-composition > p:first-of-type {
+		grid-column: 3;
+		grid-row: 1;
+		align-self: end;
+		margin-top: 0;
+	}
 }
 
-/* "What are you building?" router: a two-column table of plain text and links. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > table {
-	display: table;
-	max-width: 64rem;
-	font-size: 1rem;
+/* --- Proof: large names on tiles ---------------------------------------------------------- */
+
+.sw-tiles {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.375rem;
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > table td {
-	padding-block: 0.875rem;
+.sw-tiles__list {
+	display: contents;
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):last-child {
-	font-family: var(--sw-font-mono);
+.sw-home-section .sw-tiles__heading {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: flex-start;
+	min-height: 7.5rem;
+	padding: 1.25rem;
+	background: var(--sw-accent);
+	color: var(--sw-accent-ink);
+	font-size: var(--sw-step-heading);
+}
+
+.sw-tile {
+	list-style: none;
+	min-width: 0;
+}
+
+.sw-tile a {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 1rem;
+	height: 100%;
+	min-height: 7.5rem;
+	padding: 1.25rem;
+	background: var(--sw-panel);
+	color: var(--sw-ink-strong);
+	text-decoration: none;
+	transition:
+		background-color var(--sw-t-hover) ease,
+		color var(--sw-t-hover) ease;
+}
+
+.sw-tile__name {
 	font-stretch: var(--sw-mono-narrow);
-	font-size: var(--sw-text-meta);
+	font-size: var(--sw-step-title);
+	font-weight: 500;
+	letter-spacing: -0.03em;
+	overflow-wrap: anywhere;
 }
 
-@media (min-width: 50rem) {
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table :is(td, th):last-child {
-		width: 14rem;
-	}
+.sw-tile__kind {
+	font-size: var(--sw-step-small);
+	color: var(--sw-muted);
 }
 
-/* "The same parts, three places": four columns do not fit a phone, so each row becomes a short
-   stack, with the column headings repeated as labels. */
-@media (max-width: 49.99rem) {
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) :is(tbody, tr, td) {
-		display: block;
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) thead {
+.sw-tile--all {
+	grid-column: 1 / -1;
+}
+
+.sw-tile--all a {
+	background: var(--sw-ink-strong);
+	color: var(--sw-bg);
+}
+
+.sw-tile--all .sw-tile__kind {
+	color: var(--sw-bg);
+}
+
+/* Phones show eight names. */
+@media (max-width: 47.99rem) {
+	.sw-tile:nth-child(n + 9):not(.sw-tile--all) {
 		display: none;
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) tr {
-		padding-block: 1rem;
-		border-bottom: 1px solid var(--sw-line-strong);
+}
+
+@media (min-width: 48rem) {
+	.sw-tiles {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.5rem;
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td {
-		margin-top: 0;
-		padding: 0.25rem 0;
-		border: 0;
+	.sw-home-section .sw-tiles__heading {
+		grid-column: span 2;
+		min-height: 0;
+		padding: 1.5rem;
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:first-child {
+	.sw-tile a {
+		aspect-ratio: 2 / 1;
+		min-height: 0;
+		padding: 1.5rem;
+	}
+	.sw-tile--all {
+		grid-column: span 2;
+	}
+	.sw-tile--all a {
+		aspect-ratio: auto;
+	}
+}
+
+/* --- Start here: two-ended rows in a narrow column --------------------------------------- */
+
+.sw-start {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	padding-bottom: clamp(3rem, 8vw, 6rem);
+}
+
+.sw-start ul {
+	margin-top: 2rem;
+	padding: 0;
+}
+
+.sw-start li {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0 1rem;
+	min-height: 2.75rem;
+	padding-block: 0.375rem;
+}
+
+.sw-start li a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+	min-height: 2rem;
+	font-size: var(--sw-step-body);
+	font-weight: 500;
+	color: var(--sw-ink-strong);
+	text-decoration: none;
+	transition: color var(--sw-t-hover) ease;
+}
+
+/* Each row is marked with the arc at text size. */
+.sw-start li a::before {
+	content: '';
+	flex: none;
+	width: 1rem;
+	height: 1rem;
+	background: var(--sw-accent);
+	-webkit-mask: var(--sw-arc-mask) center / contain no-repeat;
+	mask: var(--sw-arc-mask) center / contain no-repeat;
+	transition: transform 320ms var(--sw-ease-out);
+}
+
+.sw-start li code {
+	padding: 0;
+	background: none;
+	font-size: var(--sw-step-small);
+	color: var(--sw-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 64rem) {
+	.sw-start {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		column-gap: var(--sw-gutter);
+	}
+	.sw-start > * {
+		grid-column: 7 / span 5;
+		max-width: 32.5rem;
+	}
+	.sw-start ul {
+		width: 100%;
+	}
+}
+
+/* --------------------------------------------------------------------------------------------
+ * Feedback under the pointer
+ * ------------------------------------------------------------------------------------------ */
+
+.sw-button:focus-visible,
+.sw-cell:focus-visible,
+.sw-tab:focus-visible,
+.sw-tile a:focus-visible,
+.sw-start li a:focus-visible {
+	outline: 2px solid var(--sw-accent);
+	outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.sw-button:hover,
+	.sw-cell--ink:hover,
+	.sw-tile--all a:hover {
+		background: var(--sw-accent);
+		color: var(--sw-accent-ink);
+	}
+	.sw-cell:not(.sw-cell--ink):hover,
+	.sw-tile:not(.sw-tile--all) a:hover {
+		background: var(--sw-panel-strong);
+	}
+	.sw-cell:hover::after {
+		transform: translateX(0.25rem);
+	}
+	.sw-tab:hover {
 		color: var(--sw-ink-strong);
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:not(:first-child)::before {
-		display: inline-block;
-		min-width: 6ch;
-		font-family: var(--sw-font-mono);
-		font-size: var(--sw-text-label);
-		letter-spacing: var(--sw-tracking-label);
-		text-transform: uppercase;
-		color: var(--sw-faint);
+	.sw-tile:not(.sw-tile--all) a:hover .sw-tile__name,
+	.sw-start li a:hover {
+		color: var(--sw-accent);
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(2)::before {
-		content: 'Does';
+	.sw-start li a:hover::before {
+		transform: rotate(90deg);
 	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(3)::before {
-		content: 'And';
-	}
-	main:has(.sw-hero[data-page='home']) .sl-markdown-content > table:has(th:nth-child(4)) td:nth-child(4)::before {
-		content: 'In';
+	.sw-home-hero__install > p a:hover,
+	.sw-composition a:hover,
+	.sw-panel__plate .sw-source a:hover {
+		color: var(--sw-ink-strong);
+		text-decoration-color: currentColor;
 	}
 }
 
-/* Keep "All integrations ->" on one line so the arrow never wraps alone. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > .sl-heading-wrapper.level-h2 + p > a {
-	white-space: nowrap;
+/* --------------------------------------------------------------------------------------------
+ * Motion. Everything is visible without it: the hidden starting states live in keyframes
+ * (`backwards` fill) or behind `html.js`, and all of it sits inside `no-preference`.
+ * ------------------------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+	/* The signature: the stage opens upward like a rising tide, the run settles inside it. */
+	.sw-stage {
+		animation: sw-shutter 1100ms var(--sw-ease-in-out) 150ms backwards;
+	}
+	[data-ui].sw-run {
+		animation: sw-settle 1500ms var(--sw-ease-soft) 150ms backwards;
+	}
+	/* Then the run replays, one printed line at a time. */
+	[data-ui] .sw-run__line {
+		animation: sw-print 160ms ease-out var(--delay, 0ms) backwards;
+	}
+
+	/* Hero text: the headline rises, then the sentence and the action. The headline animates as
+	   one element: per-line animations on its inner spans dropped out of full-page captures. */
+	.sw-hero[data-page='home'] h1 {
+		animation: sw-rise 800ms var(--sw-ease-out) 100ms backwards;
+	}
+	.sw-hero[data-page='home'] .sw-hero__tagline {
+		animation: sw-rise 800ms var(--sw-ease-out) 320ms backwards;
+	}
+	.sw-home-hero__action {
+		animation: sw-rise 800ms var(--sw-ease-out) 420ms backwards;
+	}
+
+	/* Section entrances, once, each in its own manner. */
+	.js [data-reveal] [data-stagger],
+	.js .sw-composition > *,
+	.js .sw-composition li,
+	.js .sw-tiles__heading,
+	.js .sw-tile,
+	.js .sw-start > *,
+	.js .sw-start li {
+		opacity: 0;
+		transition:
+			opacity 700ms var(--sw-ease-out),
+			transform 900ms var(--sw-ease-out);
+		transition-delay: calc(var(--i, 0) * 80ms);
+	}
+	.js [data-reveal].is-in [data-stagger],
+	.js [data-reveal].is-in > *,
+	.js [data-reveal].is-in li,
+	.js [data-reveal].is-in .sw-tiles__heading {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Showcase: the plate settles from a slight scale, the text column rises after it. */
+	.js .sw-showcase [data-stagger] {
+		transform: translateY(1.5rem);
+	}
+	.js .sw-showcase .sw-panel__plate[data-stagger] {
+		transform: scale(0.97);
+	}
+
+
+	/* How it works: the heading and paragraph rise; the three zones arrive left to right. */
+	.js .sw-composition > * {
+		transform: translateY(1.25rem);
+	}
+	.js .sw-composition > .sw-composition__zone {
+		transform: translateX(-1.5rem);
+		transition-delay: calc(200ms + var(--i, 0) * 180ms);
+	}
+	.js .sw-composition li {
+		transform: translateY(1rem);
+	}
+	.js .sw-composition li:nth-child(1) {
+		transition-delay: 400ms;
+	}
+	.js .sw-composition li:nth-child(2) {
+		transition-delay: 580ms;
+	}
+	.js .sw-composition li:nth-child(3) {
+		transition-delay: 760ms;
+	}
+
+	/* Tiles arrive one after another in reading order. */
+	.js .sw-tiles__heading,
+	.js .sw-tile {
+		transform: translateY(1rem);
+		transition-delay: calc(var(--i, 0) * 45ms);
+	}
+
+	/* Start here: row by row. */
+	.js .sw-start li {
+		transform: translateX(-0.75rem);
+	}
+	.js .sw-start li:nth-child(2) {
+		transition-delay: 70ms;
+	}
+	.js .sw-start li:nth-child(3) {
+		transition-delay: 140ms;
+	}
+	.js .sw-start li:nth-child(4) {
+		transition-delay: 210ms;
+	}
+	.js .sw-start li:nth-child(5) {
+		transition-delay: 280ms;
+	}
+	.js .sw-start li:nth-child(6) {
+		transition-delay: 350ms;
+	}
+
+	/* Arrived: the manner-specific starting transforms above end here. */
+	.js .sw-showcase.is-in [data-stagger],
+	.js .sw-composition.is-in > .sw-composition__zone {
+		transform: none;
+	}
 }
 
-/* Integrations: plain mono feature names. */
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > p:last-child {
-	max-width: 64rem;
-	font-family: var(--sw-font-mono);
-	font-stretch: var(--sw-mono-narrow);
-	font-size: 0.875rem;
-	line-height: 2;
-	color: var(--sw-faint);
+@keyframes sw-shutter {
+	from {
+		clip-path: inset(100% 0 0 0 round var(--sw-crest) 0 0 0);
+	}
 }
 
-main:has(.sw-hero[data-page='home']) .sl-markdown-content > p:last-child code {
-	padding: 0;
-	margin-inline-end: 1.5ch;
-	background: transparent;
-	font-size: inherit;
-	color: var(--sw-ink);
-	white-space: nowrap;
+@keyframes sw-settle {
+	from {
+		transform: translateY(2rem) scale(1.12);
+	}
+}
+
+@keyframes sw-print {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes sw-rise {
+	from {
+		opacity: 0;
+		transform: translateY(1.125rem);
+	}
 }
