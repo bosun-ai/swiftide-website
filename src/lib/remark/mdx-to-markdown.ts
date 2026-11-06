@@ -3,10 +3,11 @@
  * components we allow in content and throws on anything else, so an unknown component never
  * leaks into what LLMs read.
  */
-import type { BlockContent, Heading, Paragraph, PhrasingContent, Root, RootContent } from 'mdast';
+import type { BlockContent, Heading, ListItem, Paragraph, PhrasingContent, Root, RootContent } from 'mdast';
 import type { MdxJsxAttribute, MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx-jsx';
 import { SKIP, visit } from 'unist-util-visit';
 import type { VFile } from 'vfile';
+import { integrationsByFeature, loadIntegrations } from '../integrations.ts';
 import { loadReleaseRun } from '../release-run.ts';
 
 type JsxElement = MdxJsxFlowElement | MdxJsxTextElement;
@@ -40,23 +41,35 @@ const HOME_COMPONENTS: Record<string, Rule> = {
 	ShowcasePanel: (node) => {
 		const example = attr(node, 'example') ?? '';
 		return [
-			heading(2, `${attr(node, 'label') ?? ''}: ${attr(node, 'title') ?? ''}`),
+			{
+				type: 'heading',
+				depth: 2,
+				children: [text(`${attr(node, 'label') ?? ''}: `), link(`/showcases/${example}/`, attr(node, 'title') ?? '')],
+			},
 			paragraph([text(attr(node, 'description') ?? '')]),
 			...(node.children as RootContent[]),
 			{ type: 'code', lang: 'text', value: attr(node, 'result') ?? '' },
-			paragraph([link(attr(node, 'guide') ?? '', 'Read the guide'), text(' · '), link(`/showcases/${example}/`, 'Run it')]),
+			paragraph([link(attr(node, 'guide') ?? '', `${attr(node, 'label') ?? ''} guide →`)]),
 		];
 	},
 	Composition: (node) => node.children as RootContent[],
-	IntegrationTiles: (node) => {
+	IntegrationTiles: (node, { projectRoot }) => {
+		const integrations = loadIntegrations(projectRoot);
 		const features = (attr(node, 'features') ?? '').split(/\s+/).filter(Boolean);
+		const item = (content: PhrasingContent): ListItem => ({ type: 'listItem', spread: false, children: [paragraph([content])] });
 		return [
 			heading(2, attr(node, 'heading') ?? ''),
-			paragraph(features.flatMap((feature, i) => [...(i ? [text(' ')] : []), { type: 'inlineCode' as const, value: feature }])),
-			paragraph([link(attr(node, 'href') ?? '', 'All integrations')]),
+			{
+				type: 'list',
+				ordered: false,
+				spread: false,
+				children: [
+					...integrationsByFeature(integrations, features).map(({ feature, page }) => item(link(`/${page}/`, feature))),
+					item(link(attr(node, 'href') ?? '', `All ${integrations.length} integrations`)),
+				],
+			},
 		];
 	},
-	StartHere: (node) => node.children as RootContent[],
 };
 
 /** What each allowed component becomes. Children are kept unless the rule replaces them. */

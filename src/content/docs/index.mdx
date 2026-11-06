@@ -13,7 +13,6 @@ import HeroStage from '../../components/home/HeroStage.astro';
 import IntegrationTiles from '../../components/home/IntegrationTiles.astro';
 import Showcase from '../../components/home/Showcase.astro';
 import ShowcasePanel from '../../components/home/ShowcasePanel.astro';
-import StartHere from '../../components/home/StartHere.astro';
 
 <HeroStage action="Get started" href="/start/what-is-swiftide/">
 
@@ -21,7 +20,7 @@ import StartHere from '../../components/home/StartHere.astro';
 cargo add swiftide --features swiftide-agents,openai
 ```
 
-[API reference](docsrs:swiftide/) · [GitHub](https://github.com/bosun-ai/swiftide) · [Discord](https://discord.gg/3jjXYen9UY) · [llms.txt](/llms.txt)
+[API reference](docsrs:swiftide/) · [GitHub](https://github.com/bosun-ai/swiftide) · [Discord](https://discord.gg/3jjXYen9UY) · [llms.txt](/llms.txt) · [For coding agents](/start/for-coding-agents/)
 
 </HeroStage>
 
@@ -56,21 +55,6 @@ The same client, executor or store works in an agent, a task graph and a pipelin
 - **Runtimes**\
   [an agent](/agents/overview/), [a task graph](/tasks/overview/), [a pipeline](/indexing/overview/)
 
-Shared in the showcases: [one client](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/workspace-architect/src/graph.rs), [one executor](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/release-notes-agent/src/main.rs), [one store](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/index.rs) and [its queries](https://github.com/bosun-ai/swiftide/blob/{{swiftide_sha}}/examples/docs-qa/src/query.rs).
-
 </Composition>
 
-<IntegrationTiles heading="Every integration is a Cargo feature" href="/integrations/overview/" features="openai anthropic aws-bedrock gemini ollama fastembed qdrant lancedb pgvector redis tree-sitter mcp" />
-
-<StartHere>
-
-## Start here
-
-- [Agents](/agents/overview/) `release-notes-agent`
-- [Tasks](/tasks/overview/) `workspace-architect`
-- [Indexing](/indexing/overview/) `ask-your-codebase`
-- [Querying](/querying/overview/) `docs-qa`
-- [For coding agents](/start/for-coding-agents/) `llms.txt · skill`
-- [API reference](docsrs:swiftide/) `docs.rs`
-
-</StartHere>
+<IntegrationTiles heading="Integrations" href="/integrations/overview/" features="openai anthropic aws-bedrock ollama fastembed qdrant lancedb pgvector redis tree-sitter mcp" />

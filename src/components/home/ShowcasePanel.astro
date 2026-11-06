@@ -1,7 +1,8 @@
 ---
 /**
  * One showcase in `<Showcase>`: the code excerpt (the slot, a `::snippet`) on a square plate, and
- * beside it the showcase's name, one sentence, one line of its recorded output and two actions.
+ * beside it the showcase's name (a link to its page), one sentence, one line of its recorded
+ * output and a link to the guide for that part of swiftide.
  *
  * `result` must be a line the showcase's OUTPUT.md really printed; the build fails otherwise.
  */
@@ -36,13 +37,12 @@ const id = `showcase-${example}`;
 	</div>
 	<div class="sw-panel__side">
 		<div class="sw-panel__text" data-stagger style="--i:1">
-			<h2 class="sw-panel__title" id={`${id}-title`}>{title}</h2>
+			<h2 class="sw-panel__title" id={`${id}-title`}>
+				<a href={`/showcases/${example}/`}>{title}</a>
+			</h2>
 			<p class="sw-panel__description">{description}</p>
 		</div>
 		<p class="sw-panel__result" data-stagger style="--i:2"><code>{result}</code></p>
-		<div class="sw-panel__actions" data-stagger style="--i:3">
-			<a class="sw-cell" href={guide}>Read the guide</a>
-			<a class="sw-cell sw-cell--ink" href={`/showcases/${example}/`}>Run it</a>
-		</div>
+		<p class="sw-panel__guide" data-stagger style="--i:3"><a href={guide}>{label} guide →</a></p>
 	</div>
 </article>

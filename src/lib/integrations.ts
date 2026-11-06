@@ -104,6 +104,15 @@ export function loadIntegrations(projectRoot: string): Integration[] {
 	return parseIntegrations(readFileSync(path.join(projectRoot, INTEGRATIONS_FILE), 'utf8'));
 }
 
+/** The integrations behind the given feature flags, in that order. Unknown flags throw. */
+export function integrationsByFeature(integrations: readonly Integration[], features: readonly string[]): Integration[] {
+	return features.map((feature) => {
+		const found = integrations.find((integration) => integration.feature === feature);
+		if (!found) throw new Error(`"${feature}" is not a feature in ${INTEGRATIONS_FILE}`);
+		return found;
+	});
+}
+
 /** docs.rs target (for `docsRsUrl`) of an item path such as `swiftide::agents::Agent`. */
 export function docsRsTarget(item: IntegrationItem): string {
 	const segments = item.path.split('::');
